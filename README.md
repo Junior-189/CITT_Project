@@ -2,7 +2,6 @@
 
 A full-stack web application for managing innovations, research projects, intellectual property, funding, events, and startups at Mbeya University of Science and Technology (MUST).
 
----
 
 ## Table of Contents
 
@@ -22,13 +21,13 @@ A full-stack web application for managing innovations, research projects, intell
 - [Authentication](#authentication)
 - [Security](#security)
 
----
+
 
 ## Overview
 
 The CITT Management System supports MUST's Centre for Innovation and Technology Transfer in managing the full lifecycle of innovations — from project submission and IP registration to funding applications and event participation. The system provides role-based dashboards, real-time notifications, audit logging, and analytics for administrators, IP managers, and innovators.
 
----
+
 
 ## Tech Stack
 
@@ -57,11 +56,11 @@ The CITT Management System supports MUST's Centre for Innovation and Technology 
 | Firebase SDK      | OAuth client-side auth       |
 | Lucide React      | Icon library                 |
 
----
+
 
 ## Project Structure
 
-```
+
 Project_CITT/
 ├── CITT_Server/                   # Backend (Express + PostgreSQL)
 │   ├── config/
@@ -105,7 +104,7 @@ Project_CITT/
 └── README.md
 ```
 
----
+
 
 ## Getting Started
 
@@ -203,7 +202,7 @@ Handles intellectual property workflows. Can review and approve/reject IP submis
 
 The default role for registered users. Can submit projects, apply for funding, register IP, participate in events, and manage their own profile and submissions. Read-only access to public content.
 
----
+
 
 ## Features
 
@@ -234,7 +233,7 @@ All significant actions are logged with user details, timestamps, IP addresses, 
 ### User Management
 Registration via email/password or Google OAuth. Profile management with university, college, and year of study fields. Super administrators can create admin and IP manager accounts directly. Soft-delete support preserves data integrity.
 
----
+
 
 ## API Reference
 
@@ -346,7 +345,7 @@ The system uses 10 migration files that create and maintain the following tables
 
 All user-facing tables support soft deletes via a `deleted_at` timestamp column.
 
----
+
 
 ## Authentication
 
@@ -356,7 +355,7 @@ The system uses a dual authentication approach:
 
 **Firebase OAuth (Secondary)** — Users can sign in with Google via Firebase. On first sign-in, the system creates a local user record linked by Firebase UID. Users authenticated via OAuth can optionally set a local password for direct login.
 
----
+
 
 ## Security
 
@@ -368,6 +367,9 @@ The system uses a dual authentication approach:
 - **Audit Trail** — All significant actions logged with user, timestamp, IP address, and user agent
 - **CORS** — Configured to allow only the frontend origin
 
----
+
 
 Built for the Centre for Innovation and Technology Transfer (CITT) at Mbeya University of Science and Technology.
+
+# CITT_Project
+A full-stack management system (React + Express + PostgreSQL) for managing innovations, research projects, intellectual property, funding, events, and startups at MUST's Centre for Innovation and Technology Transfer. fa7734417b2edbdd0a0a276d875ed210f3d72c9a
