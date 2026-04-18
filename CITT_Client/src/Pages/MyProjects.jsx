@@ -50,7 +50,8 @@ const MyProjects = () => {
     };
 
     fetchMyProjects();
-  }, [profile?.id, getAuthenticatedAxios]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.id]);
 
   // Handle edit button click
   const handleEdit = (project) => {

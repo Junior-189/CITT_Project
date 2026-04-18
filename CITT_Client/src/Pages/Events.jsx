@@ -1,12 +1,12 @@
 // src/Pages/Events.jsx
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useMemo, useCallback } from "react";
 import { AuthContext } from '../context/AuthContext';
 
 const Events = () => {
   const { user, profile, role, getAuthenticatedAxios } = useContext(AuthContext);
 
-  // Check if user has admin access
-  const isAdmin = role === "admin" || role === "superAdmin";
+  // Check if user has admin access - memoize this
+  const isAdmin = useMemo(() => role === "admin" || role === "superAdmin", [role]);
   const [activeTab, setActiveTab] = useState("overview");
 
   // Events & submissions state
@@ -48,22 +48,45 @@ const Events = () => {
     pitch_url: "",
   });
 
+  // Track if component is mounted and auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Update auth state when user/profile changes
+  useEffect(() => {
+    const newAuthState = !!(user || profile);
+    setIsAuthenticated(newAuthState);
+  }, [user?.uid, profile?.id]); // Only when auth identity changes
+
+  // Refetch data when auth state changes
+  useEffect(() => {
+    fetchEvents();
+    if (isAuthenticated) {
+      fetchMySubmissions();
+    } else {
+      // Clear data when user logs out
+      setEvents([]);
+      setSubmissions([]);
+      setActiveTab("overview");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated]); // When isAuthenticated changes
+
   // Fetch events on component mount
   useEffect(() => {
     fetchEvents();
-    if (user || profile) {
+    if (isAuthenticated) {
       fetchMySubmissions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, profile]);
+  }, []); // Only run once on mount
 
-  // Fetch events
-  async function fetchEvents() {
+  // Fetch events - memoize to prevent recreation
+  const fetchEvents = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       const api = getAuthenticatedAxios();
-      const endpoint = (user || profile) ? '/api/events?limit=500' : '/api/events/public';
+      const endpoint = isAuthenticated ? '/api/events?limit=500' : '/api/events/public';
       console.log('Fetching events from:', endpoint);
       const response = await api.get(endpoint);
       console.log('Events response:', response.data);
@@ -75,10 +98,11 @@ const Events = () => {
     } finally {
       setLoading(false);
     }
-  }
+  }, [isAuthenticated, getAuthenticatedAxios]);
 
-  // Fetch my submissions (or all submissions for admin)
-  async function fetchMySubmissions() {
+  // Fetch my submissions (or all submissions for admin) - memoize
+  const fetchMySubmissions = useCallback(async () => {
+    if (!isAuthenticated) return;
     try {
       const api = getAuthenticatedAxios();
       // Admin fetches all submissions, others fetch only their own
@@ -88,7 +112,7 @@ const Events = () => {
     } catch (e) {
       console.error("fetchMySubmissions:", e);
     }
-  }
+  }, [isAuthenticated, isAdmin, getAuthenticatedAxios]);
 
   // Create event (admin only)
   async function handleCreateEvent(e) {
@@ -250,20 +274,20 @@ const Events = () => {
   }
 
   // Dismiss alerts
-  const dismissAlert = () => {
+  const dismissAlert = useCallback(() => {
     setError("");
     setSuccess("");
-  };
+  }, []);
 
-  // Format date for display
-  const formatDate = (dateString) => {
+  // Format date for display - memoize
+  const formatDate = useCallback((dateString) => {
     if (!dateString) return "—";
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'
     });
-  };
+  }, []);
 
   // Show loading indicator on initial load
   if (loading && events.length === 0 && !error) {

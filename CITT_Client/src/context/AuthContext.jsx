@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, { createContext, useState, useEffect, useCallback } from "react";
 import { auth, googleProvider, db } from "../firebase";
 import {
   signInWithEmailAndPassword,
@@ -384,14 +384,14 @@ export const AuthProvider = ({ children }) => {
   const hasAdminAccess = () => hasAnyRole(["admin", "superAdmin"]);
 
   // 🔹 Get axios instance with auth header
-  const getAuthenticatedAxios = () => {
+  const getAuthenticatedAxios = useCallback(() => {
     return axios.create({
       baseURL: API_BASE_URL,
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: token ? `Bearer ${token}` : ""
       }
     });
-  };
+  }, [token]);
 
   return (
     <AuthContext.Provider
