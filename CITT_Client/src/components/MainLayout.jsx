@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import TopNavbar from './TopNavbar';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
@@ -11,45 +12,23 @@ import { useAuth } from '../context/AuthContext';
 const MainLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { showProfileForm } = useAuth();
-
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a1f33]">
-      {/* Top Contact Bar */}
+    <div className="h-screen flex flex-col overflow-hidden bg-[#0a1f33]">
       <Topbar />
-
-      {/* University Header with Logo */}
       <Header />
-
-      {/* Layout Container: Sidebar + Content */}
-      <div className="flex flex-1">
-        {/* Collapsible Sidebar */}
+      <div className="flex flex-1 overflow-hidden bg-white">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-
-        {/* Main Content Column */}
-        <div className="flex-1 flex flex-col">
-          {/* Top Navigation Bar with User Menu */}
-          <TopNavbar toggleSidebar={toggleSidebar} />
-
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            <div className="min-h-full">
-              {children}
-            </div>
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <TopNavbar />
+          <main className="flex-1 overflow-y-auto">
+            <div className="min-h-full">{children}</div>
           </main>
-
-          {/* Call to Action Section */}
-          <CTA />
-
-          {/* Footer */}
-          <Footer />
+          {isHomePage && <><CTA /><Footer /></>}
         </div>
       </div>
-
-      {/* Profile Form Modal (if needed) */}
       {showProfileForm && <ProfileForm />}
     </div>
   );

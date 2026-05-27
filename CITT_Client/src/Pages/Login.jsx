@@ -1,69 +1,59 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext'; // Updated path to context folder
+import { AuthContext } from '../context/AuthContext';
+
+const ROLE_ROUTES = {
+  superAdmin:                '/superadmin/dashboard',
+  admin:                     '/admin/dashboard',
+  transferTechnologyOfficer: '/admin/dashboard',
+  ipManager:                 '/ipmanager/dashboard',
+  diiDirector:               '/dii/workspace',
+  debmDirector:              '/debm/workspace',
+  rtpDirector:               '/rtp/workspace',
+  mentor:                    '/workspace/mentor',
+  technicalCommittee:        '/workspace/technical-committee',
+  coordinator:               '/workspace/coordinator',
+  innovator:                 '/projects',
+};
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [pendingMessage, setPendingMessage] = useState('');
   const { login, loginWithGoogle } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const redirectByRole = (role) => {
+    navigate(ROLE_ROUTES[role] || '/');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setPendingMessage('');
     try {
-      console.log('Attempting login with:', email, password); // DEBUG
       const userData = await login(email, password);
-      console.log('Login response:', userData); // DEBUG
-      if (!userData) {
-        console.error('No userData returned from login');
-        setError('No user data returned.');
-        return;
-      }
-
-      // Navigate based on user role
-      if (userData.role === 'superAdmin') {
-        navigate('/superadmin/dashboard');
-      } else if (userData.role === 'admin') {
-        navigate('/admin/dashboard');
-      } else if (userData.role === 'ipManager') {
-        navigate('/ipmanager/dashboard');
-      } else {
-        // innovator or any other role goes to home
-        navigate('/');
-      }
+      redirectByRole(userData.role);
     } catch (err) {
-      console.error('Login error:', err); // DEBUG
-      setError(err.message || 'Login failed. Please try again.');
+      const code = err.response?.data?.error || '';
+      const msg = err.response?.data?.message || err.message || '';
+      if (code === 'account_pending') {
+        setPendingMessage(msg || 'Your account is awaiting admin approval.');
+      } else if (code === 'account_rejected') {
+        setError(msg || 'Your account has been rejected. Please contact the administrator.');
+      } else {
+        setError('Invalid email or password. Please try again.');
+      }
     }
   };
 
   const handleGoogleLogin = async () => {
     setError('');
+    setPendingMessage('');
     try {
       const userData = await loginWithGoogle();
-
-      // Show prompt to set password for email/password login in the future
-      setTimeout(() => {
-        const shouldSetPassword = window.confirm(
-          'You have logged in successfully with Google! Would you like to set a password now? This will allow you to log in with your email and password next time.'
-        );
-        if (shouldSetPassword) {
-          navigate('/set-password');
-        } else {
-          // Navigate based on user role
-          if (userData.role === 'superAdmin') {
-            navigate('/superadmin/dashboard');
-          } else if (userData.role === 'admin') {
-            navigate('/admin/dashboard');
-          } else if (userData.role === 'ipManager') {
-            navigate('/ipmanager/dashboard');
-          } else {
-            navigate('/');
-          }
-        }
-      }, 300);
+      redirectByRole(userData.role);
     } catch (err) {
       setError(err.message || 'Google login failed. Please try again.');
     }
@@ -71,31 +61,34 @@ const Login = () => {
 
   return (
     <section className="relative min-h-screen py-16 px-5 flex items-center justify-center">
-      {/* Background Image with Overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{
-          backgroundImage: 'url(/must-campus.jpg)',
-          zIndex: -2
-        }}
-      ></div>
-      <div className="absolute inset-0 bg-slate-900 opacity-85" style={{ zIndex: -1 }}></div>
+        style={{ backgroundImage: 'url(/must-campus.jpg)', zIndex: -2 }}
+      />
+      <div className="absolute inset-0 bg-slate-900 opacity-85" style={{ zIndex: -1 }} />
 
-      {/* Content */}
       <div className="relative max-w-md w-full mx-auto text-white">
         <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 shadow-2xl border border-white border-opacity-20">
           <h2 className="text-3xl font-bold mb-6 text-teal-300 text-center">
             Login to ITTMS
           </h2>
-          
+
           {error && (
-            <div className="bg-red-500 bg-opacity-20 border border-red-400 text-red-200 px-4 py-3 rounded mb-4">
+            <div className="mb-4 bg-red-900 bg-opacity-50 border border-red-500 rounded-lg p-3 text-red-200 text-sm">
               {error}
-              {error.toLowerCase().includes('incorrect') && (
-                <div className="mt-2 text-sm text-red-100">
-                  <p>Did you sign up with Google? <a href="/set-password" className="underline font-semibold">Click here to set a password</a></p>
-                </div>
-              )}
+            </div>
+          )}
+
+          {pendingMessage && (
+            <div className="mb-4 bg-amber-900 bg-opacity-50 border border-amber-500 rounded-lg p-4">
+              <p className="text-amber-200 text-sm font-semibold mb-1">Account Pending Approval</p>
+              <p className="text-amber-100 text-sm">{pendingMessage}</p>
+              <button
+                onClick={() => { setPendingMessage(''); setEmail(''); setPassword(''); }}
+                className="mt-3 text-xs text-amber-300 hover:text-white underline"
+              >
+                Use a different account
+              </button>
             </div>
           )}
 
@@ -103,9 +96,7 @@ const Login = () => {
             <div className="bg-white bg-opacity-20 rounded-lg p-6 w-full max-w-sm">
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="block text-teal-300 mb-2" htmlFor="email">
-                    Email
-                  </label>
+                  <label className="block text-teal-300 mb-2" htmlFor="email">Email</label>
                   <input
                     type="email"
                     id="email"
@@ -116,11 +107,9 @@ const Login = () => {
                     required
                   />
                 </div>
-                
+
                 <div className="mb-6">
-                  <label className="block text-teal-300 mb-2" htmlFor="password">
-                    Password
-                  </label>
+                  <label className="block text-teal-300 mb-2" htmlFor="password">Password</label>
                   <input
                     type="password"
                     id="password"
@@ -140,14 +129,12 @@ const Login = () => {
                 </button>
               </form>
 
-              {/* Divider */}
               <div className="flex items-center my-6">
-                <div className="flex-1 border-t border-white border-opacity-30"></div>
+                <div className="flex-1 border-t border-white border-opacity-30" />
                 <span className="px-4 text-sm text-white opacity-70">OR</span>
-                <div className="flex-1 border-t border-white border-opacity-30"></div>
+                <div className="flex-1 border-t border-white border-opacity-30" />
               </div>
 
-              {/* Google Sign-In Button */}
               <button
                 onClick={handleGoogleLogin}
                 className="w-full flex items-center justify-center gap-3 px-5 py-2.5 bg-white text-slate-700 border-none rounded-md cursor-pointer hover:bg-gray-100 transition-colors font-semibold"
@@ -163,9 +150,7 @@ const Login = () => {
 
               <p className="mt-4 text-center text-slate-200">
                 Don't have an account?{' '}
-                <a href="/register" className="text-teal-300 hover:underline font-semibold">
-                  Register
-                </a>
+                <a href="/register" className="text-teal-300 hover:underline font-semibold">Register</a>
               </p>
             </div>
           </div>

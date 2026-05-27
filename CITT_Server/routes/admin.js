@@ -15,6 +15,114 @@ const { createNotification, notifyAdmins } = require('../utils/notifications');
 const { isAdmin, isReviewer } = require('../utils/roleHelpers');
 
 // ============================================
+// ACCOUNT APPROVAL
+// ============================================
+
+// GET /api/admin/pending-users
+router.get('/pending-users',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const result = await pool.query(
+      `SELECT id, name, email, phone, role, university, campus, created_at
+       FROM users
+       WHERE account_status = 'pending' AND deleted_at IS NULL
+       ORDER BY created_at ASC`
+    );
+    res.json({ users: result.rows, count: result.rows.length });
+  })
+);
+
+// PUT /api/admin/users/:id/approve
+router.put('/users/:id/approve',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const result = await pool.query(
+      `UPDATE users
+       SET account_status = 'approved', approved_by_admin = $1, approved_at = NOW(), updated_at = NOW()
+       WHERE id = $2 AND deleted_at IS NULL
+       RETURNING id, name, email, role, account_status`,
+      [req.user.id, id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'User not found' });
+
+    await pool.query(
+      `INSERT INTO notifications (user_id, title, message, type, link, read, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, false, NOW(), NOW())`,
+      [id,
+       'Account Approved',
+       'Your CITT account has been approved. You can now log in and access the system.',
+       'account_approved',
+       '/login']
+    );
+
+    res.json({ message: `${result.rows[0].name} approved successfully`, user: result.rows[0] });
+  })
+);
+
+// PUT /api/admin/users/:id/reject
+router.put('/users/:id/reject',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { reason } = req.body;
+    const result = await pool.query(
+      `UPDATE users
+       SET account_status = 'rejected',
+           approval_rejection_reason = $1,
+           approved_by_admin = $2,
+           approved_at = NOW(),
+           updated_at = NOW()
+       WHERE id = $3 AND deleted_at IS NULL
+       RETURNING id, name, email, account_status`,
+      [reason || 'Not specified', req.user.id, id]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: `${result.rows[0].name} rejected`, user: result.rows[0] });
+  })
+);
+
+// POST /api/admin/users/create
+router.post('/users/create',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const { name, email, password, role, phone, university, campus } = req.body;
+
+    if (!name || !email || !password || !role) {
+      return res.status(400).json({ error: 'Name, email, password, and role are required' });
+    }
+
+    const forbidden = req.user.role !== 'superAdmin' && role === 'superAdmin';
+    if (forbidden) return res.status(403).json({ error: 'Admin cannot create SuperAdmin accounts' });
+
+    const validRoles = ['admin', 'transferTechnologyOfficer', 'ipManager', 'diiDirector',
+      'debmDirector', 'rtpDirector', 'mentor', 'technicalCommittee', 'coordinator', 'innovator'];
+    if (!validRoles.includes(role)) return res.status(400).json({ error: 'Invalid role' });
+
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+    const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    if (existing.rows.length) return res.status(409).json({ error: 'Email already exists' });
+
+    const bcrypt = require('bcrypt');
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password, phone, role, university, campus, account_status, approved_by_admin, approved_at, created_at, updated_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,'approved',$8,NOW(),NOW(),NOW())
+       RETURNING id, name, email, phone, role, university, campus, account_status, created_at`,
+      [name, email, hashedPassword, phone || null, role, university || null, campus || null, req.user.id]
+    );
+
+    res.status(201).json({ message: `${result.rows[0].name} added as ${role}`, user: result.rows[0] });
+  })
+);
+
+// ============================================
 // USER MANAGEMENT
 // ============================================
 
@@ -25,7 +133,7 @@ const { isAdmin, isReviewer } = require('../utils/roleHelpers');
  */
 router.get('/users',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer', 'diiDirector', 'debmDirector', 'rtpDirector']),
   asyncHandler(async (req, res) => {
     const { role, search, page = 1, limit = 50 } = req.query;
     const offset = (page - 1) * limit;
@@ -496,7 +604,7 @@ router.put('/projects/:id/resubmit',
  */
 router.put('/projects/:id/approve',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer', 'diiDirector']),
   checkPermission('projects', 'approve'),
   auditLog('projects'),
   asyncHandler(async (req, res) => {
@@ -542,7 +650,7 @@ router.put('/projects/:id/approve',
  */
 router.put('/projects/:id/reject',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer', 'diiDirector']),
   checkPermission('projects', 'reject'),
   auditLog('projects'),
   asyncHandler(async (req, res) => {

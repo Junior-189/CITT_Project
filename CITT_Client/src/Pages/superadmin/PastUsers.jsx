@@ -72,7 +72,7 @@ const PastUsers = () => {
     superAdmin: { label: 'Super Admin', color: 'bg-purple-100 text-purple-800', icon: '👑' },
     admin: { label: 'Admin', color: 'bg-teal-100 text-teal-800', icon: '🔑' },
     ipManager: { label: 'IP Manager', color: 'bg-orange-100 text-orange-800', icon: '📜' },
-    innovator: { label: 'Innovator', color: 'bg-blue-100 text-blue-800', icon: '💡' }
+    innovator: { label: 'Innovator', color: 'bg-blue-100 text-blue-800', icon: '' }
   };
 
   const formatDate = (dateString) => {

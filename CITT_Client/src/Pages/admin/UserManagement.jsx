@@ -12,6 +12,11 @@ const UserManagement = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addForm, setAddForm] = useState({ name: '', email: '', password: '', confirmPassword: '', role: 'innovator', phone: '', campus: '' });
+  const [addLoading, setAddLoading] = useState(false);
+  const [addError, setAddError] = useState('');
+  const [addSuccess, setAddSuccess] = useState('');
 
   const rolesConfig = {
     superAdmin: { label: 'Super Admin', color: 'bg-purple-100 text-purple-800' },
@@ -77,6 +82,39 @@ const UserManagement = () => {
     setCurrentPage(1); // Reset to first page on filter
   };
 
+  const handleAddUser = async () => {
+    setAddError('');
+    if (!addForm.name || !addForm.email || !addForm.password || !addForm.role) {
+      setAddError('Name, email, password, and role are required.'); return;
+    }
+    if (addForm.password !== addForm.confirmPassword) {
+      setAddError('Passwords do not match.'); return;
+    }
+    if (addForm.password.length < 8) {
+      setAddError('Password must be at least 8 characters.'); return;
+    }
+    setAddLoading(true);
+    try {
+      const api = getAuthenticatedAxios();
+      await api.post('/api/admin/users/create', {
+        name: addForm.name,
+        email: addForm.email,
+        password: addForm.password,
+        role: addForm.role,
+        phone: addForm.phone || undefined,
+        campus: addForm.campus || undefined,
+      });
+      setAddSuccess(`User "${addForm.name}" created successfully`);
+      setAddForm({ name: '', email: '', password: '', confirmPassword: '', role: 'innovator', phone: '', campus: '' });
+      fetchUsers();
+      setTimeout(() => { setShowAddModal(false); setAddSuccess(''); }, 1500);
+    } catch (err) {
+      setAddError(err.response?.data?.error || 'Failed to create user');
+    } finally {
+      setAddLoading(false);
+    }
+  };
+
   if (loading && users.length === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -92,9 +130,15 @@ const UserManagement = () => {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
-          <p className="text-gray-600 mt-2">Manage user accounts and permissions</p>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+            <p className="text-gray-600 mt-2">Manage user accounts and permissions</p>
+          </div>
+          <button onClick={() => { setShowAddModal(true); setAddError(''); setAddSuccess(''); }}
+            className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition">
+            + Add User
+          </button>
         </div>
 
         {/* Error Alert */}
@@ -339,6 +383,77 @@ const UserManagement = () => {
                     }}
                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* Add User Modal */}
+        {showAddModal && (
+          <div className="fixed z-50 inset-0 bg-black/50 flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-bold text-gray-900">Add New User</h2>
+                  <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+                {addError && <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">{addError}</div>}
+                {addSuccess && <div className="mb-3 p-3 bg-green-50 border border-green-200 rounded text-sm text-green-700">{addSuccess}</div>}
+                <div className="space-y-3">
+                  {[['name','Full Name','text',true],['email','Email','email',true],['phone','Phone','tel',false]].map(([field,label,type,req]) => (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{label}{req ? ' *' : ''}</label>
+                      <input type={type} value={addForm[field]}
+                        onChange={e => setAddForm(f => ({ ...f, [field]: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500" />
+                    </div>
+                  ))}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Role *</label>
+                    <select value={addForm.role} onChange={e => setAddForm(f => ({ ...f, role: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                      <option value="innovator">Innovator</option>
+                      <option value="admin">Admin</option>
+                      <option value="transferTechnologyOfficer">Transfer Technology Officer</option>
+                      <option value="ipManager">IP Manager</option>
+                      <option value="diiDirector">DII Director</option>
+                      <option value="debmDirector">DEBM Director</option>
+                      <option value="rtpDirector">RTP Director</option>
+                      <option value="mentor">Mentor</option>
+                      <option value="technicalCommittee">Technical Committee</option>
+                      <option value="coordinator">Coordinator</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Campus</label>
+                    <select value={addForm.campus} onChange={e => setAddForm(f => ({ ...f, campus: e.target.value }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500">
+                      <option value="">Select campus</option>
+                      <option value="Main Campus">Main Campus</option>
+                      <option value="Rukwa Campus">Rukwa Campus</option>
+                    </select>
+                  </div>
+                  {[['password','Password *'],['confirmPassword','Confirm Password *']].map(([field,label]) => (
+                    <div key={field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                      <input type="password" value={addForm[field]}
+                        onChange={e => setAddForm(f => ({ ...f, [field]: e.target.value }))}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500"
+                        placeholder="Minimum 8 characters" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-3 mt-5">
+                  <button onClick={handleAddUser} disabled={addLoading}
+                    className="flex-1 py-2 bg-teal-600 hover:bg-teal-700 disabled:bg-gray-400 text-white text-sm font-semibold rounded-lg transition">
+                    {addLoading ? 'Creating...' : 'Create User'}
+                  </button>
+                  <button onClick={() => setShowAddModal(false)}
+                    className="flex-1 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-semibold rounded-lg transition">
                     Cancel
                   </button>
                 </div>

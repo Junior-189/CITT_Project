@@ -39,12 +39,12 @@ const MySubmissions = () => {
 
   const getStatusIcon = (status) => {
     const icons = {
-      submitted: '📤',
-      reviewing: '👀',
-      approved: '✅',
-      rejected: '❌'
+      submitted: '',
+      reviewing: '',
+      approved: '',
+      rejected: ''
     };
-    return icons[status] || '📌';
+    return icons[status] || '';
   };
 
   const filteredSubmissions = filterStatus === 'all' 
@@ -118,7 +118,7 @@ const MySubmissions = () => {
               : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
           }`}
         >
-          ✅ Approved ({submissions.filter(s => s.status === 'approved').length})
+          Approved ({submissions.filter(s => s.status === 'approved').length})
         </button>
         <button
           onClick={() => setFilterStatus('rejected')}

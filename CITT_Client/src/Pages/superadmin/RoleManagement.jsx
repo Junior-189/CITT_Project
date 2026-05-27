@@ -25,14 +25,21 @@ const RoleManagement = () => {
 
   // Add new user state
   const [showAddModal, setShowAddModal] = useState(false);
-  const [addFormData, setAddFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', university: '' });
+  const [addFormData, setAddFormData] = useState({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', campus: '' });
   const [addLoading, setAddLoading] = useState(false);
 
   const rolesConfig = {
-    superAdmin: { label: 'Super Admin', color: 'bg-teal-100 text-teal-800' },
-    admin: { label: 'Admin', color: 'bg-teal-100 text-teal-800'},
-    ipManager: { label: 'IP Manager', color: 'bg-teal-100 text-teal-800'},
-    innovator: { label: 'Innovator', color: 'bg-teal-100 text-teal-800'}
+    superAdmin:              { label: 'Super Admin',              color: 'bg-slate-800 text-white' },
+    admin:                   { label: 'Admin',                    color: 'bg-teal-700 text-white' },
+    transferTechnologyOfficer: { label: 'Transfer Technology Officer', color: 'bg-teal-600 text-white' },
+    ipManager:               { label: 'IP Manager',              color: 'bg-blue-700 text-white' },
+    diiDirector:             { label: 'DII Director',            color: 'bg-teal-500 text-white' },
+    debmDirector:            { label: 'DEBM Director',           color: 'bg-blue-600 text-white' },
+    rtpDirector:             { label: 'RTP Director',            color: 'bg-teal-800 text-white' },
+    mentor:                  { label: 'Mentor',                  color: 'bg-blue-500 text-white' },
+    technicalCommittee:      { label: 'Technical Committee',     color: 'bg-slate-600 text-white' },
+    coordinator:             { label: 'Coordinator',             color: 'bg-blue-400 text-white' },
+    innovator:               { label: 'Innovator',               color: 'bg-slate-500 text-white' },
   };
 
   useEffect(() => {
@@ -207,11 +214,11 @@ const RoleManagement = () => {
         password: addFormData.password,
         role: addFormData.role,
         phone: addFormData.phone || undefined,
-        university: addFormData.university || undefined
+        campus: addFormData.campus || undefined
       });
       setSuccess(`New ${rolesConfig[addFormData.role]?.label || addFormData.role} account created successfully`);
       setShowAddModal(false);
-      setAddFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', university: '' });
+      setAddFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', campus: '' });
       fetchUsers();
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
@@ -223,19 +230,10 @@ const RoleManagement = () => {
   };
 
   const getRoleStats = () => {
-    const stats = {
-      superAdmin: 0,
-      admin: 0,
-      ipManager: 0,
-      innovator: 0
-    };
-
+    const stats = Object.fromEntries(Object.keys(rolesConfig).map(r => [r, 0]));
     users.forEach(user => {
-      if (stats.hasOwnProperty(user.role)) {
-        stats[user.role]++;
-      }
+      if (stats.hasOwnProperty(user.role)) stats[user.role]++;
     });
-
     return stats;
   };
 
@@ -297,7 +295,7 @@ const RoleManagement = () => {
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-gray-900">Add New User</h2>
-              <p className="text-sm text-gray-600 mt-1">Create a new Admin or IP Manager account</p>
+              <p className="text-sm text-gray-600 mt-1">Create a new user account for any system role</p>
             </div>
             <button
               onClick={() => setShowAddModal(true)}
@@ -312,7 +310,7 @@ const RoleManagement = () => {
         </div>
 
         {/* Role Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4 mb-6">
           {Object.entries(rolesConfig).map(([role, config]) => (
             <div key={role} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex items-center justify-between">
@@ -390,9 +388,9 @@ const RoleManagement = () => {
                   </span>
                 </div>
 
-                {user.university && (
+                {(user.campus || user.university) && (
                   <p className="text-sm text-gray-600 mb-2">
-                    <strong>University:</strong> {user.university}
+                    <strong>Campus:</strong> {user.campus || user.university}
                   </p>
                 )}
 
@@ -470,8 +468,9 @@ const RoleManagement = () => {
                             onChange={(e) => setAddFormData({ ...addFormData, role: e.target.value })}
                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
                           >
-                            <option value="admin">Admin</option>
-                            <option value="ipManager">IP Manager</option>
+                            {Object.entries(rolesConfig).map(([role, config]) => (
+                              <option key={role} value={role}>{config.label}</option>
+                            ))}
                           </select>
                         </div>
                         <div>
@@ -485,14 +484,16 @@ const RoleManagement = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">University</label>
-                          <input
-                            type="text"
-                            value={addFormData.university}
-                            onChange={(e) => setAddFormData({ ...addFormData, university: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
-                            placeholder="Enter university (optional)"
-                          />
+                          <label className="block text-sm font-medium text-gray-700 mb-1">Campus</label>
+                          <select
+                            value={addFormData.campus}
+                            onChange={(e) => setAddFormData({ ...addFormData, campus: e.target.value })}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500"
+                          >
+                            <option value="">Select campus</option>
+                            <option value="Main Campus">Main Campus</option>
+                            <option value="Rukwa Campus">Rukwa Campus</option>
+                          </select>
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 mb-1">Password *</label>
@@ -531,7 +532,7 @@ const RoleManagement = () => {
                     type="button"
                     onClick={() => {
                       setShowAddModal(false);
-                      setAddFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', university: '' });
+                      setAddFormData({ name: '', email: '', password: '', confirmPassword: '', role: 'admin', phone: '', campus: '' });
                     }}
                     className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm"
                   >

@@ -29,7 +29,7 @@ const IPManagement = () => {
     inventors: "",
     abstract: "",
     field: "",
-    trl: "",
+    milestone_stage: "",
     priorArt: "",
     projectId: "",
     files: [],
@@ -180,7 +180,7 @@ const IPManagement = () => {
         inventors: form.inventors,
         abstract: form.abstract,
         field: form.field,
-        trl: form.trl,
+        milestone_stage: form.milestone_stage,
         priorArt: form.priorArt,
         projectId: form.projectId || null,
         identificationNumbers: idNumbers,
@@ -379,9 +379,7 @@ const IPManagement = () => {
           {[
             { key: "overview", label: "Overview" },
             { key: "submit", label: "Submit IP Application" },
-            { key: "myip", label: "My IP Portfolio" },
-            { key: "tracking", label: "Status Tracking" },
-            { key: "integration", label: "External Integration" },
+            { key: "myip", label: "My IP Portfolio & Status Tracking" },
             { key: "commercialization", label: "Commercialization" },
           ].map(tab => (
             <button
@@ -408,10 +406,10 @@ const IPManagement = () => {
               </div>
 
               <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-blue-600">
-                <h3 className="font-bold text-slate-800 text-lg">External Integration</h3>
-                <p className="text-slate-600 mt-2">Sync IP statuses with external registries (WIPO/ARIPO/BRELA).</p>
+                <h3 className="font-bold text-slate-800 text-lg">IP Portfolio &amp; Status</h3>
+                <p className="text-slate-600 mt-2">View your IP portfolio and track application statuses.</p>
                 <div className="mt-4">
-                  <button onClick={() => setActiveTab("integration")} className="bg-blue-600 text-white px-4 py-2 rounded-lg">Manage Sync</button>
+                  <button onClick={() => setActiveTab("myip")} className="bg-blue-600 text-white px-4 py-2 rounded-lg">View Portfolio</button>
                 </div>
               </div>
 
@@ -588,18 +586,18 @@ const IPManagement = () => {
                   <input name="field" value={form.field} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg" placeholder="e.g., Healthcare" />
                 </div>
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-2">Technology Readiness Level</label>
-                  <select name="trl" value={form.trl} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg">
-                    <option value="">Select TRL</option>
-                    <option value="1">TRL 1</option>
-                    <option value="2">TRL 2</option>
-                    <option value="3">TRL 3</option>
-                    <option value="4">TRL 4</option>
-                    <option value="5">TRL 5</option>
-                    <option value="6">TRL 6</option>
-                    <option value="7">TRL 7</option>
-                    <option value="8">TRL 8</option>
-                    <option value="9">TRL 9</option>
+                  <label className="block text-slate-700 font-semibold mb-2">Milestone Stage</label>
+                  <select name="milestone_stage" value={form.milestone_stage} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 rounded-lg">
+                    <option value="">Select Milestone Stage</option>
+                    <option value="1">Stage 1 - Idea Generation</option>
+                    <option value="2">Stage 2 - Concept Development</option>
+                    <option value="3">Stage 3 - Prototype Development</option>
+                    <option value="4">Stage 4 - Testing &amp; Validation</option>
+                    <option value="5">Stage 5 - IP &amp; Documentation</option>
+                    <option value="6">Stage 6 - Funding &amp; Investment</option>
+                    <option value="7">Stage 7 - Deployment / Implementation</option>
+                    <option value="8">Stage 8 - Monitoring &amp; Evaluation</option>
+                    <option value="9">Stage 9 - Scaling &amp; Commercialization</option>
                   </select>
                 </div>
                 <div>
@@ -622,7 +620,7 @@ const IPManagement = () => {
               <div className="flex gap-4">
                 <button disabled={!user || loading} type="submit" className="bg-teal-600 text-white px-6 py-2 rounded-lg">{loading ? "Submitting..." : "Submit Application"}</button>
                 <button type="button" onClick={() => {
-                  setForm({ ipType: "", title: "", inventors: "", abstract: "", field: "", trl: "", priorArt: "", projectId: "", files: [] });
+                  setForm({ ipType: "", title: "", inventors: "", abstract: "", field: "", milestone_stage: "", priorArt: "", projectId: "", files: [] });
                 }} className="bg-slate-200 px-6 py-2 rounded-lg">Reset</button>
               </div>
             </form>
@@ -696,7 +694,7 @@ const IPManagement = () => {
 
                   <p className="text-slate-700 mb-3">{ip.abstract}</p>
 
-                  {ip.field && <p className="text-xs text-slate-500 mb-3">Field: {ip.field} {ip.trl ? `• TRL: ${ip.trl}` : ""}</p>}
+                  {ip.field && <p className="text-xs text-slate-500 mb-3">Field: {ip.field} {ip.milestone_stage ? `• Stage: ${ip.milestone_stage}` : ""}</p>}
 
                   <div className="flex gap-3 flex-wrap">
                     <button onClick={() => {
@@ -728,8 +726,8 @@ const IPManagement = () => {
           </div>
         )}
 
-        {/* Status Tracking - DERIVED FROM MY IP PORTFOLIO */}
-        {activeTab === "tracking" && (() => {
+        {/* Status Tracking - merged into My IP Portfolio tab */}
+        {activeTab === "myip" && (() => {
           const approvedIPs = ipsForTracking.filter(ip =>
             ip.status === "Patent Granted" || ip.status === "Granted" || ip.status === "Published"
           );

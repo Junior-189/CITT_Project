@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: citt-postgres-dev
+    environment:
+      POSTGRES_USER: citt_users
+      POSTGRES_PASSWORD: dev_password
+      POSTGRES_DB: citt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+      - ./CITT_Server/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - citt-dev-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: citt-redis-dev
+    ports:
+      - "6379:6379"
+    networks:
+      - citt-dev-network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: citt-mailhog-dev
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - citt-dev-network
+
+volumes:
+  postgres_dev_data:
+
+networks:
+  citt-dev-network:
+    driver: bridge

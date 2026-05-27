@@ -195,7 +195,7 @@ const UserProfile = () => {
       {/* Additional Info */}
       <div className="mt-8 grid grid-cols-3 gap-6">
         <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">📊 Statistics</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Statistics</h3>
           <p className="text-slate-600 text-sm mb-3">Account Status: <span className="text-green-600 font-semibold">Active</span></p>
           <p className="text-slate-600 text-sm">Member Duration: <span className="font-semibold">
             {user.created_at ? Math.floor((new Date() - new Date(user.created_at)) / (1000 * 60 * 60 * 24)) : 0} days
@@ -203,13 +203,13 @@ const UserProfile = () => {
         </div>
 
         <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">🔒 Account Information</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Account Information</h3>
           <p className="text-slate-600 text-sm mb-3">Role: <span className="font-semibold capitalize">{user.role || 'innovator'}</span></p>
           <p className="text-slate-600 text-sm">Account Type: <span className="font-semibold">Standard</span></p>
         </div>
 
         <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">⏰ Timeline</h3>
+          <h3 className="text-lg font-bold text-slate-800 mb-4">Timeline</h3>
           <p className="text-slate-600 text-sm mb-3">Registered: <span className="font-semibold">
             {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
           </span></p>

@@ -31,7 +31,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
   config.url = normalizeApiPath(config.url);
 
-  const token = localStorage.getItem('authToken') || localStorage.getItem('serverToken');
+  const token = localStorage.getItem('authToken');
   const hasAuthHeader = Boolean(config.headers?.Authorization || config.headers?.authorization);
 
   if (token && !hasAuthHeader) {
@@ -57,7 +57,6 @@ api.interceptors.response.use(
     if (shouldLogout) {
       localStorage.removeItem('authToken');
       localStorage.removeItem('userProfile');
-      localStorage.removeItem('serverToken');
 
       if (typeof window !== 'undefined' && window.location?.pathname !== '/login') {
         window.location.href = '/login';

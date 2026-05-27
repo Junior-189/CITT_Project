@@ -1,221 +1,74 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
-/**
- * General ProtectedRoute - Requires authentication
- * Optionally checks for specific roles
- */
-export const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { user, profile, role, loading } = useAuth();
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center min-h-screen bg-gray-50">
+    <div className="text-center">
+      <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mb-4"></div>
+      <p className="text-gray-500 text-sm">Loading...</p>
+    </div>
+  </div>
+);
 
-  // Show loading state while checking authentication
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not authenticated - redirect to login
-  if (!user && !profile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Check if specific roles are required
-  if (allowedRoles && allowedRoles.length > 0) {
-    if (!role || !allowedRoles.includes(role)) {
-      return <Navigate to="/unauthorized" replace />;
-    }
-  }
-
+export const ProtectedRoute = ({ children }) => {
+  const { profile, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <LoadingSpinner />;
+  if (!profile) return <Navigate to="/login" state={{ from: location }} replace />;
   return children;
 };
 
-/**
- * AdminRoute - Requires admin role only (SuperAdmin can also access)
- */
-export const AdminRoute = ({ children }) => {
-  const { role, loading, user, profile } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not authenticated
-  if (!user && !profile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Allow admin and superAdmin (SuperAdmin can access Admin panel)
-  if (role !== 'admin' && role !== 'superAdmin') {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-};
-
-/**
- * SuperAdminRoute - Requires superAdmin role only
- */
-export const SuperAdminRoute = ({ children }) => {
-  const { role, loading, user, profile } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not authenticated
-  if (!user && !profile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Check if user is superAdmin
-  if (role !== 'superAdmin') {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-};
-
-/**
- * IPManagerRoute - Requires ipManager role only
- */
-export const IPManagerRoute = ({ children }) => {
-  const { role, loading, user, profile } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not authenticated
-  if (!user && !profile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Only IP Manager role allowed
-  if (role !== 'ipManager') {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-};
-
-/**
- * InnovatorRoute - Requires innovator role only
- */
-export const InnovatorRoute = ({ children }) => {
-  const { user, profile, role, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Not authenticated
-  if (!user && !profile) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Only Innovator role allowed
-  if (role !== 'innovator') {
-    return <Navigate to="/unauthorized" replace />;
-  }
-
-  return children;
-};
-
-/**
- * PublicRoute - Only accessible when NOT authenticated
- * Redirects to dashboard if user is logged in
- */
 export const PublicRoute = ({ children }) => {
-  const { user, profile, role, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+  const { profile, loading, role } = useAuth();
+  if (loading) return <LoadingSpinner />;
+  if (profile) {
+    const paths = {
+      superAdmin: '/superadmin/dashboard', admin: '/admin/dashboard',
+      transferTechnologyOfficer: '/admin/dashboard', ipManager: '/ipmanager/dashboard',
+      diiDirector: '/dii/dashboard', debmDirector: '/debm/dashboard',
+      rtpDirector: '/rtp/dashboard', mentor: '/mentor/dashboard',
+      technicalCommittee: '/tc/dashboard', coordinator: '/coordinator/dashboard',
+      innovator: '/projects',
+    };
+    return <Navigate to={paths[role] || '/projects'} replace />;
   }
-
-  // Already authenticated - redirect to appropriate dashboard based on role
-  if (user || profile) {
-    if (role === 'superAdmin') {
-      return <Navigate to="/superadmin/dashboard" replace />;
-    } else if (role === 'admin') {
-      return <Navigate to="/admin/dashboard" replace />;
-    } else if (role === 'ipManager') {
-      return <Navigate to="/ipmanager/dashboard" replace />;
-    } else {
-      // innovator or any other role goes to home
-      return <Navigate to="/" replace />;
-    }
-  }
-
   return children;
 };
 
-/**
- * RoleRedirect - Redirects user to appropriate dashboard based on role
- */
-export const RoleRedirect = () => {
-  const { role, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Redirecting...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Redirect to appropriate dashboard
-  if (role === 'superAdmin') {
-    return <Navigate to="/superadmin/dashboard" replace />;
-  } else if (role === 'admin') {
-    return <Navigate to="/admin/dashboard" replace />;
-  } else if (role === 'ipManager') {
-    return <Navigate to="/ipmanager/dashboard" replace />;
-  } else {
-    return <Navigate to="/" replace />;
-  }
+export const AdminRoute = ({ children }) => {
+  const { profile, role, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <LoadingSpinner />;
+  if (!profile) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!['admin','superAdmin','transferTechnologyOfficer'].includes(role)) return <Navigate to="/unauthorized" replace />;
+  return children;
 };
+
+export const SuperAdminRoute = ({ children }) => {
+  const { profile, role, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <LoadingSpinner />;
+  if (!profile) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (role !== 'superAdmin') return <Navigate to="/unauthorized" replace />;
+  return children;
+};
+
+export const IPManagerRoute = ({ children }) => {
+  const { profile, role, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <LoadingSpinner />;
+  if (!profile) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!['ipManager','admin','superAdmin','transferTechnologyOfficer'].includes(role)) return <Navigate to="/unauthorized" replace />;
+  return children;
+};
+
+export const RoleRoute = ({ children, roles = [] }) => {
+  const { profile, role, loading } = useAuth();
+  const location = useLocation();
+  if (loading) return <LoadingSpinner />;
+  if (!profile) return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!roles.includes(role)) return <Navigate to="/unauthorized" replace />;
+  return children;
+};
+
+export default ProtectedRoute;

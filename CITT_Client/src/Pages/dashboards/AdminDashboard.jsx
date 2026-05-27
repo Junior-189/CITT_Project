@@ -13,10 +13,15 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const intervalRef = useRef(null);
 
+  const [pendingUsers, setPendingUsers] = useState([]);
+  const [pendingLoading, setPendingLoading] = useState(true);
+  const [rejectReason, setRejectReason] = useState('');
+  const [rejectingId, setRejectingId] = useState(null);
+
   useEffect(() => {
     if (profile?.id && getAuthenticatedAxios) {
       fetchStats();
-      // Poll every 30 seconds for real-time updates
+      fetchPendingUsers();
       intervalRef.current = setInterval(fetchStats, 30000);
     }
     return () => {
@@ -39,6 +44,41 @@ const AdminDashboard = () => {
       console.error('Error fetching stats:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPendingUsers = async () => {
+    try {
+      const api = getAuthenticatedAxios();
+      const res = await api.get('/api/admin/pending-users');
+      setPendingUsers(res.data.users || []);
+    } catch (err) {
+      console.error('Error fetching pending users:', err);
+    } finally {
+      setPendingLoading(false);
+    }
+  };
+
+  const handleApprove = async (userId) => {
+    try {
+      const api = getAuthenticatedAxios();
+      await api.put(`/api/admin/users/${userId}/approve`);
+      setPendingUsers(p => p.filter(u => u.id !== userId));
+    } catch (err) {
+      console.error('Approve failed:', err);
+    }
+  };
+
+  const handleReject = async (userId) => {
+    if (!rejectReason.trim()) return;
+    try {
+      const api = getAuthenticatedAxios();
+      await api.put(`/api/admin/users/${userId}/reject`, { reason: rejectReason });
+      setPendingUsers(p => p.filter(u => u.id !== userId));
+      setRejectingId(null);
+      setRejectReason('');
+    } catch (err) {
+      console.error('Reject failed:', err);
     }
   };
 
@@ -224,6 +264,68 @@ const AdminDashboard = () => {
             </div>
             <p className="text-gray-600 text-sm">Upload and manage event photos</p>
           </Link>
+        </div>
+
+        {/* Pending Approvals */}
+        <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              Pending Account Approvals
+              {pendingUsers.length > 0 && (
+                <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-600 rounded-full">
+                  {pendingUsers.length}
+                </span>
+              )}
+            </h2>
+          </div>
+          {pendingLoading ? (
+            <p className="text-gray-500 text-sm">Loading...</p>
+          ) : pendingUsers.length === 0 ? (
+            <p className="text-gray-500 text-sm">No pending approvals</p>
+          ) : (
+            <div className="space-y-3">
+              {pendingUsers.map(u => (
+                <div key={u.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 border border-gray-100 rounded-lg bg-gray-50">
+                  <div>
+                    <p className="font-semibold text-slate-800 text-sm">{u.name}</p>
+                    <p className="text-xs text-gray-500">{u.email} {u.campus ? `· ${u.campus}` : ''}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">Registered: {new Date(u.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {rejectingId === u.id ? (
+                      <>
+                        <input
+                          value={rejectReason}
+                          onChange={e => setRejectReason(e.target.value)}
+                          placeholder="Reason for rejection"
+                          className="px-2 py-1 border border-gray-300 rounded text-xs focus:ring-1 focus:ring-red-400"
+                        />
+                        <button onClick={() => handleReject(u.id)}
+                          className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded transition">
+                          Confirm
+                        </button>
+                        <button onClick={() => { setRejectingId(null); setRejectReason(''); }}
+                          className="px-3 py-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-xs font-semibold rounded transition">
+                          Cancel
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button onClick={() => handleApprove(u.id)}
+                          className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded transition">
+                          Approve
+                        </button>
+                        <button onClick={() => setRejectingId(u.id)}
+                          className="px-3 py-1.5 bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold rounded transition">
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Info Box */}

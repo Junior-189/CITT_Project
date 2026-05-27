@@ -294,9 +294,7 @@ const Analytics = () => {
               {/* Approved Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="mr-2">✅</span> Approved
-                  </span>
+                  <span className="text-sm font-medium text-gray-700">Approved</span>
                   <span className="text-sm font-bold text-green-600">
                     {projects?.approved || 0} ({getProjectStatusPercentage(projects?.approved, projects?.total)}%)
                   </span>

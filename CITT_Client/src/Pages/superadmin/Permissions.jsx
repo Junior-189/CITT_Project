@@ -78,7 +78,7 @@ const Permissions = () => {
     {
       role: 'innovator',
       label: 'Innovator',
-      icon: '💡',
+      icon: '',
       color: 'bg-teal-100 text-teal-800',
       permissions: [
         { name: 'Submit Projects', description: 'Submit innovation projects', enabled: true },

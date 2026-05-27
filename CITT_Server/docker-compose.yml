@@ -1,0 +1,53 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: citt-postgres
+    environment:
+      POSTGRES_USER: citt_users
+      POSTGRES_PASSWORD: SuniJr443Simple
+      POSTGRES_DB: citt_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: citt-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  backend:
+    build: .
+    container_name: citt-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=citt_users
+      - DB_PASSWORD=SuniJr443Simple
+      - DB_NAME=citt_db
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=citt_jwt_secret_change_in_production
+      - FRONTEND_URL=http://localhost:5173
+    depends_on:
+      - postgres
+      - redis
+    restart: unless-stopped
+
+  frontend:
+    build: ../CITT_Client
+    container_name: citt-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

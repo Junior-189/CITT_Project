@@ -1,0 +1,105 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: citt-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-citt_users}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_me}
+      POSTGRES_DB: ${DB_NAME:-citt_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./CITT_Server/migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-citt_users} -d ${DB_NAME:-citt_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - citt-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: citt-redis
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - citt-network
+
+  server:
+    build:
+      context: ./CITT_Server
+      dockerfile: Dockerfile
+    container_name: citt-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 5000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-citt_users}
+      DB_PASSWORD: ${DB_PASSWORD:-change_me}
+      DB_NAME: ${DB_NAME:-citt_db}
+      JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
+      JWT_ACCESS_EXPIRY: ${JWT_ACCESS_EXPIRY:-15m}
+      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
+      REDIS_URL: redis://redis:6379
+      SMTP_HOST: ${SMTP_HOST:-mailhog}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_SECURE: "false"
+      MAIL_FROM: ${MAIL_FROM:-noreply@citt.ac.tz}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      CLAMAV_ENABLED: "false"
+    ports:
+      - "5000:5000"
+    volumes:
+      - server_uploads:/app/uploads
+      - server_logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - citt-network
+
+  client:
+    build:
+      context: ./CITT_Client
+      dockerfile: Dockerfile
+    container_name: citt-client
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - citt-network
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: citt-mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - citt-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  server_uploads:
+  server_logs:
+
+networks:
+  citt-network:
+    driver: bridge

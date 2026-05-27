@@ -120,7 +120,7 @@ const Unauthorized = () => {
         {/* Additional Info */}
         <div className="mt-6 p-4 bg-blue-900/20 border border-blue-500/30 rounded-lg">
           <h3 className="text-sm font-semibold text-blue-300 mb-2">
-            💡 Why am I seeing this?
+            Why am I seeing this?
           </h3>
           <ul className="text-xs text-gray-400 space-y-1">
             <li>• You may not have the required role for this page</li>

@@ -2,6 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Bell, User, LogOut, Lock, ChevronDown } from 'lucide-react';
+import { getRoleBadgeClass } from '../utils/roleColors';
+
+const stripEmoji = (str) =>
+  str ? str.replace(/[\u{1F300}-\u{1FFFF}|\u{2600}-\u{27FF}|✅|⚠️|📍|📧|☎️|🌐|📊|🔐|⏰]/gu, '').trim() : '';
 
 const UserMenuBar = () => {
   const { profile, role, logout, getAuthenticatedAxios } = useAuth();
@@ -31,8 +35,7 @@ const UserMenuBar = () => {
   useEffect(() => {
     if (profile) {
       fetchNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(fetchNotifications, 30000);
+      const interval = setInterval(fetchNotifications, 60000);
       return () => clearInterval(interval);
     }
   }, [profile]);
@@ -49,7 +52,6 @@ const UserMenuBar = () => {
     }
   };
 
-  // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
       const api = getAuthenticatedAxios();
@@ -57,6 +59,16 @@ const UserMenuBar = () => {
       fetchNotifications();
     } catch (error) {
       console.error('Failed to mark notification as read:', error);
+    }
+  };
+
+  const markAllRead = async () => {
+    try {
+      const api = getAuthenticatedAxios();
+      await api.put('/api/notifications/mark-all-read');
+      fetchNotifications();
+    } catch (error) {
+      console.error('Failed to mark all notifications as read:', error);
     }
   };
 
@@ -69,37 +81,29 @@ const UserMenuBar = () => {
       if (notificationMenuRef.current && !notificationMenuRef.current.contains(event.target)) {
         setShowNotifications(false);
       }
-      if (passwordModalRef.current && !passwordModalRef.current.contains(event.target)) {
-        // Don't close modal on outside click - user must explicitly close it
-      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Handle password change
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPasswordError('');
     setPasswordSuccess('');
 
-    // Validation
     if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
       setPasswordError('All fields are required');
       return;
     }
-
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setPasswordError('New passwords do not match');
       return;
     }
-
-    if (passwordData.newPassword.length < 6) {
-      setPasswordError('Password must be at least 6 characters long');
+    if (passwordData.newPassword.length < 8) {
+      setPasswordError('Password must be at least 8 characters long');
       return;
     }
-
     if (passwordData.currentPassword === passwordData.newPassword) {
       setPasswordError('New password must be different from current password');
       return;
@@ -112,7 +116,6 @@ const UserMenuBar = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-
       setPasswordSuccess('Password changed successfully!');
       setTimeout(() => {
         setShowPasswordModal(false);
@@ -133,43 +136,27 @@ const UserMenuBar = () => {
 
   const getUserInitials = () => {
     if (profile?.name) {
-      return profile.name
-        .split(' ')
-        .map(n => n[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2);
+      return profile.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
     }
     return profile?.email?.[0]?.toUpperCase() || 'U';
   };
 
-  const getRoleBadgeColor = () => {
-    switch (role) {
-      case 'superAdmin':
-        return 'bg-purple-100 text-purple-800';
-      case 'admin':
-        return 'bg-teal-100 text-teal-800';
-      case 'ipManager':
-        return 'bg-orange-100 text-orange-800';
-      case 'innovator':
-        return 'bg-blue-100 text-blue-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getRoleBadgeColor = () => getRoleBadgeClass(role);
 
   const getRoleLabel = () => {
     switch (role) {
-      case 'superAdmin':
-        return 'Super Admin';
-      case 'admin':
-        return 'Admin';
-      case 'ipManager':
-        return 'IP Manager';
-      case 'innovator':
-        return 'Innovator';
-      default:
-        return 'User';
+      case 'superAdmin': return 'Super Admin';
+      case 'admin': return 'Admin';
+      case 'transferTechnologyOfficer': return 'TTO';
+      case 'ipManager': return 'IP Manager';
+      case 'diiDirector': return 'DII Director';
+      case 'debmDirector': return 'DEBM Director';
+      case 'rtpDirector': return 'RTP Director';
+      case 'mentor': return 'Mentor';
+      case 'technicalCommittee': return 'Technical Committee';
+      case 'coordinator': return 'Coordinator';
+      case 'innovator': return 'Innovator';
+      default: return 'User';
     }
   };
 
@@ -194,10 +181,20 @@ const UserMenuBar = () => {
           {/* Notifications Dropdown */}
           {showNotifications && (
             <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
-              <div className="p-4 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                  {unreadCount > 0 && (
+                    <p className="text-sm text-gray-600">{unreadCount} unread</p>
+                  )}
+                </div>
                 {unreadCount > 0 && (
-                  <p className="text-sm text-gray-600">{unreadCount} unread</p>
+                  <button
+                    onClick={markAllRead}
+                    className="text-xs text-teal-600 hover:text-teal-800 font-medium transition-colors"
+                  >
+                    Mark all read
+                  </button>
                 )}
               </div>
               <div className="max-h-96 overflow-y-auto">
@@ -210,13 +207,19 @@ const UserMenuBar = () => {
                   notifications.map((notification) => (
                     <div
                       key={notification.id}
-                      onClick={() => markAsRead(notification.id)}
+                      onClick={() => {
+                        markAsRead(notification.id);
+                        if (notification.link) {
+                          setShowNotifications(false);
+                          navigate(notification.link);
+                        }
+                      }}
                       className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
                         !notification.read ? 'bg-blue-50' : ''
                       }`}
                     >
-                      <p className="text-sm font-medium text-gray-900">{notification.title}</p>
-                      <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
+                      <p className="text-sm font-medium text-gray-900">{stripEmoji(notification.title)}</p>
+                      <p className="text-xs text-gray-600 mt-1">{stripEmoji(notification.message)}</p>
                       <p className="text-xs text-gray-400 mt-1">
                         {new Date(notification.created_at).toLocaleString()}
                       </p>
@@ -257,20 +260,14 @@ const UserMenuBar = () => {
               </div>
               <div className="py-2">
                 <button
-                  onClick={() => {
-                    setShowProfileMenu(false);
-                    navigate('/profile');
-                  }}
+                  onClick={() => { setShowProfileMenu(false); navigate('/profile'); }}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   <User className="w-4 h-4" />
                   My Profile
                 </button>
                 <button
-                  onClick={() => {
-                    setShowProfileMenu(false);
-                    setShowPasswordModal(true);
-                  }}
+                  onClick={() => { setShowProfileMenu(false); setShowPasswordModal(true); }}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
                 >
                   <Lock className="w-4 h-4" />
@@ -288,25 +285,12 @@ const UserMenuBar = () => {
             </div>
           )}
         </div>
-
-        {/* Quick Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="hidden lg:flex items-center gap-2 px-4 py-2 text-slate-800 bg-teal-200 hover:bg-teal-300 rounded-lg transition-colors text-sm font-medium"
-          aria-label="Logout"
-        >
-          <LogOut className="w-4 h-4" />
-          Logout
-        </button>
       </div>
 
       {/* Change Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div
-            ref={passwordModalRef}
-            className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4"
-          >
+          <div ref={passwordModalRef} className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
@@ -330,7 +314,6 @@ const UserMenuBar = () => {
                   <p className="text-sm text-red-700">{passwordError}</p>
                 </div>
               )}
-
               {passwordSuccess && (
                 <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <p className="text-sm text-green-700">{passwordSuccess}</p>
@@ -339,9 +322,7 @@ const UserMenuBar = () => {
 
               <form onSubmit={handlePasswordChange}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Current Password
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
@@ -351,11 +332,8 @@ const UserMenuBar = () => {
                     required
                   />
                 </div>
-
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    New Password
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
@@ -365,11 +343,8 @@ const UserMenuBar = () => {
                     required
                   />
                 </div>
-
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Confirm New Password
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
@@ -379,7 +354,6 @@ const UserMenuBar = () => {
                     required
                   />
                 </div>
-
                 <div className="flex gap-3">
                   <button
                     type="button"

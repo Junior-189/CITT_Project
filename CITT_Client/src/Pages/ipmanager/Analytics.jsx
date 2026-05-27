@@ -221,9 +221,9 @@ const Analytics = () => {
             <h2 className="text-xl font-semibold text-gray-900 mb-6">Status Distribution</h2>
             <div className="space-y-4">
               {[
-                { label: 'Pending', key: 'pending', barColor: 'bg-yellow-500', textColor: 'text-yellow-600', icon: '⏳' },
-                { label: 'Approved', key: 'approved', barColor: 'bg-green-600', textColor: 'text-green-600', icon: '✅' },
-                { label: 'Rejected', key: 'rejected', barColor: 'bg-red-600', textColor: 'text-red-600', icon: '❌' },
+                { label: 'Pending', key: 'pending', barColor: 'bg-yellow-500', textColor: 'text-yellow-600', icon: '' },
+                { label: 'Approved', key: 'approved', barColor: 'bg-green-600', textColor: 'text-green-600', icon: '' },
+                { label: 'Rejected', key: 'rejected', barColor: 'bg-red-600', textColor: 'text-red-600', icon: '' },
               ].map(({ label, key, barColor, textColor, icon }) => (
                 <div key={key}>
                   <div className="flex justify-between items-center mb-1">

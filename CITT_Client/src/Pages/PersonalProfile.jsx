@@ -1,102 +1,74 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import api from '../services/api';
 
+const CAMPUS_OPTIONS = ['Main Campus', 'Rukwa Campus'];
+
 const PersonalProfile = () => {
-  const navigate = useNavigate();
-  const { user, profile: authProfile, token } = useContext(AuthContext);
+  const { profile: authProfile, token } = useContext(AuthContext);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: ''
-  });
+  const [formData, setFormData] = useState({ name: '', phone: '', campus: '' });
+  const [saveMsg, setSaveMsg] = useState('');
+  const [error, setError] = useState('');
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const photoInputRef = useRef(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const load = async () => {
       try {
-        setLoading(true);
-        // Use authProfile from context if available, otherwise fetch
         if (authProfile) {
           setProfile(authProfile);
-          setFormData({
-            name: authProfile.name || '',
-            email: authProfile.email || '',
-            phone: authProfile.phone || ''
-          });
+          setFormData({ name: authProfile.name || '', phone: authProfile.phone || '', campus: authProfile.campus || '' });
         } else if (token) {
-          const response = await api.get('/auth/me', {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          setProfile(response.data);
-          setFormData({
-            name: response.data.name || '',
-            email: response.data.email || '',
-            phone: response.data.phone || ''
-          });
-        } else {
-          setError('Not authenticated');
+          const res = await api.get('/api/auth/me');
+          setProfile(res.data);
+          setFormData({ name: res.data.name || '', phone: res.data.phone || '', campus: res.data.campus || '' });
         }
-      } catch (err) {
-        console.error('Error fetching profile:', err);
-        setError('Failed to load your profile');
+      } catch {
+        setError('Failed to load profile');
       } finally {
         setLoading(false);
       }
     };
+    if (authProfile || token) load();
+    else setLoading(false);
+  }, [authProfile, token]);
 
-    if (user || token) {
-      fetchProfile();
-    } else {
-      setLoading(false);
-      setError('Please log in first');
+  const handleSave = async () => {
+    setError('');
+    try {
+      await api.put(`/api/users/${profile.id}`, { name: formData.name, email: profile.email, phone: formData.phone, campus: formData.campus });
+      setProfile(p => ({ ...p, ...formData }));
+      setIsEditing(false);
+      setSaveMsg('Profile updated successfully');
+      setTimeout(() => setSaveMsg(''), 3000);
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to save profile');
     }
-  }, [user, authProfile, token]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
   };
 
-  const handleSaveProfile = async () => {
+  const handlePhotoChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setPhotoUploading(true);
     try {
-      const userId = profile?.id;
-      if (!userId) {
-        setError('User ID not found');
-        return;
-      }
-      await api.put(`/users/${userId}`, formData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setProfile(prev => ({
-        ...prev,
-        ...formData
-      }));
-      setIsEditing(false);
-      // Show success message
-      alert('Profile updated successfully');
-    } catch (err) {
-      console.error('Error updating profile:', err);
-      setError('Failed to update profile');
+      const fd = new FormData();
+      fd.append('photo', file);
+      const res = await api.post('/api/auth/upload-photo', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+      setProfile(p => ({ ...p, profile_photo_url: res.data.photo_url }));
+    } catch {
+      setError('Photo upload failed');
     }
+    setPhotoUploading(false);
   };
 
   if (loading) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
-        <div className="flex justify-center items-center h-96">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading your profile...</p>
-          </div>
+      <main className="flex-1 px-8 py-10 overflow-auto bg-slate-50">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
         </div>
       </main>
     );
@@ -104,229 +76,135 @@ const PersonalProfile = () => {
 
   if (!profile) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
-        <div className="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-lg mb-6">
-          <p className="text-red-700 font-semibold">{error || 'Profile not found'}</p>
-        </div>
-        <button
-          onClick={() => navigate('/')}
-          className="px-4 py-2 bg-slate-300 text-slate-800 rounded-md hover:bg-slate-400 transition"
-        >
-          Go Home
-        </button>
+      <main className="flex-1 px-8 py-10 overflow-auto bg-slate-50">
+        <div className="bg-red-50 border border-red-300 rounded-lg p-4 text-red-700">{error || 'Profile not found'}</div>
       </main>
     );
   }
 
+  const photoSrc = profile.profile_photo_url
+    ? `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}${profile.profile_photo_url}`
+    : null;
+
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-white">
-      {/* Header Section */}
-      <div className="bg-gradient-to-r from-slate-800 to-teal-700 text-white rounded-xl p-8 mb-8">
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className="text-4xl font-bold mb-2">My Profile</h1>
-            <p className="text-slate-200 mb-4">{profile.email}</p>
-            <div className="flex gap-4">
-              <div className="bg-teal-600 px-4 py-2 rounded-lg">
-                <p className="text-sm text-slate-200">Role</p>
-                <p className="font-bold capitalize">{profile.role || 'innovator'}</p>
-              </div>
-              <div className="bg-teal-600 px-4 py-2 rounded-lg">
-                <p className="text-sm text-slate-200">Member Since</p>
-                <p className="font-bold">
-                  {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
-                </p>
-              </div>
-            </div>
-          </div>
-          {!isEditing && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="px-6 py-3 bg-teal-500 hover:bg-teal-600 rounded-lg font-semibold transition"
-            >
-              Edit Profile
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-slate-200">
-        <button
-          onClick={() => setActiveTab('profile')}
-          className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-            activeTab === 'profile'
-              ? 'border-teal-600 text-teal-600'
-              : 'border-transparent text-slate-600 hover:text-slate-800'
-          }`}
-        >
-          Profile Information
-        </button>
-        <button
-          onClick={() => setActiveTab('submissions')}
-          className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-            activeTab === 'submissions'
-              ? 'border-teal-600 text-teal-600'
-              : 'border-transparent text-slate-600 hover:text-slate-800'
-          }`}
-        >
-          My Submissions
-        </button>
-        <button
-          onClick={() => setActiveTab('activity')}
-          className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
-            activeTab === 'activity'
-              ? 'border-teal-600 text-teal-600'
-              : 'border-transparent text-slate-600 hover:text-slate-800'
-          }`}
-        >
-          Activity
-        </button>
-      </div>
-
-      {error && (
-        <div className="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-lg mb-6">
-          <p className="text-red-700 font-semibold">{error}</p>
-        </div>
-      )}
-
-      {/* Content */}
-      <div className="bg-white rounded-xl border border-slate-200 p-8">
-        {activeTab === 'profile' && (
-          <div className="space-y-6">
+    <main className="flex-1 px-8 py-10 overflow-auto bg-slate-50">
+      <div className="max-w-3xl mx-auto">
+        {/* Top bar */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-2xl font-bold text-slate-800">My Profile</h1>
+          <div className="flex gap-2">
             {isEditing ? (
-              <div className="space-y-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="Your full name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="your@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="+255 123 456 789"
-                  />
-                </div>
-                <div className="flex gap-4 pt-4">
-                  <button
-                    onClick={handleSaveProfile}
-                    className="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition"
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    onClick={() => setIsEditing(false)}
-                    className="px-6 py-3 bg-slate-300 hover:bg-slate-400 text-slate-800 font-semibold rounded-lg transition"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
+              <>
+                <button onClick={handleSave}
+                  className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition">
+                  Save Changes
+                </button>
+                <button onClick={() => { setIsEditing(false); setError(''); setFormData({ name: profile.name || '', phone: profile.phone || '', campus: profile.campus || '' }); }}
+                  className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg transition">
+                  Cancel
+                </button>
+              </>
             ) : (
-              <div className="grid grid-cols-2 gap-8">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Full Name</label>
-                  <p className="text-slate-600 text-lg">{profile.name || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
-                  <p className="text-slate-600 text-lg">{profile.email || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Phone Number</label>
-                  <p className="text-slate-600 text-lg">{profile.phone || 'Not provided'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
-                  <p className="text-slate-600 text-lg capitalize">{profile.role || 'innovator'}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Member Since</label>
-                  <p className="text-slate-600 text-lg">
-                    {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Account Status</label>
-                  <p className="text-green-600 font-semibold flex items-center gap-2">
-                    <span className="w-3 h-3 bg-green-600 rounded-full"></span>
-                    Active
-                  </p>
-                </div>
-              </div>
+              <button onClick={() => setIsEditing(true)}
+                className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition">
+                Edit Profile
+              </button>
             )}
           </div>
-        )}
-
-        {activeTab === 'submissions' && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">Event Submissions</h3>
-            <div className="text-center py-12">
-              <p className="text-slate-600">You haven't submitted to any events yet.</p>
-              <button
-                onClick={() => navigate('/events')}
-                className="mt-4 px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition"
-              >
-                Explore Events
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'activity' && (
-          <div className="space-y-6">
-            <h3 className="text-xl font-bold text-slate-800 mb-4">Recent Activity</h3>
-            <div className="text-center py-12">
-              <p className="text-slate-600">No recent activity</p>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Info Cards */}
-      <div className="mt-8 grid grid-cols-3 gap-6">
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">📊 Quick Stats</h3>
-          <p className="text-slate-600 text-sm mb-3">Account Type: <span className="font-semibold capitalize">{profile.role || 'innovator'}</span></p>
-          <p className="text-slate-600 text-sm">Status: <span className="text-green-600 font-semibold">Active</span></p>
         </div>
 
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">🔐 Security</h3>
-          <p className="text-slate-600 text-sm mb-3">Authentication: <span className="font-semibold">Enabled</span></p>
-          <p className="text-slate-600 text-sm">Last Updated: <span className="font-semibold">Today</span></p>
+        {saveMsg && <div className="mb-4 bg-teal-50 border border-teal-300 rounded-lg p-3 text-teal-700 text-sm">{saveMsg}</div>}
+        {error && <div className="mb-4 bg-red-50 border border-red-300 rounded-lg p-3 text-red-700 text-sm">{error}</div>}
+
+        {/* Profile header card */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-6 flex items-center gap-6">
+          {/* Photo */}
+          <div
+            className="relative w-28 h-28 flex-shrink-0 cursor-pointer group"
+            onClick={() => photoInputRef.current?.click()}
+          >
+            {photoSrc ? (
+              <img src={photoSrc} alt="Profile" className="w-28 h-28 rounded-full object-cover border-4 border-teal-100" />
+            ) : (
+              <div className="w-28 h-28 rounded-full bg-teal-700 flex items-center justify-center border-4 border-teal-100">
+                <span className="text-white text-3xl font-bold">{profile.name?.[0]?.toUpperCase() || '?'}</span>
+              </div>
+            )}
+            <div className="absolute inset-0 rounded-full bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+              {photoUploading
+                ? <div className="animate-spin rounded-full h-6 w-6 border-2 border-white" />
+                : <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              }
+            </div>
+            <input ref={photoInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handlePhotoChange} />
+          </div>
+
+          {/* Name / role / date */}
+          <div>
+            <h2 className="text-xl font-bold text-slate-800">{profile.name}</h2>
+            <span className="inline-block mt-1 px-3 py-1 rounded-full text-xs font-semibold bg-teal-700 text-white capitalize">
+              {profile.role || 'innovator'}
+            </span>
+            <p className="text-slate-500 text-sm mt-2">
+              Member since {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
+            </p>
+          </div>
         </div>
 
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
-          <h3 className="text-lg font-bold text-slate-800 mb-4">⏰ Membership</h3>
-          <p className="text-slate-600 text-sm mb-3">Joined: <span className="font-semibold">
-            {profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'N/A'}
-          </span></p>
-          <p className="text-slate-600 text-sm">Duration: <span className="font-semibold">
-            {profile.created_at ? Math.floor((new Date() - new Date(profile.created_at)) / (1000 * 60 * 60 * 24)) : 0} days
-          </span></p>
+        {/* Fields card */}
+        <div className="bg-white rounded-xl border border-slate-200 p-6">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Full Name */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Full Name</label>
+              {isEditing
+                ? <input name="name" value={formData.name} onChange={e => setFormData(s => ({ ...s, name: e.target.value }))}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+                : <p className="text-slate-700 text-sm">{profile.name || 'Not provided'}</p>
+              }
+            </div>
+
+            {/* Email (read-only) */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
+                Email
+                <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              </label>
+              <p className="text-slate-500 text-sm">{profile.email || 'Not provided'}</p>
+            </div>
+
+            {/* Phone */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Phone Number</label>
+              {isEditing
+                ? <input name="phone" value={formData.phone} onChange={e => setFormData(s => ({ ...s, phone: e.target.value }))}
+                    placeholder="+255 700 000 000"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+                : <p className="text-slate-700 text-sm">{profile.phone || 'Not provided'}</p>
+              }
+            </div>
+
+            {/* Campus */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Campus</label>
+              {isEditing
+                ? <select value={formData.campus} onChange={e => setFormData(s => ({ ...s, campus: e.target.value }))}
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+                    <option value="">Select campus</option>
+                    {CAMPUS_OPTIONS.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                : <p className="text-slate-700 text-sm">{profile.campus || 'Not provided'}</p>
+              }
+            </div>
+
+            {/* Role (read-only) */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Role</label>
+              <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-teal-700 text-white capitalize">
+                {profile.role || 'innovator'}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </main>

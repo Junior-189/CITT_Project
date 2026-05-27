@@ -1,61 +1,53 @@
 import { Link } from 'react-router-dom';
-import { Menu } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import UserMenuBar from './UserMenuBar';
 
-const TopNavbar = ({ toggleSidebar }) => {
+const TopNavbar = () => {
   const { profile, role } = useAuth();
 
   const isAuthenticated = !!profile;
 
   const getDashboardTitle = () => {
     switch (role) {
-      case 'superAdmin':
-        return 'Super Admin Dashboard';
-      case 'admin':
-        return 'Admin Dashboard';
-      case 'ipManager':
-        return 'IP Manager Dashboard';
-      case 'innovator':
-        return 'CITT Management System';
-      default:
-        return 'CITT Management System';
+      case 'superAdmin': return 'Super Admin Dashboard';
+      case 'admin': return 'Admin Dashboard';
+      case 'transferTechnologyOfficer': return 'Transfer Technology Officer';
+      case 'ipManager': return 'IP Manager Dashboard';
+      case 'diiDirector': return 'DII Director Workspace';
+      case 'debmDirector': return 'DEBM Director Workspace';
+      case 'rtpDirector': return 'RTP Director Workspace';
+      case 'mentor': return 'Mentor Dashboard';
+      case 'technicalCommittee': return 'Technical Committee';
+      case 'coordinator': return 'Coordinator Dashboard';
+      case 'innovator': return 'CITT Management System';
+      default: return 'CITT Management System';
     }
   };
 
   return (
     <nav className="bg-gradient-to-r from-slate-800 to-teal-700 shadow-lg">
-      <div className="mx-auto px-16">
+      <div className="px-4 md:px-6">
         <div className="flex justify-between items-center h-16">
-          {/* Left side - Sidebar Toggle, Logo and Title */}
-          <div className="flex items-center gap-4">
-            {/* Sidebar Toggle Button - Three line icon */}
-            <button
-              onClick={toggleSidebar}
-              className="p-2 rounded-md text-white hover:bg-white/10 transition-colors"
-              aria-label="Toggle sidebar"
-            >
-              <Menu className="w-6 h-6" />
-            </button>
 
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
-                <span className="text-teal-700 font-bold text-lg">C</span>
+          {/* Left side — Logo/Title only */}
+          <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+                <span className="text-teal-700 font-bold text-base">C</span>
               </div>
               <div className="hidden md:block">
-                <h1 className="text-white font-bold text-lg">
+                <h1 className="text-white font-bold text-base leading-tight whitespace-nowrap">
                   {getDashboardTitle()}
                 </h1>
-                <p className="text-white/70 text-xs">
+                <p className="text-white/60 text-xs whitespace-nowrap">
                   Innovation & Technology Transfer
                 </p>
               </div>
             </Link>
           </div>
 
-          {/* Right side - User Menu */}
-          <div className="flex items-center">
+          {/* Right side — User Menu */}
+          <div className="flex items-center flex-shrink-0">
             {isAuthenticated ? (
               <UserMenuBar />
             ) : (
@@ -68,13 +60,14 @@ const TopNavbar = ({ toggleSidebar }) => {
                 </Link>
                 <Link
                   to="/register"
-                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors text-sm font-medium"
+                  className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-500 transition-colors text-sm font-medium"
                 >
                   Register
                 </Link>
               </div>
             )}
           </div>
+
         </div>
       </div>
     </nav>

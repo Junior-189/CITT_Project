@@ -4,6 +4,26 @@ const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { auditLog } = require('../middleware/auditLog');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const profileUploadDir = path.join(__dirname, '../uploads/profiles');
+if (!fs.existsSync(profileUploadDir)) fs.mkdirSync(profileUploadDir, { recursive: true });
+
+const profileStorage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, profileUploadDir),
+  filename: (req, file, cb) => cb(null, `profile_${req.user.id}_${Date.now()}${path.extname(file.originalname)}`),
+});
+const ALLOWED_IMAGE_MIMES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+const profileUpload = multer({
+  storage: profileStorage,
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    if (ALLOWED_IMAGE_MIMES.includes(file.mimetype)) return cb(null, true);
+    cb(new Error('Only JPG, PNG, or WEBP images are allowed'));
+  },
+});
 
 /**
  * GET /api/auth/me
@@ -18,17 +38,11 @@ router.get('/me', authenticateToken, asyncHandler(async (req, res) => {
   }
 
   const query = `
-    SELECT 
-      id, 
-      firestore_id,
-      name, 
-      email, 
-      phone, 
-      role, 
-      created_at, 
-      updated_at, 
-      deleted_at
-    FROM users 
+    SELECT
+      id, firestore_id, name, email, phone, role,
+      university, campus, account_status, profile_photo_url,
+      created_at, updated_at, deleted_at
+    FROM users
     WHERE id = $1 AND deleted_at IS NULL
   `;
 
@@ -46,7 +60,7 @@ router.get('/me', authenticateToken, asyncHandler(async (req, res) => {
  * Update current authenticated user's profile
  * Protected: Yes
  */
-router.put('/me', authenticateToken, auditLog, asyncHandler(async (req, res) => {
+router.put('/me', authenticateToken, auditLog('users'), asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   const { name, email, phone } = req.body;
 
@@ -135,7 +149,7 @@ router.get('/:id', authenticateToken, asyncHandler(async (req, res) => {
  * Update a user's profile (admin can update any user)
  * Protected: Yes
  */
-router.put('/:id', authenticateToken, auditLog, asyncHandler(async (req, res) => {
+router.put('/:id', authenticateToken, auditLog('users'), asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { name, email, phone } = req.body;
   const currentUserId = req.user?.id;
@@ -187,6 +201,20 @@ router.put('/:id', authenticateToken, auditLog, asyncHandler(async (req, res) =>
     message: 'User profile updated successfully',
     user: result.rows[0]
   });
+}));
+
+/**
+ * POST /api/auth/upload-photo
+ * Upload or replace current user's profile photo
+ */
+router.post('/upload-photo', authenticateToken, profileUpload.single('photo'), asyncHandler(async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No photo uploaded' });
+  const photoUrl = `/uploads/profiles/${req.file.filename}`;
+  await pool.query(
+    `UPDATE users SET profile_photo_url = $1, updated_at = NOW() WHERE id = $2`,
+    [photoUrl, req.user.id]
+  );
+  res.json({ message: 'Profile photo updated', photo_url: photoUrl });
 }));
 
 module.exports = router;

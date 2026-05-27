@@ -8,6 +8,7 @@ const Events = () => {
   // Check if user has admin access - memoize this
   const isAdmin = useMemo(() => role === "admin" || role === "superAdmin", [role]);
   const [activeTab, setActiveTab] = useState("overview");
+  const [showSubmitForm, setShowSubmitForm] = useState(false);
 
   // Events & submissions state
   const [events, setEvents] = useState([]);
@@ -108,7 +109,7 @@ const Events = () => {
       // Admin fetches all submissions, others fetch only their own
       const endpoint = isAdmin ? '/api/events/submissions/all' : '/api/events/submissions/my';
       const response = await api.get(endpoint);
-      setSubmissions(response.data.submissions || []);
+      setSubmissions(Array.isArray(response.data) ? response.data : response.data.submissions || []);
     } catch (e) {
       console.error("fetchMySubmissions:", e);
     }
@@ -265,6 +266,7 @@ const Events = () => {
 
       fetchMySubmissions();
       setActiveTab("submissions");
+      setShowSubmitForm(false);
     } catch (err) {
       console.error("handleSubmitEntry:", err);
       setError(err.response?.data?.error || "Failed to submit entry.");
@@ -391,19 +393,6 @@ const Events = () => {
 
           {!isAdmin && (
             <button
-              onClick={() => setActiveTab("submit")}
-              className={`px-6 py-3 font-semibold whitespace-nowrap ${
-                activeTab === "submit"
-                  ? "text-teal-600 border-b-2 border-teal-600"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
-            >
-              Submit Entry
-            </button>
-          )}
-
-          {!isAdmin && (
-            <button
               onClick={() => setActiveTab("submissions")}
               className={`px-6 py-3 font-semibold whitespace-nowrap ${
                 activeTab === "submissions"
@@ -499,7 +488,7 @@ const Events = () => {
                   </p>
                   <div className="mt-4">
                     <button
-                      onClick={() => setActiveTab("submit")}
+                      onClick={() => { setActiveTab("submissions"); setShowSubmitForm(true); }}
                       className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                     >
                       Submit Entry
@@ -852,7 +841,8 @@ const Events = () => {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => {
-                          setActiveTab("submit");
+                          setActiveTab("submissions");
+                          setShowSubmitForm(true);
                           setSubmissionForm((s) => ({ ...s, eventId: ev.id }));
                         }}
                         className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 font-medium"
@@ -866,163 +856,105 @@ const Events = () => {
           </div>
         )}
 
-        {/* Submit Entry Tab */}
-        {activeTab === "submit" && (
-          <div className="bg-white rounded-xl p-6 shadow-md max-w-4xl mx-auto">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Submit Event Entry</h2>
-
-            {!user && !profile && (
-              <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
-                <p className="text-red-700">Please log in to submit an entry.</p>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmitEntry} className="space-y-4">
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Select Event *</label>
-                <select
-                  value={submissionForm.eventId}
-                  onChange={(e) => setSubmissionForm({ ...submissionForm, eventId: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  required
-                >
-                  <option value="">Choose an event</option>
-                  {events
-                    .filter((e) => e.published)
-                    .map((ev) => (
-                      <option key={ev.id} value={ev.id}>
-                        {ev.title}
-                      </option>
-                    ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Project / Entry Title *</label>
-                <input
-                  type="text"
-                  value={submissionForm.title}
-                  onChange={(e) => setSubmissionForm({ ...submissionForm, title: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="Enter your project title"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-700 font-medium mb-1">Team Name</label>
-                  <input
-                    type="text"
-                    value={submissionForm.team_name}
-                    onChange={(e) => setSubmissionForm({ ...submissionForm, team_name: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="Your team name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-700 font-medium mb-1">Team Members</label>
-                  <input
-                    type="text"
-                    value={submissionForm.members}
-                    onChange={(e) => setSubmissionForm({ ...submissionForm, members: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                    placeholder="List names, emails"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Project Description *</label>
-                <textarea
-                  value={submissionForm.description}
-                  onChange={(e) => setSubmissionForm({ ...submissionForm, description: e.target.value })}
-                  rows="5"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="Describe your project"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Problem Statement</label>
-                <textarea
-                  value={submissionForm.problem_statement}
-                  onChange={(e) =>
-                    setSubmissionForm({ ...submissionForm, problem_statement: e.target.value })
-                  }
-                  rows="3"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="What problem are you solving?"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Proposed Solution</label>
-                <textarea
-                  value={submissionForm.solution}
-                  onChange={(e) => setSubmissionForm({ ...submissionForm, solution: e.target.value })}
-                  rows="3"
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="How does your solution work?"
-                />
-              </div>
-
-              <div>
-                <label className="block text-slate-700 font-medium mb-1">Pitch Video URL (optional)</label>
-                <input
-                  type="url"
-                  value={submissionForm.pitch_url}
-                  onChange={(e) => setSubmissionForm({ ...submissionForm, pitch_url: e.target.value })}
-                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                  placeholder="YouTube or Vimeo link"
-                />
-              </div>
-
-              <div className="flex items-start gap-2 pt-2">
-                <input type="checkbox" id="terms" required className="mt-1" />
-                <label htmlFor="terms" className="text-sm text-slate-600">
-                  I confirm this submission is original and I agree to the event rules and terms.
-                </label>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="submit"
-                  disabled={loading || (!user && !profile)}
-                  className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 disabled:bg-slate-400 font-medium"
-                >
-                  {loading ? "Submitting..." : "Submit Entry"}
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setSubmissionForm({
-                      eventId: "",
-                      title: "",
-                      team_name: "",
-                      members: "",
-                      description: "",
-                      problem_statement: "",
-                      solution: "",
-                      pitch_url: "",
-                    })
-                  }
-                  className="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300 font-medium"
-                >
-                  Reset
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
         {/* My Submissions Tab */}
         {activeTab === "submissions" && (
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-2">My Submissions</h2>
-            <p className="text-slate-600 mb-6">All your submitted entries across events. Click on any entry to view full details.</p>
+            <div className="flex justify-between items-center mb-5">
+              <h2 className="text-xl font-bold text-slate-800">My Submissions</h2>
+              {(user || profile) && (
+                <button
+                  onClick={() => setShowSubmitForm(s => !s)}
+                  className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700"
+                >
+                  {showSubmitForm ? 'Close Form' : 'Submit Entry'}
+                </button>
+              )}
+            </div>
+
+            {showSubmitForm && (user || profile) && (
+              <div className="mb-6 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-800 mb-4">Submit Event Entry</h3>
+                <form onSubmit={handleSubmitEntry} className="space-y-4">
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Select Event *</label>
+                    <select
+                      value={submissionForm.eventId}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, eventId: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      required
+                    >
+                      <option value="">Choose an event</option>
+                      {events.filter((e) => e.published).map((ev) => (
+                        <option key={ev.id} value={ev.id}>{ev.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Project / Entry Title *</label>
+                    <input type="text" value={submissionForm.title}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, title: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Enter your project title" required />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-slate-700 font-medium mb-1">Team Name</label>
+                      <input type="text" value={submissionForm.team_name}
+                        onChange={(e) => setSubmissionForm({ ...submissionForm, team_name: e.target.value })}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        placeholder="Your team name" />
+                    </div>
+                    <div>
+                      <label className="block text-slate-700 font-medium mb-1">Team Members</label>
+                      <input type="text" value={submissionForm.members}
+                        onChange={(e) => setSubmissionForm({ ...submissionForm, members: e.target.value })}
+                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        placeholder="List names, emails" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Project Description *</label>
+                    <textarea value={submissionForm.description}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, description: e.target.value })}
+                      rows="4" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="Describe your project" required />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Problem Statement</label>
+                    <textarea value={submissionForm.problem_statement}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, problem_statement: e.target.value })}
+                      rows="2" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="What problem are you solving?" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Proposed Solution</label>
+                    <textarea value={submissionForm.solution}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, solution: e.target.value })}
+                      rows="2" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="How does your solution work?" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-700 font-medium mb-1">Pitch Video URL (optional)</label>
+                    <input type="url" value={submissionForm.pitch_url}
+                      onChange={(e) => setSubmissionForm({ ...submissionForm, pitch_url: e.target.value })}
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      placeholder="YouTube or Vimeo link" />
+                  </div>
+                  <div className="flex items-start gap-2 pt-2">
+                    <input type="checkbox" id="terms" required className="mt-1" />
+                    <label htmlFor="terms" className="text-sm text-slate-600">
+                      I confirm this submission is original and I agree to the event rules and terms.
+                    </label>
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <button type="submit" disabled={loading}
+                      className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 disabled:bg-slate-400 font-medium">
+                      {loading ? "Submitting..." : "Submit Entry"}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
 
             {!user && !profile && (
               <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-4">
@@ -1030,13 +962,11 @@ const Events = () => {
               </div>
             )}
 
-            {(user || profile) && submissions.length === 0 && (
+            {(user || profile) && submissions.length === 0 && !showSubmitForm && (
               <div className="bg-white rounded-xl p-8 shadow-md text-center">
                 <p className="text-slate-600">You haven't submitted to any events yet.</p>
-                <button
-                  onClick={() => setActiveTab("submit")}
-                  className="mt-4 bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700"
-                >
+                <button onClick={() => setShowSubmitForm(true)}
+                  className="mt-4 bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700">
                   Submit Entry
                 </button>
               </div>

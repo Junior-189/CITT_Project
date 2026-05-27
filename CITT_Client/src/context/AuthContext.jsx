@@ -122,18 +122,8 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    // Log out user only when tab/browser is closed (not on refresh)
-    const handlePageHide = (event) => {
-      if (!event.persisted) {
-        signOut(auth);
-        handleLogout();
-      }
-    };
-    window.addEventListener('pagehide', handlePageHide);
-
     return () => {
       unsubscribe();
-      window.removeEventListener('pagehide', handlePageHide);
     };
   }, [justAuthenticated, profile]);
 
@@ -203,15 +193,7 @@ export const AuthProvider = ({ children }) => {
 
       return backendUser;
     } catch (error) {
-      console.error("Login failed:", error);
-      // Extract error message from axios response
-      let errorMessage = "Incorrect username or password";
-      if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
-      throw new Error(errorMessage);
+      throw error;
     }
   };
 
@@ -329,7 +311,7 @@ export const AuthProvider = ({ children }) => {
             headers: { Authorization: `Bearer ${token}` },
             timeout: 5000 // 5 second timeout
           });
-          console.log("✅ Backend profile updated successfully");
+          console.log("Backend profile updated successfully");
         } catch (apiError) {
           console.error("❌ Failed to update backend profile:", apiError);
           throw new Error("Failed to save profile to backend: " + (apiError.response?.data?.error || apiError.message));
@@ -347,9 +329,9 @@ export const AuthProvider = ({ children }) => {
             ...profileData,
             createdAt: new Date().toISOString(),
           });
-          console.log("✅ Firestore updated successfully");
+          console.log("Firestore updated successfully");
         } catch (firestoreError) {
-          console.warn("⚠️ Firestore update failed (non-critical):", firestoreError);
+          console.warn("Firestore update failed (non-critical):", firestoreError);
         }
       }
 
@@ -357,7 +339,7 @@ export const AuthProvider = ({ children }) => {
       console.log("📝 Updating local state...");
       setProfile(profileData);
       setShowProfileForm(false);
-      console.log("✅ Profile saved successfully!");
+      console.log("Profile saved successfully!");
     } catch (error) {
       console.error("❌ Failed to save profile:", error);
       throw error;
@@ -382,6 +364,24 @@ export const AuthProvider = ({ children }) => {
 
   // 🔹 Check if user has admin privileges (admin or superAdmin)
   const hasAdminAccess = () => hasAnyRole(["admin", "superAdmin"]);
+
+  // 🔹 Role-based route map covering all 11 roles
+  const ROLE_ROUTES = {
+    superAdmin:                '/superadmin/dashboard',
+    admin:                     '/admin/dashboard',
+    transferTechnologyOfficer: '/admin/dashboard',
+    ipManager:                 '/ipmanager/dashboard',
+    diiDirector:               '/dii/workspace',
+    debmDirector:              '/debm/workspace',
+    rtpDirector:               '/rtp/workspace',
+    mentor:                    '/workspace/mentor',
+    technicalCommittee:        '/workspace/technical-committee',
+    coordinator:               '/workspace/coordinator',
+    innovator:                 '/projects',
+  };
+
+  // 🔹 Get the default route for a given role
+  const getRouteForRole = (userRole) => ROLE_ROUTES[userRole] || '/';
 
   // 🔹 Get axios instance with auth header
   const getAuthenticatedAxios = useCallback(() => {
@@ -427,6 +427,7 @@ export const AuthProvider = ({ children }) => {
         isIPManager,
         isInnovator,
         hasAdminAccess,
+        getRouteForRole,
 
         // Utility
         getAuthenticatedAxios,

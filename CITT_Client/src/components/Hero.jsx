@@ -102,7 +102,7 @@ const Hero = () => {
                     <p className="text-sm text-slate-600 mb-3 line-clamp-2">{event.description}</p>
                     <div className="flex justify-between items-center text-sm text-slate-500">
                       <span className="bg-teal-100 text-teal-700 px-3 py-1 rounded-full">{event.category}</span>
-                      {event.location && <span>📍 {event.location}</span>}
+                      {event.location && <span>{event.location}</span>}
                     </div>
                     {event.start_date && (
                       <p className="text-xs text-slate-500 mt-2">
@@ -129,7 +129,7 @@ const Hero = () => {
                     onClick={() => navigate(`/profile/${user.id}`)}
                   >
                     <h5 className="font-bold text-slate-800 text-lg mb-2">{user.name}</h5>
-                    <p className="text-sm text-slate-600 mb-2">📧 {user.email}</p>
+                    <p className="text-sm text-slate-600 mb-2">{user.email}</p>
                     {user.phone && <p className="text-sm text-slate-600 mb-2">📱 {user.phone}</p>}
                     <p className="text-xs text-slate-500">
                       Joined: {new Date(user.created_at).toLocaleDateString()}

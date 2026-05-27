@@ -108,12 +108,12 @@ const AdminSubmissions = () => {
 
   const getStatusIcon = (status) => {
     const icons = {
-      submitted: '📤',
-      reviewing: '👀',
-      approved: '✅',
-      rejected: '❌'
+      submitted: '',
+      reviewing: '',
+      approved: '',
+      rejected: ''
     };
-    return icons[status] || '📌';
+    return icons[status] || '';
   };
 
   const filteredSubmissions = filterStatus === 'all'

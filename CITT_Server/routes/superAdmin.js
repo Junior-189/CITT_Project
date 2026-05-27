@@ -97,13 +97,7 @@ router.put('/users/:id/role',
       [newRole, id]
     );
 
-    // Log the role change
-    await logAction(
-      { user: req.user, method: 'PUT', path: `/superadmin/users/${id}/role`, params: { id } },
-      'CHANGE_USER_ROLE',
-      'users',
-      parseInt(id)
-    );
+    await logAction(req.user.id, 'CHANGE_USER_ROLE', 'users', parseInt(id));
 
     res.json({
       message: `User role changed from ${oldRole} to ${newRole}`,
@@ -827,7 +821,7 @@ router.post('/users',
   canModifyRole,
   auditLog('users'),
   asyncHandler(async (req, res) => {
-    const { name, email, password, role, phone, university } = req.body;
+    const { name, email, password, role, phone, university, campus } = req.body;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ error: 'Name, email, password, and role are required' });
@@ -837,8 +831,8 @@ router.post('/users',
       return res.status(400).json({ error: 'Invalid role', validRoles: Object.values(ROLES) });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters' });
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters' });
     }
 
     // Check if email already exists
@@ -850,10 +844,10 @@ router.post('/users',
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      `INSERT INTO users (name, email, password, phone, role, university, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-       RETURNING id, name, email, phone, role, university, created_at`,
-      [name, email, hashedPassword, phone || null, role, university || null]
+      `INSERT INTO users (name, email, password, phone, role, university, campus, account_status, approved_by_admin, approved_at, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, 'approved', $8, NOW(), NOW(), NOW())
+       RETURNING id, name, email, phone, role, university, campus, account_status, created_at`,
+      [name, email, hashedPassword, phone || null, role, university || null, campus || null, req.user.id]
     );
 
     res.status(201).json({

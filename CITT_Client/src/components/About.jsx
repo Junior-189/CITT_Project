@@ -146,7 +146,7 @@ const About = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-white rounded-xl p-6 shadow-md border border-slate-200 hover:shadow-lg transition-shadow">
-              <div className="text-4xl mb-3">💡</div>
+              <div className="text-4xl mb-3"></div>
               <h4 className="text-xl font-bold mb-3 text-slate-800">
                 Innovation Management
               </h4>

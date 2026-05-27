@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom"; // ✅ Import Link
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -122,14 +122,13 @@ const Footer = () => {
             </h3>
             <ul className="list-none">
               <li className="mb-2.5 text-white opacity-80">
-                📍 Mbeya University of Science and Technology
+                Mbeya University of Science and Technology
               </li>
               <li className="mb-2.5 text-white opacity-80">
-                📧 citt@must.ac.tz
+                citt@must.ac.tz
               </li>
-              <li className="mb-2.5 text-white opacity-80">☎️ +255 25 295 7544</li>
+              <li className="mb-2.5 text-white opacity-80">+255 25 295 7544</li>
               <li className="mb-2.5 text-white opacity-80">
-                🌐{" "}
                 <a
                   href="https://www.must.ac.tz"
                   target="_blank"

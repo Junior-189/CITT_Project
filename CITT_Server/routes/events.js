@@ -102,16 +102,11 @@ router.get('/', authenticateToken, asyncHandler(async (req, res) => {
       u.email as creator_email
     FROM events e
     LEFT JOIN users u ON e.created_by = u.id
-    WHERE 1=1
+    WHERE e.deleted_at IS NULL
   `;
 
   const params = [];
   let paramIndex = 1;
-
-  // Non-admins can only see non-deleted events
-  if (!isAdmin(req.user.role)) {
-    query += ` AND e.deleted_at IS NULL`;
-  }
 
   if (category) {
     query += ` AND e.category = $${paramIndex}`;
@@ -137,28 +132,44 @@ router.get('/', authenticateToken, asyncHandler(async (req, res) => {
 }));
 
 /**
+ * GET /api/events/submissions/my
+ * Get current user's submissions
+ */
+router.get('/submissions/my',
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const result = await pool.query(`
+      SELECT
+        es.*,
+        e.title as event_title,
+        e.start_date,
+        e.category
+      FROM event_submissions es
+      LEFT JOIN events e ON es.event_id = e.id
+      WHERE es.user_id = $1
+      ORDER BY es.created_at DESC
+    `, [req.user.id]);
+
+    res.json(result.rows);
+  })
+);
+
+/**
  * GET /api/events/:id
  * Get single event details (auth required)
  */
 router.get('/:id', authenticateToken, asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  let query = `
+  const result = await pool.query(`
     SELECT
       e.*,
       u.name as creator_name,
       u.email as creator_email
     FROM events e
     LEFT JOIN users u ON e.created_by = u.id
-    WHERE e.id = $1
-  `;
-
-  // Non-admins can only see non-deleted events
-  if (!isAdmin(req.user.role)) {
-    query += ` AND e.deleted_at IS NULL`;
-  }
-
-  const result = await pool.query(query, [id]);
+    WHERE e.id = $1 AND e.deleted_at IS NULL
+  `, [id]);
 
   if (result.rows.length === 0) {
     return res.status(404).json({ error: 'Event not found' });
@@ -180,40 +191,32 @@ router.post('/',
     const {
       title,
       type,
+      category,
       description,
       start_date,
       end_date,
-      submission_deadline,
       location,
-      capacity,
-      requirements,
-      prize,
-      tags,
-      published,
-      banner_image
     } = req.body;
 
+    // Support both 'type' and 'category' fields; 'type' maps to 'category' for compatibility
+    const eventCategory = category || type || null;
+
     // Validation
-    if (!title || !type) {
-      return res.status(400).json({ error: 'Title and type are required' });
+    if (!title) {
+      return res.status(400).json({ error: 'Title is required' });
     }
 
     const result = await pool.query(`
       INSERT INTO events (
-        title, type, description, start_date, end_date, submission_deadline,
-        location, capacity, requirements, prize, tags, published, banner_image, created_by
+        title, category, description, start_date, end_date,
+        location, created_by
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING *
     `, [
-      title, type, description, start_date, end_date, submission_deadline,
-      location, capacity, requirements, prize, tags, published || false, banner_image, req.user.id
+      title, eventCategory, description, start_date, end_date,
+      location, req.user.id
     ]);
-
-    // Notify all innovators if event is published immediately
-    if (published) {
-      await notifyAllInnovators(title);
-    }
 
     res.status(201).json({
       message: 'Event created successfully',
@@ -236,18 +239,15 @@ router.put('/:id',
     const {
       title,
       type,
+      category,
       description,
       start_date,
       end_date,
-      submission_deadline,
       location,
-      capacity,
-      requirements,
-      prize,
-      tags,
-      published,
-      banner_image
     } = req.body;
+
+    // Support both 'type' and 'category' fields for compatibility
+    const eventCategory = category !== undefined ? category : type;
 
     // Check if event exists
     const checkResult = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
@@ -259,24 +259,16 @@ router.put('/:id',
       UPDATE events
       SET
         title = COALESCE($1, title),
-        type = COALESCE($2, type),
+        category = COALESCE($2, category),
         description = COALESCE($3, description),
         start_date = COALESCE($4, start_date),
         end_date = COALESCE($5, end_date),
-        submission_deadline = COALESCE($6, submission_deadline),
-        location = COALESCE($7, location),
-        capacity = COALESCE($8, capacity),
-        requirements = COALESCE($9, requirements),
-        prize = COALESCE($10, prize),
-        tags = COALESCE($11, tags),
-        published = COALESCE($12, published),
-        banner_image = COALESCE($13, banner_image),
+        location = COALESCE($6, location),
         updated_at = NOW()
-      WHERE id = $14
+      WHERE id = $7
       RETURNING *
     `, [
-      title, type, description, start_date, end_date, submission_deadline,
-      location, capacity, requirements, prize, tags, published, banner_image, id
+      title, eventCategory, description, start_date, end_date, location, id
     ]);
 
     res.json({
@@ -325,10 +317,10 @@ router.put('/:id/publish',
 
     const result = await pool.query(`
       UPDATE events
-      SET published = $1, updated_at = NOW()
-      WHERE id = $2
+      SET updated_at = NOW()
+      WHERE id = $1
       RETURNING *
-    `, [published, id]);
+    `, [id]);
 
     if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
@@ -442,29 +434,6 @@ router.get('/:id/submissions',
     query += ` ORDER BY es.created_at DESC`;
 
     const result = await pool.query(query, params);
-
-    res.json({ submissions: result.rows, total: result.rows.length });
-  })
-);
-
-/**
- * GET /api/events/submissions/my
- * Get current user's submissions
- */
-router.get('/submissions/my',
-  authenticateToken,
-  asyncHandler(async (req, res) => {
-    const result = await pool.query(`
-      SELECT
-        es.*,
-        e.title as event_title,
-        e.start_date,
-        e.category
-      FROM event_submissions es
-      LEFT JOIN events e ON es.event_id = e.id
-      WHERE es.user_id = $1
-      ORDER BY es.created_at DESC
-    `, [req.user.id]);
 
     res.json({ submissions: result.rows, total: result.rows.length });
   })
