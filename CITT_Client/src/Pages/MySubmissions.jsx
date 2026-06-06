@@ -128,7 +128,7 @@ const MySubmissions = () => {
               : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
           }`}
         >
-          ❌ Rejected ({submissions.filter(s => s.status === 'rejected').length})
+          Rejected ({submissions.filter(s => s.status === 'rejected').length})
         </button>
       </div>
 

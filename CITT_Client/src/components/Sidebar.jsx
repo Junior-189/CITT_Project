@@ -175,20 +175,21 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         />
       )}
 
-      {/* Sidebar Wrapper */}
-      <div className="relative flex-shrink-0 bg-white" style={{ backgroundColor: '#ffffff' }}>
-
-        {/* Sidebar */}
-        <aside
-          className={`
-            sticky top-0 self-start left-0 z-40
-            bg-white border-r-2 border-teal-600
-            transition-all duration-300 ease-in-out
-            ${isOpen ? 'w-64' : 'w-0 lg:w-14'}
-            flex flex-col h-full
-          `}
-          style={{ backgroundColor: '#ffffff' }}
-        >
+      {/* Sidebar */}
+      <aside
+        className={`
+          bg-white border-r-2 border-teal-600
+          transition-all duration-300 ease-in-out
+          flex flex-col flex-shrink-0
+          z-40 h-full lg:h-screen
+          lg:sticky lg:top-0
+          ${isOpen
+            ? 'w-64 absolute inset-y-0 left-0 lg:relative lg:inset-auto'
+            : 'w-0 lg:w-14 lg:relative lg:inset-auto'
+          }
+        `}
+        style={{ backgroundColor: '#ffffff' }}
+      >
           {/* Sidebar Header */}
           <div className={`flex items-center border-b border-teal-100 transition-all duration-300 ${isOpen ? 'justify-between p-4' : 'justify-center p-3'}`}>
 
@@ -205,12 +206,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               </div>
             )}
 
-            {/* Toggle Button — ALWAYS VISIBLE in both open and closed states */}
+            {/* Toggle Button — desktop only (mobile uses hamburger in TopNavbar) */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex w-7 h-7 rounded-full bg-teal-600 hover:bg-teal-700 border-2 border-white shadow-md items-center justify-center transition-all duration-300 focus:outline-none shrink-0"
+              className="hidden lg:flex w-7 h-7 rounded-full bg-teal-600 hover:bg-teal-700 border-2 border-white shadow-md items-center justify-center transition-all duration-300 focus:outline-none shrink-0"
               aria-label={isOpen ? 'Close sidebar' : 'Open sidebar'}
-              title={isOpen ? 'Close sidebar' : 'Open sidebar'}
             >
               {isOpen ? (
                 <ChevronLeft size={16} className="text-white" />
@@ -230,6 +230,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                   <li key={item.path}>
                     <Link
                       to={item.path}
+                      onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
                         active 
                           ? 'bg-teal-50 text-teal-600 font-medium' 
@@ -273,7 +274,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             </div>
           )}
         </aside>
-      </div>
     </>
   );
 };

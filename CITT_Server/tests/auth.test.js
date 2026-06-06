@@ -4,6 +4,11 @@ describe('Auth API', () => {
   const testEmail = `auth_test_${Date.now()}@test.com`;
   const testPassword = 'Test@1234';
 
+  afterAll(async () => {
+    await pool.query("DELETE FROM users WHERE email LIKE 'test%@test.com'");
+    await pool.end();
+  });
+
   describe('POST /api/auth/register', () => {
     it('should register a new user successfully', async () => {
       const res = await request(app)

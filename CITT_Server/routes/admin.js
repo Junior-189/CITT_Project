@@ -318,15 +318,38 @@ router.get('/projects',
     const offset = (page - 1) * limit;
     const userIsReviewer = isReviewer(req.user.role);
 
+    // Check which optional columns exist
+    const colCheck = await pool.query(
+      `SELECT column_name FROM information_schema.columns
+       WHERE table_name='projects'
+         AND column_name IN ('approved_by','project_status','category','institution','funding_needed','problem_statement','deleted_at')`
+    );
+    const existingCols = colCheck.rows.map(r => r.column_name);
+    const hasApprovedBy = existingCols.includes('approved_by');
+    const hasProjectStatus = existingCols.includes('project_status');
+    const hasDeletedAt = existingCols.includes('deleted_at');
+
+    const selectApproverJoin = hasApprovedBy
+      ? ', approver.name as approved_by_name'
+      : '';
+    const approverJoin = hasApprovedBy
+      ? ' LEFT JOIN users approver ON p.approved_by = approver.id'
+      : '';
+
     let query = `
-      SELECT p.*, u.name as user_name, u.email as user_email,
-             approver.name as approved_by_name
+      SELECT p.*, u.name as user_name, u.email as user_email
+             ${selectApproverJoin}
       FROM projects p
       JOIN users u ON p.user_id = u.id
-      LEFT JOIN users approver ON p.approved_by = approver.id
+      ${approverJoin}
       WHERE 1=1
     `;
     const params = [];
+
+    // Soft-delete support
+    if (hasDeletedAt) {
+      query += ` AND p.deleted_at IS NULL`;
+    }
 
     // Non-reviewer users only see their own projects
     if (!userIsReviewer) {
@@ -339,7 +362,7 @@ router.get('/projects',
       query += ` AND p.approval_status = $${params.length}`;
     }
 
-    if (project_status) {
+    if (project_status && hasProjectStatus) {
       params.push(project_status);
       query += ` AND p.project_status = $${params.length}`;
     }
@@ -350,9 +373,15 @@ router.get('/projects',
     const result = await pool.query(query, params);
     // Count only user's projects for non-reviewers
     let countResult;
+    let countQuery = 'SELECT COUNT(*) FROM projects WHERE 1=1';
+    const countParams = [];
+    if (hasDeletedAt) countQuery += ' AND deleted_at IS NULL';
     if (!userIsReviewer) {
-      countResult = await pool.query('SELECT COUNT(*) FROM projects WHERE user_id = $1', [req.user.id]);
-    } else {
+      countParams.push(req.user.id);
+      countQuery += ` AND user_id = $${countParams.length}`;
+    }
+    countResult = await pool.query(countQuery, countParams);
+    if (userIsReviewer && !hasDeletedAt) {
       countResult = await pool.query('SELECT COUNT(*) FROM projects');
     }
 
@@ -1382,6 +1411,81 @@ router.get('/audit-logs',
         offset: parseInt(offset),
         total: parseInt(countResult.rows[0].count)
       }
+    });
+  })
+);
+
+// ============================================
+// ANALYTICS DASHBOARD
+// ============================================
+
+// GET /api/admin/analytics — summary stats
+router.get('/analytics',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const [
+      usersRes, projectsRes, eventsRes,
+    ] = await Promise.all([
+      pool.query(`SELECT COUNT(*) as total, SUM(CASE WHEN account_status='pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN account_status='approved' THEN 1 ELSE 0 END) as approved FROM users WHERE deleted_at IS NULL`),
+      pool.query(`SELECT COUNT(*) as total, SUM(CASE WHEN approval_status='pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN approval_status='approved' THEN 1 ELSE 0 END) as approved, SUM(CASE WHEN approval_status='rejected' THEN 1 ELSE 0 END) as rejected FROM projects`),
+      pool.query(`SELECT COUNT(*) as total FROM events WHERE deleted_at IS NULL`),
+    ]);
+
+    let fundingData = { total: 0, totalAmount: 0 };
+    let ipData = { total: 0 };
+    try {
+      const fundingRes = await pool.query(`SELECT COUNT(*) as total, COALESCE(SUM(amount),0) as total_amount FROM funding`);
+      fundingData = { total: parseInt(fundingRes.rows[0].total), totalAmount: parseFloat(fundingRes.rows[0].total_amount) };
+    } catch { /* table might not exist */ }
+    try {
+      const ipRes = await pool.query(`SELECT COUNT(*) as total FROM ip_management`);
+      ipData = { total: parseInt(ipRes.rows[0].total) };
+    } catch { /* table might not exist */ }
+
+    res.json({
+      users: {
+        total: parseInt(usersRes.rows[0].total),
+        pending: parseInt(usersRes.rows[0].pending),
+        approved: parseInt(usersRes.rows[0].approved),
+      },
+      projects: {
+        total: parseInt(projectsRes.rows[0].total),
+        pending: parseInt(projectsRes.rows[0].pending),
+        approved: parseInt(projectsRes.rows[0].approved),
+        rejected: parseInt(projectsRes.rows[0].rejected),
+      },
+      funding: fundingData,
+      events: { total: parseInt(eventsRes.rows[0].total) },
+      ipRecords: ipData,
+    });
+  })
+);
+
+// GET /api/admin/analytics/trends — monthly trends
+router.get('/analytics/trends',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
+  asyncHandler(async (req, res) => {
+    const months = 12;
+    const usersRes = await pool.query(
+      `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count FROM users WHERE created_at > NOW() - INTERVAL '${months} months' AND deleted_at IS NULL GROUP BY month ORDER BY month`
+    );
+    const projectsRes = await pool.query(
+      `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count FROM projects WHERE created_at > NOW() - INTERVAL '${months} months' GROUP BY month ORDER BY month`
+    );
+    let fundingRows = [];
+    try {
+      const r = await pool.query(
+        `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count, COALESCE(SUM(amount),0) as total_amount FROM funding WHERE created_at > NOW() - INTERVAL '${months} months' GROUP BY month ORDER BY month`
+      );
+      fundingRows = r.rows;
+    } catch { /* table might not exist */ }
+
+    res.json({
+      users: usersRes.rows,
+      projects: projectsRes.rows,
+      funding: fundingRows,
     });
   })
 );

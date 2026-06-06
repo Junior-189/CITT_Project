@@ -10,6 +10,8 @@ import IP from './Pages/IPManagement';
 import Events from './Pages/Events';
 import Login from './Pages/Login';
 import Register from './Pages/Register';
+import ResetPassword from './Pages/ResetPassword';
+import VerifyEmail from './Pages/VerifyEmail';
 import SetPassword from './Pages/SetPassword';
 import Unauthorized from './Pages/Unauthorized';
 import UserProfile from './Pages/UserProfile';
@@ -93,6 +95,8 @@ const App = () => (
               <Route path="/departments" element={<RoleRoute roles={['superAdmin','admin','transferTechnologyOfficer','diiDirector','debmDirector','rtpDirector']}><Departments /></RoleRoute>} />
               <Route path="/login" element={<PublicRoute><Login /></PublicRoute>} />
               <Route path="/register" element={<PublicRoute><Register /></PublicRoute>} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="/gallery" element={<Gallery />} />
 

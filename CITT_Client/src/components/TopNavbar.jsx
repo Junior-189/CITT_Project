@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import UserMenuBar from './UserMenuBar';
+import { Menu, X } from 'lucide-react';
 
-const TopNavbar = () => {
+const TopNavbar = ({ sidebarOpen, onToggleSidebar }) => {
   const { profile, role } = useAuth();
 
   const isAuthenticated = !!profile;
@@ -29,8 +30,20 @@ const TopNavbar = () => {
       <div className="px-4 md:px-6">
         <div className="flex justify-between items-center h-16">
 
-          {/* Left side — Logo/Title only */}
+          {/* Left side — Mobile hamburger + Logo */}
           <div className="flex items-center gap-3">
+            {/* Mobile menu toggle */}
+            <button
+              onClick={onToggleSidebar}
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-white/10 transition-colors flex-shrink-0"
+              aria-label={sidebarOpen ? 'Close menu' : 'Open menu'}
+            >
+              {sidebarOpen ? (
+                <X size={22} className="text-white" />
+              ) : (
+                <Menu size={22} className="text-white" />
+              )}
+            </button>
             <Link to="/" className="flex items-center gap-3 min-w-0">
               <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
                 <span className="text-teal-700 font-bold text-base">C</span>

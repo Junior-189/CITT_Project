@@ -7,7 +7,7 @@ const Events = () => {
 
   // Check if user has admin access - memoize this
   const isAdmin = useMemo(() => role === "admin" || role === "superAdmin", [role]);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeView, setActiveView] = useState("events");
   const [showSubmitForm, setShowSubmitForm] = useState(false);
 
   // Events & submissions state
@@ -67,7 +67,7 @@ const Events = () => {
       // Clear data when user logs out
       setEvents([]);
       setSubmissions([]);
-      setActiveTab("overview");
+      setActiveView("events");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]); // When isAuthenticated changes
@@ -265,7 +265,7 @@ const Events = () => {
       });
 
       fetchMySubmissions();
-      setActiveTab("submissions");
+      setActiveView("submissions");
       setShowSubmitForm(false);
     } catch (err) {
       console.error("handleSubmitEntry:", err);
@@ -339,189 +339,81 @@ const Events = () => {
           </div>
         )}
 
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-slate-200 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab("overview")}
-            className={`px-6 py-3 font-semibold whitespace-nowrap ${
-              activeTab === "overview"
-                ? "text-teal-600 border-b-2 border-teal-600"
-                : "text-slate-600 hover:text-slate-800"
-            }`}
-          >
-            Overview
-          </button>
-
-          {isAdmin && (
+        {/* Toggle Buttons */}
+        <div className="flex gap-3 mb-6">
+          <div className="inline-flex bg-slate-100 rounded-lg p-1">
+            {isAdmin ? (
+              <>
+                <button onClick={() => setActiveView("events")}
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  Manage Events
+                </button>
+                <button onClick={() => setActiveView("submissions")}
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  Entry History
+                </button>
+              </>
+            ) : (
+              <>
+                <button onClick={() => setActiveView("events")}
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  Upcoming Events
+                </button>
+                <button onClick={() => setActiveView("submissions")}
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  My Submissions
+                </button>
+              </>
+            )}
+          </div>
+          {(user || profile) && (
             <button
-              onClick={() => setActiveTab("manage")}
-              className={`px-6 py-3 font-semibold whitespace-nowrap ${
-                activeTab === "manage"
-                  ? "text-teal-600 border-b-2 border-teal-600"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
+              onClick={() => setShowSubmitForm(s => !s)}
+              className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors"
             >
-              Manage Events
-            </button>
-          )}
-
-          {isAdmin && (
-            <button
-              onClick={() => setActiveTab("history")}
-              className={`px-6 py-3 font-semibold whitespace-nowrap ${
-                activeTab === "history"
-                  ? "text-teal-600 border-b-2 border-teal-600"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
-            >
-              Entry History
-            </button>
-          )}
-
-          {!isAdmin && (
-            <button
-              onClick={() => setActiveTab("upcoming")}
-              className={`px-6 py-3 font-semibold whitespace-nowrap ${
-                activeTab === "upcoming"
-                  ? "text-teal-600 border-b-2 border-teal-600"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
-            >
-              Upcoming Events
-            </button>
-          )}
-
-          {!isAdmin && (
-            <button
-              onClick={() => setActiveTab("submissions")}
-              className={`px-6 py-3 font-semibold whitespace-nowrap ${
-                activeTab === "submissions"
-                  ? "text-teal-600 border-b-2 border-teal-600"
-                  : "text-slate-600 hover:text-slate-800"
-              }`}
-            >
-              My Submissions
+              {showSubmitForm ? 'Close Form' : 'Submit Entry'}
             </button>
           )}
         </div>
 
-        {/* Overview Tab */}
-        {activeTab === "overview" && (
+        {/* Overview Cards */}
+        {activeView === "events" && !isAdmin && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            {/* Admin Cards */}
-            {isAdmin && (
-              <>
-                <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <h3 className="font-bold text-slate-800 text-lg">Manage Events</h3>
-                  </div>
-                  <p className="text-slate-600 mt-2">
-                    Create and publish events, set deadlines and requirements.
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setActiveTab("manage")}
-                      className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
-                    >
-                      Manage Events
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-blue-600">
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <h3 className="font-bold text-slate-800 text-lg">Entry History</h3>
-                  </div>
-                  <p className="text-slate-600 mt-2">
-                    View all event submissions from innovators.
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setActiveTab("history")}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      View Submissions
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {/* Innovator Cards */}
-            {!isAdmin && (
-              <>
-                <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <h3 className="font-bold text-slate-800 text-lg">Upcoming Events</h3>
-                  </div>
-                  <p className="text-slate-600 mt-2">
-                    Browse upcoming events and competitions.
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setActiveTab("upcoming")}
-                      className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700"
-                    >
-                      View Events
-                    </button>
-                  </div>
-                </div>
-
-                <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-blue-600">
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <h3 className="font-bold text-slate-800 text-lg">Submit Entry</h3>
-                  </div>
-                  <p className="text-slate-600 mt-2">
-                    Submit your innovative ideas and compete for prizes.
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => { setActiveTab("submissions"); setShowSubmitForm(true); }}
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-                    >
-                      Submit Entry
-                    </button>
-                  </div>
-                </div>
-
-                <div className="md:col-span-2 bg-white rounded-xl p-6 shadow-md border-l-4 border-green-600">
-                  <div className="flex items-center gap-3 mb-2">
-                    <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                    </svg>
-                    <h3 className="font-bold text-slate-800 text-lg">My Submissions</h3>
-                  </div>
-                  <p className="text-slate-600 mt-2">
-                    View your submissions and track their status.
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => setActiveTab("submissions")}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-                    >
-                      My Submissions
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
+            <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
+              <div className="flex items-center gap-3 mb-2">
+                <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <h3 className="font-bold text-slate-800 text-lg">Upcoming Events</h3>
+              </div>
+              <p className="text-slate-600 mt-2">Browse upcoming events and competitions.</p>
+              <div className="mt-4">
+                <button onClick={() => setActiveView("events")}
+                  className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
+                  Browse Events
+                </button>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
+              <div className="flex items-center gap-3 mb-2">
+                <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h3 className="font-bold text-slate-800 text-lg">Submit Entry</h3>
+              </div>
+              <p className="text-slate-600 mt-2">Submit your innovative ideas and compete for prizes.</p>
+              <div className="mt-4">
+                <button onClick={() => { setActiveView("submissions"); setShowSubmitForm(true); }}
+                  className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
+                  Submit Entry
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Manage Events Tab (Admin Only) */}
-        {activeTab === "manage" && isAdmin && (
+        {/* Manage Events (Admin) - activeView === "events" */}
+        {activeView === "events" && isAdmin && (
           <div>
             {/* Create Event Form */}
             <div className="bg-white rounded-xl p-6 shadow-md mb-6">
@@ -791,8 +683,8 @@ const Events = () => {
           </div>
         )}
 
-        {/* Upcoming Events Tab */}
-        {activeTab === "upcoming" && (
+        {/* Upcoming Events (Innovators) - activeView === "events" */}
+        {activeView === "events" && !isAdmin && (
           <div className="space-y-4">
             <h2 className="text-2xl font-bold text-slate-800 mb-4">Upcoming Events</h2>
 
@@ -841,7 +733,7 @@ const Events = () => {
                     <div className="flex flex-col gap-2">
                       <button
                         onClick={() => {
-                          setActiveTab("submissions");
+                          setActiveView("submissions");
                           setShowSubmitForm(true);
                           setSubmissionForm((s) => ({ ...s, eventId: ev.id }));
                         }}
@@ -856,11 +748,11 @@ const Events = () => {
           </div>
         )}
 
-        {/* My Submissions Tab */}
-        {activeTab === "submissions" && (
+        {/* Submissions View */}
+        {activeView === "submissions" && (
           <div>
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-bold text-slate-800">My Submissions</h2>
+              <h2 className="text-xl font-bold text-slate-800">{isAdmin ? 'Entry History' : 'My Submissions'}</h2>
               {(user || profile) && (
                 <button
                   onClick={() => setShowSubmitForm(s => !s)}
@@ -1031,7 +923,7 @@ const Events = () => {
                               : s.status === "rejected"
                               ? "bg-red-100 text-red-800"
                               : s.status === "reviewing"
-                              ? "bg-purple-100 text-purple-800"
+                              ? "bg-slate-100 text-slate-800"
                               : "bg-blue-100 text-blue-800"
                           }`}
                         >
@@ -1125,106 +1017,6 @@ const Events = () => {
                 );
               })}
             </div>
-          </div>
-        )}
-
-        {/* Entry History Tab - Admin Only */}
-        {activeTab === "history" && isAdmin && (
-          <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Entry History</h2>
-            <p className="text-slate-600 mb-6">View all event submissions from innovators</p>
-
-            {/* Fetch and display all submissions */}
-            {(() => {
-              // This will show all submissions - you'll need to fetch them from the API
-              return (
-                <>
-                  {submissions.length === 0 && (
-                    <div className="bg-white rounded-xl p-8 shadow-md text-center">
-                      <p className="text-slate-600">No event submissions found.</p>
-                      <p className="text-sm text-slate-500 mt-2">Submissions from innovators will appear here.</p>
-                    </div>
-                  )}
-
-                  <div className="grid gap-4">
-                    {submissions.map((s) => (
-                      <div key={s.id} className="bg-white p-6 rounded-xl shadow-md border-l-4 border-teal-600">
-                        <div className="flex justify-between items-start mb-4">
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-slate-800">{s.title}</h3>
-                            <p className="text-slate-600 mt-1">Event: <strong>{s.event_title}</strong></p>
-                            <p className="text-sm text-slate-500 mt-1">
-                              Team: {s.team_name || "Individual"}
-                            </p>
-                            {s.members && (
-                              <p className="text-sm text-slate-500">
-                                Members: {s.members}
-                              </p>
-                            )}
-                          </div>
-                          <div className="text-right">
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                s.status === "winner"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : s.status === "finalist"
-                                  ? "bg-green-100 text-green-800"
-                                  : s.status === "rejected"
-                                  ? "bg-red-100 text-red-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
-                              {s.status}
-                            </span>
-                            <p className="text-xs text-slate-500 mt-2">
-                              Submitted: {formatDate(s.created_at)}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="mb-4">
-                          <p className="font-semibold text-slate-700 text-sm">Description</p>
-                          <p className="text-slate-700 mt-1">{s.description}</p>
-                        </div>
-
-                        {s.problem_statement && (
-                          <div className="mb-4">
-                            <p className="font-semibold text-slate-700 text-sm">Problem Statement</p>
-                            <p className="text-slate-600 text-sm mt-1">{s.problem_statement}</p>
-                          </div>
-                        )}
-
-                        {s.solution && (
-                          <div className="mb-4">
-                            <p className="font-semibold text-slate-700 text-sm">Solution</p>
-                            <p className="text-slate-600 text-sm mt-1">{s.solution}</p>
-                          </div>
-                        )}
-
-                        {s.pitch_url && (
-                          <div className="mb-4">
-                            <a
-                              href={s.pitch_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="text-teal-600 hover:underline text-sm font-medium"
-                            >
-                              View Pitch Video →
-                            </a>
-                          </div>
-                        )}
-
-                        <div className="flex items-center gap-3 pt-4 border-t border-slate-200">
-                          <span className="text-xs text-slate-500">
-                            Submission ID: {s.id}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
           </div>
         )}
       </div>

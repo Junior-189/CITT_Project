@@ -68,7 +68,7 @@ const Login = () => {
       <div className="absolute inset-0 bg-slate-900 opacity-85" style={{ zIndex: -1 }} />
 
       <div className="relative max-w-md w-full mx-auto text-white">
-        <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-8 shadow-2xl border border-white border-opacity-20">
+        <div className="bg-slate-800/90 backdrop-blur-sm rounded-xl p-8 shadow-2xl border border-teal-600/40">
           <h2 className="text-3xl font-bold mb-6 text-teal-300 text-center">
             Login to ITTMS
           </h2>
@@ -93,29 +93,29 @@ const Login = () => {
           )}
 
           <div className="flex justify-center">
-            <div className="bg-white bg-opacity-20 rounded-lg p-6 w-full max-w-sm">
+            <div className="bg-slate-800/80 rounded-lg p-6 w-full max-w-sm">
               <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <label className="block text-teal-300 mb-2" htmlFor="email">Email</label>
+                  <label className="block text-teal-200 text-sm font-medium mb-1.5" htmlFor="email">Email</label>
                   <input
                     type="email"
                     id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3 py-2 rounded-md text-slate-800 border-2 border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-700/60 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm"
                     placeholder="Enter your email"
                     required
                   />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-teal-300 mb-2" htmlFor="password">Password</label>
+                  <label className="block text-teal-200 text-sm font-medium mb-1.5" htmlFor="password">Password</label>
                   <input
                     type="password"
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-3 py-2 rounded-md text-slate-800 border-2 border-teal-400 focus:outline-none focus:ring-2 focus:ring-teal-300"
+                    className="w-full px-3 py-2 rounded-lg bg-slate-700/60 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm"
                     placeholder="Enter your password"
                     required
                   />
@@ -148,9 +148,12 @@ const Login = () => {
                 Continue with Google
               </button>
 
-              <p className="mt-4 text-center text-slate-200">
+              <p className="mt-4 text-center text-slate-300 text-sm">
                 Don't have an account?{' '}
-                <a href="/register" className="text-teal-300 hover:underline font-semibold">Register</a>
+                <a href="/register" className="text-teal-400 hover:underline font-semibold">Register</a>
+              </p>
+              <p className="mt-2 text-center">
+                <a href="/reset-password" className="text-teal-400 hover:underline text-sm">Forgot Password?</a>
               </p>
             </div>
           </div>

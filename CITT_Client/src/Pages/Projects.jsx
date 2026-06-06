@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import { Eye, Edit2, RotateCcw } from 'lucide-react';
 
 // ─── Stage Definitions ────────────────────────────────────────────────────────
 const MILESTONE_STAGES = [
   {
     id: 1, name: 'Idea Generation', short: 'Idea',
-    description: 'This is where your innovation starts. Define the problem and describe your raw idea.',
-    activities: ['Brainstorming ideas', 'Identifying real-world problems', 'Initial concept sketching'],
-    outputs: ['Idea description', 'Problem statement', 'Initial concept note'],
+    description: 'Define the problem and describe your raw innovation idea.',
     questions: [
       { key: 'q1', label: 'What problem does your innovation solve?', required: true },
       { key: 'q2', label: 'Describe your innovation idea in simple terms.', required: true },
@@ -18,8 +17,6 @@ const MILESTONE_STAGES = [
   {
     id: 2, name: 'Concept Development', short: 'Concept',
     description: 'Structure and detail your idea with feasibility analysis and technical planning.',
-    activities: ['Feasibility analysis', 'Literature review', 'Technical planning'],
-    outputs: ['Concept document', 'Feasibility report', 'Basic design'],
     questions: [
       { key: 'q1', label: 'Have you conducted a feasibility analysis? Summarize your findings.', required: true },
       { key: 'q2', label: 'What is the basic design or technical plan of your concept?', required: true },
@@ -29,8 +26,6 @@ const MILESTONE_STAGES = [
   {
     id: 3, name: 'Prototype Development', short: 'Prototype',
     description: 'Build a working model of your innovation and conduct initial testing.',
-    activities: ['Hardware/software development', 'Initial testing', 'Iteration'],
-    outputs: ['Functional prototype', 'Test results'],
     questions: [
       { key: 'q1', label: 'Describe the prototype you have built.', required: true },
       { key: 'q2', label: 'What materials or technologies were used to build the prototype?', required: true },
@@ -40,8 +35,6 @@ const MILESTONE_STAGES = [
   {
     id: 4, name: 'Testing & Validation', short: 'Testing',
     description: 'Test your prototype in real conditions and gather user feedback.',
-    activities: ['Performance testing', 'User feedback', 'Error fixing'],
-    outputs: ['Test reports', 'Validation results'],
     questions: [
       { key: 'q1', label: 'How did you test your prototype in real conditions?', required: true },
       { key: 'q2', label: 'What feedback did you receive from users or testers?', required: true },
@@ -51,8 +44,6 @@ const MILESTONE_STAGES = [
   {
     id: 5, name: 'IP & Documentation', short: 'IP',
     description: 'Protect your innovation legally and prepare full technical documentation.',
-    activities: ['Patent search', 'IP registration', 'Technical documentation'],
-    outputs: ['IP application', 'Final report', 'Technical documentation'],
     questions: [
       { key: 'q1', label: 'Have you conducted a patent search? What did you find?', required: true },
       { key: 'q2', label: 'Describe the intellectual property protection applied for or planned.', required: true },
@@ -62,8 +53,6 @@ const MILESTONE_STAGES = [
   {
     id: 6, name: 'Funding & Investment', short: 'Funding',
     description: 'Secure financial support for your innovation through pitching and proposals.',
-    activities: ['Pitch preparation', 'Proposal writing', 'Investor meetings'],
-    outputs: ['Funding proposal', 'Investment agreements'],
     questions: [
       { key: 'q1', label: 'What funding sources have you identified or applied to?', required: true },
       { key: 'q2', label: 'Describe your pitch or funding proposal.', required: true },
@@ -73,8 +62,6 @@ const MILESTONE_STAGES = [
   {
     id: 7, name: 'Deployment / Implementation', short: 'Deploy',
     description: 'Implement your innovation in real environments with user training.',
-    activities: ['Installation / deployment', 'User training', 'System integration'],
-    outputs: ['Operational system', 'Deployment report'],
     questions: [
       { key: 'q1', label: 'Describe how the innovation was deployed or installed.', required: true },
       { key: 'q2', label: 'What user training was conducted?', required: true },
@@ -84,8 +71,6 @@ const MILESTONE_STAGES = [
   {
     id: 8, name: 'Monitoring & Evaluation', short: 'M&E',
     description: 'Track performance and impact of your deployed innovation.',
-    activities: ['Data collection', 'Performance analysis', 'Feedback loops'],
-    outputs: ['Evaluation reports', 'Improvement plans'],
     questions: [
       { key: 'q1', label: 'What data have you collected to measure performance?', required: true },
       { key: 'q2', label: 'What are the key performance results so far?', required: true },
@@ -95,8 +80,6 @@ const MILESTONE_STAGES = [
   {
     id: 9, name: 'Scaling & Commercialization', short: 'Scale',
     description: 'Expand your innovation and bring it to the market.',
-    activities: ['Market entry', 'Production scaling', 'Business development'],
-    outputs: ['Commercial product', 'Market presence'],
     questions: [
       { key: 'q1', label: 'Describe your market entry strategy.', required: true },
       { key: 'q2', label: 'How do you plan to scale production or delivery?', required: true },
@@ -377,11 +360,11 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
       </div>
 
       {/* Info note */}
-      <div className="mb-6 p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2">
-        <svg className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="mb-6 p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2">
+        <svg className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p className="text-xs text-amber-700">
+        <p className="text-xs text-slate-600">
           <strong>Note:</strong> If you have received funding or registered intellectual property at this stage, you may also upload those documents here as optional proof before continuing.
         </p>
       </div>
@@ -394,7 +377,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
           ${isSubmitting
             ? 'bg-gray-400 cursor-not-allowed'
             : isRejected
-            ? 'bg-orange-500 hover:bg-orange-600 shadow-md hover:shadow-lg'
+            ? 'bg-teal-600 hover:bg-teal-700 shadow-md hover:shadow-lg'
             : 'bg-teal-600 hover:bg-teal-700 shadow-md hover:shadow-lg'
           }`}
       >
@@ -427,7 +410,6 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [submitSuccess, setSubmitSuccess] = React.useState('');
   const [submitError, setSubmitError] = React.useState('');
-  const { getAuthenticatedAxios } = useAuth();
 
   React.useEffect(() => {
     fetchMilestones();
@@ -436,7 +418,6 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
 
   const fetchMilestones = async () => {
     try {
-      const api = getAuthenticatedAxios();
       const res = await api.get(`/api/projects/${project.id}/milestones`);
       const ms = res.data.milestones || [];
       setMilestones(ms);
@@ -469,7 +450,6 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
     setIsSubmitting(true);
     setSubmitError('');
     try {
-      const api = getAuthenticatedAxios();
       const formData = new FormData();
       formData.append('notes', notes);
       if (file) formData.append('file', file);
@@ -618,7 +598,7 @@ const approvalBadge = (status) => {
 };
 
 const Projects = () => {
-  const { profile, getAuthenticatedAxios } = useAuth();
+  const { profile } = useAuth();
 
   // Form
   const [showForm, setShowForm] = useState(false);
@@ -658,7 +638,6 @@ const Projects = () => {
     setLoading(true);
     setListError('');
     try {
-      const api = getAuthenticatedAxios();
       const res = await api.get('/api/admin/projects', { params: { limit: 1000 } });
       const all = res.data.projects || [];
       const uid = Number(profile.id);
@@ -681,7 +660,6 @@ const Projects = () => {
     setSubmitting(true);
     setFormError('');
     try {
-      const api = getAuthenticatedAxios();
       const payload = {
         title: formData.title,
         description: formData.description,
@@ -706,7 +684,6 @@ const Projects = () => {
 
   const handleResubmit = async (projectId) => {
     try {
-      const api = getAuthenticatedAxios();
       await api.put(`/api/admin/projects/${projectId}/resubmit`);
       await fetchProjects();
     } catch (e) {
@@ -717,7 +694,6 @@ const Projects = () => {
   const handleEditSave = async (projectId) => {
     setEditSaving(true);
     try {
-      const api = getAuthenticatedAxios();
       await api.put(`/api/admin/projects/${projectId}`, editData);
       setEditingId(null);
       await fetchProjects();
@@ -768,7 +744,7 @@ const Projects = () => {
               { label: 'Approved', count: stats.approved,   color: 'border-green-500' },
               { label: 'Rejected', count: stats.rejected,   color: 'border-red-500' },
               { label: 'In Progress', count: stats.in_progress, color: 'border-blue-500' },
-              { label: 'Completed', count: stats.completed, color: 'border-purple-500' },
+              { label: 'Completed', count: stats.completed, color: 'border-teal-500' },
             ].map(s => (
               <div key={s.label} className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${s.color} text-center`}>
                 <p className="text-2xl font-bold text-slate-800">{s.count}</p>

@@ -55,15 +55,30 @@ const upload = multer({
  * Get all gallery images (public - no auth required)
  */
 router.get('/', asyncHandler(async (req, res) => {
+  const { page = 1, limit = 20 } = req.query;
+  const offset = (parseInt(page) - 1) * parseInt(limit);
+
   const result = await pool.query(`
     SELECT gi.*, u.name as uploaded_by_name
     FROM gallery_images gi
     LEFT JOIN users u ON gi.uploaded_by = u.id
     WHERE gi.deleted_at IS NULL
     ORDER BY gi.created_at DESC
-  `);
+    LIMIT $1 OFFSET $2
+  `, [parseInt(limit), offset]);
 
-  res.json({ images: result.rows });
+  const countResult = await pool.query('SELECT COUNT(*) FROM gallery_images WHERE deleted_at IS NULL');
+  const total = parseInt(countResult.rows[0].count);
+
+  res.json({
+    images: result.rows,
+    pagination: {
+      page: parseInt(page),
+      limit: parseInt(limit),
+      total,
+      totalPages: Math.ceil(total / parseInt(limit)),
+    }
+  });
 }));
 
 // ============================================

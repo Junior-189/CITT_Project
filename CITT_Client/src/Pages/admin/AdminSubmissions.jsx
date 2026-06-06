@@ -159,7 +159,7 @@ const AdminSubmissions = () => {
                 : 'bg-slate-200 text-slate-800 hover:bg-slate-300'
             }`}
           >
-            {status === 'all' ? '📋 All' : getStatusIcon(status)} {status.charAt(0).toUpperCase() + status.slice(1)} ({filteredSubmissions.filter(s => status === 'all' || s.status === status).length})
+            {status === 'all' ? 'All' : getStatusIcon(status)} {status.charAt(0).toUpperCase() + status.slice(1)} ({filteredSubmissions.filter(s => status === 'all' || s.status === status).length})
           </button>
         ))}
       </div>

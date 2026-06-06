@@ -106,7 +106,7 @@ const Hero = () => {
                     </div>
                     {event.start_date && (
                       <p className="text-xs text-slate-500 mt-2">
-                        🗓️ {new Date(event.start_date).toLocaleDateString()}
+                        {new Date(event.start_date).toLocaleDateString()}
                       </p>
                     )}
                   </div>

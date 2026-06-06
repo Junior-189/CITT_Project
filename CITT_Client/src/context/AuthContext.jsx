@@ -3,6 +3,8 @@ import { auth, googleProvider, db } from "../firebase";
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
@@ -25,7 +27,17 @@ export const AuthProvider = ({ children }) => {
   const [showProfileForm, setShowProfileForm] = useState(false); // Controls popup for completing profile
   const [justAuthenticated, setJustAuthenticated] = useState(false); // Track if user just logged in/registered
 
-  // 🔹 Initialize: Check for existing JWT token in localStorage
+  // Handle Google sign-in redirect result on page load
+  useEffect(() => {
+    getRedirectResult(auth).then((result) => {
+      if (result) {
+        setJustAuthenticated(true);
+        sessionStorage.setItem('googleRedirect', 'true');
+      }
+    }).catch(() => {});
+  }, []);
+
+  // Initialize: Check for existing JWT token in localStorage
   useEffect(() => {
     const storedToken = localStorage.getItem("authToken");
     const storedUser = localStorage.getItem("userProfile");
@@ -96,7 +108,23 @@ export const AuthProvider = ({ children }) => {
           setUser(firebaseUser);
 
           // Sync with PostgreSQL backend
-          await syncWithBackend(firebaseUser, firestoreData);
+          const backendUser = await syncWithBackend(firebaseUser, firestoreData);
+
+          // Handle Google redirect sign-in (popup-blocked fallback)
+          if (sessionStorage.getItem('googleRedirect')) {
+            sessionStorage.removeItem('googleRedirect');
+            const role = backendUser?.role || 'innovator';
+            const routes = {
+              superAdmin: '/superadmin/dashboard', admin: '/admin/dashboard',
+              transferTechnologyOfficer: '/admin/dashboard', ipManager: '/ipmanager/dashboard',
+              diiDirector: '/dii/workspace', debmDirector: '/debm/workspace',
+              rtpDirector: '/rtp/workspace', mentor: '/workspace/mentor',
+              technicalCommittee: '/workspace/technical-committee',
+              coordinator: '/workspace/coordinator', innovator: '/projects',
+            };
+            window.location.href = routes[role] || '/';
+            return;
+          }
 
           // If profile not complete AND user just authenticated, trigger popup
           if (justAuthenticated && !firestoreData.profileComplete) {
@@ -197,14 +225,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Google login (Firebase + PostgreSQL)
+  // Google login (Firebase + PostgreSQL)
   const loginWithGoogle = async () => {
-    const result = await signInWithPopup(auth, googleProvider);
-    setJustAuthenticated(true);
-
-    // Firebase auth successful, now sync with PostgreSQL
-    const backendUser = await syncWithBackend(result.user, {});
-    return backendUser;
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      setJustAuthenticated(true);
+      const backendUser = await syncWithBackend(result.user, {});
+      return backendUser;
+    } catch (error) {
+      if (error.code === 'auth/popup-blocked' || error.code === 'auth/popup-closed-by-user') {
+        sessionStorage.setItem('googleRedirect', 'true');
+        await signInWithRedirect(auth, googleProvider);
+        return; // page will redirect; never reaches here
+      }
+      throw error;
+    }
   };
 
   // 🔹 Registration (Email/Password) - PostgreSQL backend
@@ -313,7 +348,7 @@ export const AuthProvider = ({ children }) => {
           });
           console.log("Backend profile updated successfully");
         } catch (apiError) {
-          console.error("❌ Failed to update backend profile:", apiError);
+          console.error("Failed to update backend profile:", apiError);
           throw new Error("Failed to save profile to backend: " + (apiError.response?.data?.error || apiError.message));
         }
       } else {
@@ -322,7 +357,7 @@ export const AuthProvider = ({ children }) => {
 
       // If user has Firebase UID, save to Firestore (secondary - don't block on this)
       if (user?.uid) {
-        console.log("🔥 Saving to Firestore...");
+        console.log("Saving to Firestore...");
         try {
           const userRef = doc(db, "users", user.uid);
           await setDoc(userRef, {
@@ -341,7 +376,7 @@ export const AuthProvider = ({ children }) => {
       setShowProfileForm(false);
       console.log("Profile saved successfully!");
     } catch (error) {
-      console.error("❌ Failed to save profile:", error);
+      console.error("Failed to save profile:", error);
       throw error;
     }
   };

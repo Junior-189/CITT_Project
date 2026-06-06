@@ -32,7 +32,7 @@ const {
   connectRedis,
 } = require('./services/redis');
 
-const { sendPasswordResetEmail } = require('./services/email');
+const { sendPasswordResetEmail, sendVerificationEmail } = require('./services/email');
 
 const path = require('path');
 const analyticsRoutes = require('./routes/analytics');
@@ -136,7 +136,12 @@ app.use('/api/auth/forgot-password', sensitiveLimiter);
 app.use('/api/auth/reset-password', sensitiveLimiter);
 app.use('/api/auth/refresh', rateLimit({ windowMs: 60000, max: 30 }));
 
-app.use('/api/', generalLimiter, generalSpeedLimiter);
+// General rate limit for all non-auth API routes
+const skipAuthPaths = (req, res, next) => {
+  if (req.path.startsWith('/auth/')) return next();
+  generalLimiter(req, res, next);
+};
+app.use('/api/', skipAuthPaths, generalSpeedLimiter);
 
 // ============================================
 // CORS CONFIGURATION
@@ -294,6 +299,15 @@ app.post('/api/auth/register',
     );
 
     logger.info('User registered', { email, userId: result.rows[0].id });
+
+    // Generate verification token and send email
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    await pool.query(
+      `UPDATE users SET email_verification_token = $1, email_verification_expires = $2 WHERE id = $3`,
+      [verificationToken, verificationExpires, result.rows[0].id]
+    );
+    sendVerificationEmail(email, name, verificationToken).catch(() => {});
 
     res.status(201).json({
       message: 'Registration successful. Your account is awaiting admin approval.',
@@ -702,6 +716,32 @@ app.post('/api/auth/reset-password',
   })
 );
 
+/**
+ * POST /api/auth/verify-email
+ * Verify user email with token
+ */
+app.post('/api/auth/verify-email', asyncHandler(async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: 'Verification token is required' });
+
+  const result = await pool.query(
+    `SELECT id FROM users WHERE email_verification_token = $1 AND email_verification_expires > NOW() AND deleted_at IS NULL`,
+    [token]
+  );
+
+  if (result.rows.length === 0) {
+    return res.status(400).json({ error: 'Invalid or expired verification token' });
+  }
+
+  await pool.query(
+    `UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_verification_expires = NULL, updated_at = NOW() WHERE id = $1`,
+    [result.rows[0].id]
+  );
+
+  logger.info('Email verified', { userId: result.rows[0].id });
+  res.json({ message: 'Email verified successfully. You can now log in once your account is approved.' });
+}));
+
 // ============================================
 // PROTECTED USER ENDPOINTS
 // ============================================
@@ -714,7 +754,7 @@ app.get('/api/users', authenticateToken, asyncHandler(async (req, res) => {
   const { page = 1, limit = 50 } = req.query;
   const offset = (parseInt(page) - 1) * parseInt(limit);
   const result = await pool.query(
-    `SELECT id, name, email, phone, role, university, campus, created_at
+    `SELECT id, name, email, phone, role, university, campus, account_status, created_at
      FROM users WHERE deleted_at IS NULL
      ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
     [parseInt(limit), offset]

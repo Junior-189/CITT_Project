@@ -311,7 +311,7 @@ const Analytics = () => {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="mr-2">🔄</span> In Progress
+                    <span className="mr-2">&#9654;</span> In Progress
                   </span>
                   <span className="text-sm font-bold text-blue-600">
                     {projects?.in_progress || 0} ({getProjectStatusPercentage(projects?.in_progress, projects?.total)}%)
@@ -329,7 +329,7 @@ const Analytics = () => {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="mr-2">🎉</span> Completed
+                    <span className="mr-2">&#x2713;</span> Completed
                   </span>
                   <span className="text-sm font-bold text-purple-600">
                     {projects?.completed || 0} ({getProjectStatusPercentage(projects?.completed, projects?.total)}%)
@@ -347,7 +347,7 @@ const Analytics = () => {
               <div>
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="mr-2">❌</span> Rejected
+                    <span className="mr-2">&#x2717;</span> Rejected
                   </span>
                   <span className="text-sm font-bold text-red-600">
                     {projects?.rejected || 0} ({getProjectStatusPercentage(projects?.rejected, projects?.total)}%)

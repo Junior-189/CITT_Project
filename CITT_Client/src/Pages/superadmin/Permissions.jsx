@@ -31,7 +31,7 @@ const Permissions = () => {
     {
       role: 'superAdmin',
       label: 'Super Admin',
-      icon: '👑',
+      icon: 'S',
       color: 'bg-teal-100 text-teal-800',
       permissions: [
         { name: 'Manage Users', description: 'Create, edit, delete users', enabled: true },
@@ -63,7 +63,7 @@ const Permissions = () => {
     {
       role: 'ipManager',
       label: 'IP Manager',
-      icon: '📜',
+      icon: 'R',
       color: 'bg-teal-100 text-teal-800',
       permissions: [
         { name: 'View IP Records', description: 'Access IP records', enabled: true },

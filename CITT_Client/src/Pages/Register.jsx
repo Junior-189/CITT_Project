@@ -57,9 +57,11 @@ const Register = () => {
             </svg>
           </div>
           <h2 className="text-2xl font-bold text-teal-300 mb-3">Registration Submitted</h2>
-          <p className="text-white text-sm leading-relaxed mb-6">
-            Your account has been created and is awaiting admin approval.<br />
-            You will be able to log in once an administrator approves your account.
+          <p className="text-white text-sm leading-relaxed mb-3">
+            Your account has been created and is awaiting admin approval.
+          </p>
+          <p className="text-teal-200 text-xs mb-6">
+            A verification email has been sent to your inbox. Please verify your email address to complete registration.
           </p>
           <Link to="/login" className="block w-full py-2.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg font-semibold transition text-center">
             Go to Login
@@ -73,34 +75,34 @@ const Register = () => {
     <section className="relative min-h-screen flex items-center justify-center px-5 py-16">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: 'url(/must-campus.jpg)', zIndex: -2 }} />
       <div className="absolute inset-0 bg-slate-900 opacity-85" style={{ zIndex: -1 }} />
-      <div className="relative max-w-md w-full bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20 text-white">
+      <div className="relative max-w-md w-full bg-slate-800/90 backdrop-blur-sm rounded-xl p-8 border border-teal-600/40 shadow-2xl">
         <h2 className="text-3xl font-bold text-teal-300 text-center mb-6">Create Account</h2>
         {error && <div className="mb-4 bg-red-900/50 border border-red-500 rounded-lg p-3 text-red-200 text-sm">{error}</div>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-teal-300 text-sm mb-1">Full Name</label>
+            <label className="block text-teal-200 text-sm font-medium mb-1.5">Full Name</label>
             <input name="name" value={form.name} onChange={handleChange} required placeholder="Enter your full name"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
+              className="w-full px-3 py-2 rounded-lg bg-slate-800/80 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
           </div>
           <div>
-            <label className="block text-teal-300 text-sm mb-1">Phone Number</label>
+            <label className="block text-teal-200 text-sm font-medium mb-1.5">Phone Number</label>
             <input name="phone" value={form.phone} onChange={handleChange} placeholder="+255 700 000 000"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
+              className="w-full px-3 py-2 rounded-lg bg-slate-800/80 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
           </div>
           <div>
-            <label className="block text-teal-300 text-sm mb-1">Email Address</label>
+            <label className="block text-teal-200 text-sm font-medium mb-1.5">Email Address</label>
             <input name="email" type="email" value={form.email} onChange={handleChange} required placeholder="your@email.com"
-              className="w-full px-3 py-2 rounded-lg bg-white/20 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
+              className="w-full px-3 py-2 rounded-lg bg-slate-800/80 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
           </div>
           <div>
-            <label className="block text-teal-300 text-sm mb-1">Password</label>
+            <label className="block text-teal-200 text-sm font-medium mb-1.5">Password</label>
             <div className="relative">
               <input name="password" type={showPass ? 'text' : 'password'} value={form.password}
                 onChange={handleChange}
                 onFocus={() => setShowRules(true)}
                 onBlur={() => setShowRules(false)}
                 required placeholder="Create a strong password"
-                className="w-full px-3 py-2 pr-10 rounded-lg bg-white/20 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
+                className="w-full px-3 py-2 pr-10 rounded-lg bg-slate-800/80 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
               <button type="button" onClick={() => setShowPass(s => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-300 hover:text-white">
                 {showPass
@@ -127,11 +129,11 @@ const Register = () => {
             )}
           </div>
           <div>
-            <label className="block text-teal-300 text-sm mb-1">Confirm Password</label>
+            <label className="block text-teal-200 text-sm font-medium mb-1.5">Confirm Password</label>
             <div className="relative">
               <input name="confirmPassword" type={showConfirm ? 'text' : 'password'} value={form.confirmPassword}
                 onChange={handleChange} required placeholder="Repeat your password"
-                className="w-full px-3 py-2 pr-10 rounded-lg bg-white/20 border border-teal-400 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
+                className="w-full px-3 py-2 pr-10 rounded-lg bg-slate-800/80 border border-teal-500 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-300 text-sm" />
               <button type="button" onClick={() => setShowConfirm(s => !s)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-teal-300 hover:text-white">
                 {showConfirm

@@ -163,11 +163,11 @@ const Analytics = () => {
             <h2 className="text-xl font-semibold text-gray-900 mb-6">IP Type Distribution</h2>
             <div className="space-y-4">
               {[
-                { label: 'Patents', key: 'Patent', color: 'purple', icon: '📜' },
-                { label: 'Trademarks', key: 'Trademark', color: 'orange', icon: '🏷️' },
+                { label: 'Patents', key: 'Patent', color: 'purple', icon: '' },
+                { label: 'Trademarks', key: 'Trademark', color: 'orange', icon: 'Tag' },
                 { label: 'Copyrights', key: 'Copyright', color: 'blue', icon: '📚' },
                 { label: 'Designs', key: 'Design', color: 'teal', icon: '🎨' },
-                { label: 'Other', key: 'Other', color: 'gray', icon: '📋' },
+                { label: 'Other', key: 'Other', color: 'gray', icon: 'List' },
               ].map(({ label, key, color, icon }) => (
                 <div key={key}>
                   <div className="flex justify-between items-center mb-1">

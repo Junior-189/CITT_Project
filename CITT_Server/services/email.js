@@ -114,8 +114,35 @@ const sendWelcomeEmail = async (email, name) => {
   }
 };
 
+const sendVerificationEmail = async (email, name, verificationToken) => {
+  try {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    const verifyLink = `${frontendUrl}/verify-email?token=${verificationToken}`;
+
+    const info = await getTransporter().sendMail({
+      from: process.env.MAIL_FROM || 'noreply@citt.ac.tz',
+      to: email,
+      subject: 'CITT - Verify Your Email Address',
+      html: `
+<h1>Welcome to CITT, ${name}!</h1>
+<p>Thank you for registering. Please verify your email address by clicking the link below:</p>
+<p><a href="${verifyLink}">Verify Email Address</a></p>
+<p>Or copy this link: ${verifyLink}</p>
+<p>This link will expire in 24 hours.</p>
+<p>If you did not create this account, please ignore this email.</p>`,
+    });
+
+    logger.info('Verification email sent', { to: email, messageId: info.messageId });
+    return true;
+  } catch (error) {
+    logger.error('Failed to send verification email', { error: error.message });
+    return false;
+  }
+};
+
 module.exports = {
   getTransporter,
   sendPasswordResetEmail,
   sendWelcomeEmail,
+  sendVerificationEmail,
 };

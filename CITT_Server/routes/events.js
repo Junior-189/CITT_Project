@@ -44,7 +44,7 @@ router.get('/public', asyncHandler(async (req, res) => {
   let paramIndex = 1;
 
   if (category) {
-    query += ` AND e.category = $${paramIndex}`;
+    query += ` AND COALESCE(e.category, e.type) = $${paramIndex}`;
     params.push(category);
     paramIndex++;
   }
@@ -109,7 +109,7 @@ router.get('/', authenticateToken, asyncHandler(async (req, res) => {
   let paramIndex = 1;
 
   if (category) {
-    query += ` AND e.category = $${paramIndex}`;
+    query += ` AND COALESCE(e.category, e.type) = $${paramIndex}`;
     params.push(category);
     paramIndex++;
   }
@@ -120,7 +120,7 @@ router.get('/', authenticateToken, asyncHandler(async (req, res) => {
   const result = await pool.query(query, params);
 
   // Get total count
-  const countResult = await pool.query(`SELECT COUNT(*) FROM events WHERE 1=1`);
+  const countResult = await pool.query(`SELECT COUNT(*) FROM events WHERE deleted_at IS NULL`);
   const total = parseInt(countResult.rows[0].count);
 
   res.json({
@@ -130,6 +130,10 @@ router.get('/', authenticateToken, asyncHandler(async (req, res) => {
     totalPages: Math.ceil(total / limit)
   });
 }));
+
+// ============================================
+// EVENT SUBMISSIONS (must be before /:id to avoid route conflicts)
+// ============================================
 
 /**
  * GET /api/events/submissions/my
@@ -141,301 +145,16 @@ router.get('/submissions/my',
     const result = await pool.query(`
       SELECT
         es.*,
+        COALESCE(e.category, e.type) as event_category,
         e.title as event_title,
-        e.start_date,
-        e.category
+        e.start_date
       FROM event_submissions es
       LEFT JOIN events e ON es.event_id = e.id
-      WHERE es.user_id = $1
+      WHERE es.user_id = $1 AND e.deleted_at IS NULL
       ORDER BY es.created_at DESC
     `, [req.user.id]);
 
     res.json(result.rows);
-  })
-);
-
-/**
- * GET /api/events/:id
- * Get single event details (auth required)
- */
-router.get('/:id', authenticateToken, asyncHandler(async (req, res) => {
-  const { id } = req.params;
-
-  const result = await pool.query(`
-    SELECT
-      e.*,
-      u.name as creator_name,
-      u.email as creator_email
-    FROM events e
-    LEFT JOIN users u ON e.created_by = u.id
-    WHERE e.id = $1 AND e.deleted_at IS NULL
-  `, [id]);
-
-  if (result.rows.length === 0) {
-    return res.status(404).json({ error: 'Event not found' });
-  }
-
-  res.json({ event: result.rows[0] });
-}));
-
-/**
- * POST /api/events
- * Create new event (admin/superAdmin only)
- */
-router.post('/',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin']),
-  checkPermission('events', 'create'),
-  auditLog('events'),
-  asyncHandler(async (req, res) => {
-    const {
-      title,
-      type,
-      category,
-      description,
-      start_date,
-      end_date,
-      location,
-    } = req.body;
-
-    // Support both 'type' and 'category' fields; 'type' maps to 'category' for compatibility
-    const eventCategory = category || type || null;
-
-    // Validation
-    if (!title) {
-      return res.status(400).json({ error: 'Title is required' });
-    }
-
-    const result = await pool.query(`
-      INSERT INTO events (
-        title, category, description, start_date, end_date,
-        location, created_by
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7)
-      RETURNING *
-    `, [
-      title, eventCategory, description, start_date, end_date,
-      location, req.user.id
-    ]);
-
-    res.status(201).json({
-      message: 'Event created successfully',
-      event: result.rows[0]
-    });
-  })
-);
-
-/**
- * PUT /api/events/:id
- * Update event (admin/superAdmin only)
- */
-router.put('/:id',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin']),
-  checkPermission('events', 'update'),
-  auditLog('events'),
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const {
-      title,
-      type,
-      category,
-      description,
-      start_date,
-      end_date,
-      location,
-    } = req.body;
-
-    // Support both 'type' and 'category' fields for compatibility
-    const eventCategory = category !== undefined ? category : type;
-
-    // Check if event exists
-    const checkResult = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
-    if (checkResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    const result = await pool.query(`
-      UPDATE events
-      SET
-        title = COALESCE($1, title),
-        category = COALESCE($2, category),
-        description = COALESCE($3, description),
-        start_date = COALESCE($4, start_date),
-        end_date = COALESCE($5, end_date),
-        location = COALESCE($6, location),
-        updated_at = NOW()
-      WHERE id = $7
-      RETURNING *
-    `, [
-      title, eventCategory, description, start_date, end_date, location, id
-    ]);
-
-    res.json({
-      message: 'Event updated successfully',
-      event: result.rows[0]
-    });
-  })
-);
-
-/**
- * DELETE /api/events/:id
- * Delete event (admin/superAdmin only)
- */
-router.delete('/:id',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin']),
-  checkPermission('events', 'delete'),
-  auditLog('events'),
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-
-    // Check if event exists
-    const checkResult = await pool.query('SELECT * FROM events WHERE id = $1', [id]);
-    if (checkResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    await pool.query('DELETE FROM events WHERE id = $1', [id]);
-
-    res.json({ message: 'Event deleted successfully' });
-  })
-);
-
-/**
- * PUT /api/events/:id/publish
- * Publish/unpublish event (admin/superAdmin only)
- */
-router.put('/:id/publish',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin']),
-  checkPermission('events', 'update'),
-  auditLog('events'),
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const { published } = req.body;
-
-    const result = await pool.query(`
-      UPDATE events
-      SET updated_at = NOW()
-      WHERE id = $1
-      RETURNING *
-    `, [id]);
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    // Notify all innovators when an event is published
-    if (published) {
-      await notifyAllInnovators(result.rows[0].title);
-    }
-
-    res.json({
-      message: `Event ${published ? 'published' : 'unpublished'} successfully`,
-      event: result.rows[0]
-    });
-  })
-);
-
-// ============================================
-// EVENT SUBMISSIONS ROUTES
-// ============================================
-
-/**
- * POST /api/events/:id/submit
- * Submit entry to event (authenticated users)
- */
-router.post('/:id/submit',
-  authenticateToken,
-  auditLog('event_submissions'),
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const {
-      title,
-      team_name,
-      members,
-      description,
-      problem_statement,
-      solution,
-      pitch_url
-    } = req.body;
-
-    // Validation
-    if (!title || !description) {
-      return res.status(400).json({ error: 'Title and description are required' });
-    }
-
-    // Check if event exists
-    const eventResult = await pool.query(
-      'SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL',
-      [id]
-    );
-
-    if (eventResult.rows.length === 0) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    // Check if user already submitted to this event
-    const existingSubmission = await pool.query(
-      'SELECT * FROM event_submissions WHERE event_id = $1 AND user_id = $2',
-      [id, req.user.id]
-    );
-
-    if (existingSubmission.rows.length > 0) {
-      return res.status(400).json({ error: 'You have already submitted to this event' });
-    }
-
-    const result = await pool.query(`
-      INSERT INTO event_submissions (
-        event_id, user_id, title, team_name, members, description,
-        problem_statement, solution, pitch_url, status
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'submitted')
-      RETURNING *
-    `, [id, req.user.id, title, team_name, members, description, problem_statement, solution, pitch_url]);
-
-    res.status(201).json({
-      message: 'Submission successful',
-      submission: result.rows[0]
-    });
-  })
-);
-
-/**
- * GET /api/events/:id/submissions
- * Get submissions for an event (admin/superAdmin see all, users see own)
- */
-router.get('/:id/submissions',
-  authenticateToken,
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-
-    let query = `
-      SELECT
-        es.*,
-        u.name as user_name,
-        u.email as user_email,
-        e.title as event_title
-      FROM event_submissions es
-      LEFT JOIN users u ON es.user_id = u.id
-      LEFT JOIN events e ON es.event_id = e.id
-      WHERE es.event_id = $1
-    `;
-
-    const params = [id];
-
-    // Non-admins only see their own submissions
-    if (!isAdmin(req.user.role)) {
-      query += ` AND es.user_id = $2`;
-      params.push(req.user.id);
-    }
-
-    query += ` ORDER BY es.created_at DESC`;
-
-    const result = await pool.query(query, params);
-
-    res.json({ submissions: result.rows, total: result.rows.length });
   })
 );
 
@@ -458,11 +177,11 @@ router.get('/submissions/all',
         u.email as user_email,
         e.title as event_title,
         e.start_date,
-        e.category
+        COALESCE(e.category, e.type) as event_category
       FROM event_submissions es
       LEFT JOIN users u ON es.user_id = u.id
       LEFT JOIN events e ON es.event_id = e.id
-      WHERE 1=1
+      WHERE e.deleted_at IS NULL
     `;
 
     const params = [];
@@ -483,7 +202,7 @@ router.get('/submissions/all',
     const result = await pool.query(query, params);
 
     // Count with same filters
-    let countQuery = 'SELECT COUNT(*) FROM event_submissions es WHERE 1=1';
+    let countQuery = 'SELECT COUNT(*) FROM event_submissions es LEFT JOIN events e ON es.event_id = e.id WHERE e.deleted_at IS NULL';
     const countParams = [];
 
     if (status) {
@@ -597,6 +316,292 @@ router.get('/submissions/:submissionId/feedback',
     `, [submissionId]);
 
     res.json({ feedback: result.rows, total: result.rows.length });
+  })
+);
+
+// ============================================
+// EVENT CRUD (parameterized routes come AFTER static routes)
+// ============================================
+
+/**
+ * GET /api/events/:id
+ * Get single event details (auth required)
+ */
+router.get('/:id', authenticateToken, asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await pool.query(`
+    SELECT
+      e.*,
+      u.name as creator_name,
+      u.email as creator_email
+    FROM events e
+    LEFT JOIN users u ON e.created_by = u.id
+    WHERE e.id = $1 AND e.deleted_at IS NULL
+  `, [id]);
+
+  if (result.rows.length === 0) {
+    return res.status(404).json({ error: 'Event not found' });
+  }
+
+  res.json({ event: result.rows[0] });
+}));
+
+/**
+ * POST /api/events
+ * Create new event (admin/superAdmin only)
+ */
+router.post('/',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin']),
+  checkPermission('events', 'create'),
+  auditLog('events'),
+  asyncHandler(async (req, res) => {
+    const {
+      title,
+      type,
+      category,
+      description,
+      start_date,
+      end_date,
+      location,
+    } = req.body;
+
+    // Support both 'type' and 'category' fields; 'type' maps to 'category' for compatibility
+    const eventCategory = category || type || null;
+
+    // Validation
+    if (!title) {
+      return res.status(400).json({ error: 'Title is required' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO events (
+        title, category, description, start_date, end_date,
+        location, created_by
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+    `, [
+      title, eventCategory, description, start_date, end_date,
+      location, req.user.id
+    ]);
+
+    res.status(201).json({
+      message: 'Event created successfully',
+      event: result.rows[0]
+    });
+  })
+);
+
+/**
+ * PUT /api/events/:id
+ * Update event (admin/superAdmin only)
+ */
+router.put('/:id',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin']),
+  checkPermission('events', 'update'),
+  auditLog('events'),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const {
+      title,
+      type,
+      category,
+      description,
+      start_date,
+      end_date,
+      location,
+    } = req.body;
+
+    // Support both 'type' and 'category' fields for compatibility
+    const eventCategory = category !== undefined ? category : type;
+
+    // Check if event exists
+    const checkResult = await pool.query('SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL', [id]);
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    const result = await pool.query(`
+      UPDATE events
+      SET
+        title = COALESCE($1, title),
+        category = COALESCE($2, category),
+        description = COALESCE($3, description),
+        start_date = COALESCE($4, start_date),
+        end_date = COALESCE($5, end_date),
+        location = COALESCE($6, location),
+        updated_at = NOW()
+      WHERE id = $7
+      RETURNING *
+    `, [
+      title, eventCategory, description, start_date, end_date, location, id
+    ]);
+
+    res.json({
+      message: 'Event updated successfully',
+      event: result.rows[0]
+    });
+  })
+);
+
+/**
+ * DELETE /api/events/:id
+ * Delete event (admin/superAdmin only)
+ */
+router.delete('/:id',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin']),
+  checkPermission('events', 'delete'),
+  auditLog('events'),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    // Check if event exists
+    const checkResult = await pool.query('SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL', [id]);
+    if (checkResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    await pool.query('UPDATE events SET deleted_at = NOW() WHERE id = $1', [id]);
+
+    res.json({ message: 'Event deleted successfully' });
+  })
+);
+
+/**
+ * PUT /api/events/:id/publish
+ * Publish/unpublish event (admin/superAdmin only)
+ */
+router.put('/:id/publish',
+  authenticateToken,
+  checkRole(['admin', 'superAdmin']),
+  checkPermission('events', 'update'),
+  auditLog('events'),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { published } = req.body;
+
+    const result = await pool.query(`
+      UPDATE events
+      SET published = $1, updated_at = NOW()
+      WHERE id = $2 AND deleted_at IS NULL
+      RETURNING *
+    `, [published ? true : false, id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Notify all innovators when an event is published
+    if (published) {
+      await notifyAllInnovators(result.rows[0].title);
+    }
+
+    res.json({
+      message: `Event ${published ? 'published' : 'unpublished'} successfully`,
+      event: result.rows[0]
+    });
+  })
+);
+
+/**
+ * POST /api/events/:id/submit
+ * Submit entry to event (authenticated users)
+ */
+router.post('/:id/submit',
+  authenticateToken,
+  auditLog('event_submissions'),
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const {
+      title,
+      team_name,
+      members,
+      description,
+      problem_statement,
+      solution,
+      pitch_url
+    } = req.body;
+
+    // Validation
+    if (!title || !description) {
+      return res.status(400).json({ error: 'Title and description are required' });
+    }
+
+    // Check if event exists
+    const eventResult = await pool.query(
+      'SELECT * FROM events WHERE id = $1 AND deleted_at IS NULL',
+      [id]
+    );
+
+    if (eventResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    // Check if user already submitted to this event
+    const existingSubmission = await pool.query(
+      'SELECT * FROM event_submissions WHERE event_id = $1 AND user_id = $2',
+      [id, req.user.id]
+    );
+
+    if (existingSubmission.rows.length > 0) {
+      return res.status(400).json({ error: 'You have already submitted to this event' });
+    }
+
+    const result = await pool.query(`
+      INSERT INTO event_submissions (
+        event_id, user_id, title, team_name, members, description,
+        problem_statement, solution, pitch_url, status
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'submitted')
+      RETURNING *
+    `, [id, req.user.id, title, team_name, members, description, problem_statement, solution, pitch_url]);
+
+    res.status(201).json({
+      message: 'Submission successful',
+      submission: result.rows[0]
+    });
+  })
+);
+
+/**
+ * GET /api/events/:id/submissions
+ * Get submissions for an event (admin/superAdmin see all, users see own)
+ */
+router.get('/:id/submissions',
+  authenticateToken,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
+    let query = `
+      SELECT
+        es.*,
+        u.name as user_name,
+        u.email as user_email,
+        COALESCE(e.category, e.type) as event_category,
+        e.title as event_title
+      FROM event_submissions es
+      LEFT JOIN users u ON es.user_id = u.id
+      LEFT JOIN events e ON es.event_id = e.id
+      WHERE es.event_id = $1 AND e.deleted_at IS NULL
+    `;
+
+    const params = [id];
+
+    // Non-admins only see their own submissions
+    if (!isAdmin(req.user.role)) {
+      query += ` AND es.user_id = $2`;
+      params.push(req.user.id);
+    }
+
+    query += ` ORDER BY es.created_at DESC`;
+
+    const result = await pool.query(query, params);
+
+    res.json({ submissions: result.rows, total: result.rows.length });
   })
 );
 
