@@ -131,14 +131,14 @@ const AdminGallery = () => {
   };
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 text-slate-800">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 text-slate-800 dark:text-slate-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-4xl font-bold text-slate-800">
+          <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-100">
             Gallery Management
           </h1>
-          <p className="text-slate-600">
+          <p className="text-slate-600 dark:text-slate-400">
             Upload and manage photos from events, workshops, and exhibitions.
           </p>
         </div>
@@ -250,7 +250,7 @@ const AdminGallery = () => {
                 <img
                   src={preview}
                   alt="Preview"
-                  className="w-48 h-36 object-cover rounded-lg border border-slate-200"
+                  className="w-48 h-36 object-cover rounded-lg border border-slate-200 dark:border-slate-700"
                 />
                 <button
                   type="button"
@@ -302,7 +302,7 @@ const AdminGallery = () => {
         {/* Gallery Images List */}
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-slate-800">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
               All Gallery Images
             </h2>
             <span className="text-slate-500 text-sm">
@@ -319,7 +319,7 @@ const AdminGallery = () => {
           {!loading && images.length === 0 && (
             <div className="bg-white rounded-xl p-8 shadow-md text-center">
               <ImageIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-600">
+              <p className="text-slate-600 dark:text-slate-400">
                 No gallery images yet. Upload your first image above.
               </p>
             </div>
@@ -348,7 +348,7 @@ const AdminGallery = () => {
                     )}
                   </div>
                   <div className="p-4">
-                    <h3 className="font-semibold text-slate-800">
+                    <h3 className="font-semibold text-slate-800 dark:text-slate-100">
                       {img.title}
                     </h3>
                     {img.description && (

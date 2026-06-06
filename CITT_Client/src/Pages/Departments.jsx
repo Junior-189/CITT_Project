@@ -180,7 +180,7 @@ const Departments = () => {
                 {selectedDept.director && (
                   <div className="mt-5 p-4 bg-white rounded-xl">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-1">Current Director</p>
-                    <p className="font-bold text-slate-800">{selectedDept.director.name}</p>
+                    <p className="font-bold text-slate-800 dark:text-slate-100">{selectedDept.director.name}</p>
                     <p className="text-sm text-slate-500">{selectedDept.director.email}</p>
                   </div>
                 )}

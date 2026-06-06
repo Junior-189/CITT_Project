@@ -49,7 +49,7 @@ const ProfileForm = () => {
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
       <div className="bg-white text-slate-800 rounded-xl p-8 shadow-lg w-full max-w-lg">
-        <h2 className="text-xl font-bold mb-4 text-center text-slate-700">
+        <h2 className="text-xl font-bold mb-4 text-center text-slate-700 dark:text-slate-200">
           Complete Your Profile
         </h2>
         <p className="text-center text-slate-600 text-sm mb-6">

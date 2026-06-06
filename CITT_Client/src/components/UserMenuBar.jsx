@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Bell, User, LogOut, Lock, ChevronDown } from 'lucide-react';
+import { Bell, User, LogOut, Lock, ChevronDown, Sun, Moon } from 'lucide-react';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 import { getRoleBadgeClass } from '../utils/roleColors';
 
 const stripEmoji = (str) =>
@@ -9,6 +11,7 @@ const stripEmoji = (str) =>
 
 const UserMenuBar = () => {
   const { profile, role, logout, getAuthenticatedAxios } = useAuth();
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -163,6 +166,15 @@ const UserMenuBar = () => {
   return (
     <>
       <div className="flex items-center gap-4">
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+          aria-label="Toggle theme"
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
+
         {/* Notifications Bell */}
         <div className="relative" ref={notificationMenuRef}>
           <button
@@ -180,12 +192,12 @@ const UserMenuBar = () => {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
-              <div className="p-4 border-b border-gray-200 flex items-center justify-between">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-slate-700">
+              <div className="p-4 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Notifications</h3>
                   {unreadCount > 0 && (
-                    <p className="text-sm text-gray-600">{unreadCount} unread</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">{unreadCount} unread</p>
                   )}
                 </div>
                 {unreadCount > 0 && (
@@ -199,8 +211,8 @@ const UserMenuBar = () => {
               </div>
               <div className="max-h-96 overflow-y-auto">
                 {notifications.length === 0 ? (
-                  <div className="p-6 text-center text-gray-500">
-                    <Bell className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                  <div className="p-6 text-center text-gray-500 dark:text-slate-400">
+                    <Bell className="w-12 h-12 mx-auto mb-2 text-gray-300 dark:text-slate-600 dark:text-slate-400" />
                     <p>No notifications</p>
                   </div>
                 ) : (
@@ -214,13 +226,13 @@ const UserMenuBar = () => {
                           navigate(notification.link);
                         }
                       }}
-                      className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors ${
-                        !notification.read ? 'bg-blue-50' : ''
+                      className={`p-4 border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900 dark:hover:bg-slate-700 cursor-pointer transition-colors ${
+                        !notification.read ? 'bg-blue-50 dark:bg-slate-700' : ''
                       }`}
                     >
-                      <p className="text-sm font-medium text-gray-900">{stripEmoji(notification.title)}</p>
-                      <p className="text-xs text-gray-600 mt-1">{stripEmoji(notification.message)}</p>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-sm font-medium text-gray-900 dark:text-slate-100">{stripEmoji(notification.title)}</p>
+                      <p className="text-xs text-gray-600 dark:text-slate-400 mt-1">{stripEmoji(notification.message)}</p>
+                      <p className="text-xs text-gray-400 dark:text-slate-500 mt-1">
                         {new Date(notification.created_at).toLocaleString()}
                       </p>
                     </div>
@@ -250,10 +262,10 @@ const UserMenuBar = () => {
 
           {/* Profile Dropdown */}
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-xl z-50 border border-gray-200">
-              <div className="p-4 border-b border-gray-200">
-                <p className="text-sm font-semibold text-gray-900">{profile?.name}</p>
-                <p className="text-xs text-gray-600">{profile?.email}</p>
+            <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl z-50 border border-gray-200 dark:border-slate-700">
+              <div className="p-4 border-b border-gray-200 dark:border-slate-700">
+                <p className="text-sm font-semibold text-gray-900 dark:text-slate-100">{profile?.name}</p>
+                <p className="text-xs text-gray-600 dark:text-slate-400">{profile?.email}</p>
                 <span className={`inline-block mt-2 px-2 py-1 text-xs font-semibold rounded-full ${getRoleBadgeColor()}`}>
                   {getRoleLabel()}
                 </span>
@@ -261,19 +273,19 @@ const UserMenuBar = () => {
               <div className="py-2">
                 <button
                   onClick={() => { setShowProfileMenu(false); navigate('/profile'); }}
-                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   <User className="w-4 h-4" />
                   My Profile
                 </button>
                 <button
                   onClick={() => { setShowProfileMenu(false); setShowPasswordModal(true); }}
-                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors"
                 >
                   <Lock className="w-4 h-4" />
                   Change Password
                 </button>
-                <div className="border-t border-gray-200 my-2"></div>
+                <div className="border-t border-gray-200 dark:border-slate-700 my-2"></div>
                 <button
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
@@ -290,10 +302,10 @@ const UserMenuBar = () => {
       {/* Change Password Modal */}
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div ref={passwordModalRef} className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
+          <div ref={passwordModalRef} className="relative bg-white dark:bg-slate-800 rounded-lg shadow-xl w-full max-w-md mx-4">
             <div className="p-6">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900">Change Password</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-slate-100">Change Password</h2>
                 <button
                   onClick={() => {
                     setShowPasswordModal(false);
@@ -301,7 +313,7 @@ const UserMenuBar = () => {
                     setPasswordError('');
                     setPasswordSuccess('');
                   }}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                  className="text-gray-400 dark:text-slate-500 hover:text-gray-600 dark:text-slate-400 dark:hover:text-slate-300 transition-colors"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -322,34 +334,34 @@ const UserMenuBar = () => {
 
               <form onSubmit={handlePasswordChange}>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Current Password</label>
                   <input
                     type="password"
                     value={passwordData.currentPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 dark:text-slate-100 dark:bg-slate-700"
                     placeholder="Enter current password"
                     required
                   />
                 </div>
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">New Password</label>
                   <input
                     type="password"
                     value={passwordData.newPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 dark:text-slate-100 dark:bg-slate-700"
                     placeholder="Enter new password (min 6 characters)"
                     required
                   />
                 </div>
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Confirm New Password</label>
                   <input
                     type="password"
                     value={passwordData.confirmPassword}
                     onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 dark:text-slate-100 dark:bg-slate-700"
                     placeholder="Confirm new password"
                     required
                   />
@@ -363,7 +375,7 @@ const UserMenuBar = () => {
                       setPasswordError('');
                       setPasswordSuccess('');
                     }}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-50 dark:bg-slate-900 dark:hover:bg-slate-700 transition-colors"
                   >
                     Cancel
                   </button>

@@ -51,7 +51,7 @@ const SuperAdminDashboard = () => {
               </p>
             </div>
             <div className="text-right">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-slate-600">
+              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white text-slate-600 dark:text-slate-400">
                 {role}
               </span>
               <p className="text-sm opacity-80 mt-1">{profile?.email}</p>
@@ -70,7 +70,7 @@ const SuperAdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">
                   {loading ? '...' : stats.totalUsers.toLocaleString()}
                 </p>
               </div>
@@ -86,7 +86,7 @@ const SuperAdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Total Projects</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">
                   {loading ? '...' : stats.totalProjects.toLocaleString()}
                 </p>
               </div>
@@ -102,7 +102,7 @@ const SuperAdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Funding Apps</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">
                   {loading ? '...' : stats.fundingApps.toLocaleString()}
                 </p>
               </div>
@@ -118,7 +118,7 @@ const SuperAdminDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">IP Records</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">
                   {loading ? '...' : stats.ipRecords.toLocaleString()}
                 </p>
               </div>
@@ -133,7 +133,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-700"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Role Management</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Role Management</h3>
               <svg className="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
@@ -147,7 +147,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-700"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">System Stats</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">System Stats</h3>
               <svg className="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -161,7 +161,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-700"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Audit Logs</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Audit Logs</h3>
               <svg className="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -175,7 +175,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-700"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Database Info</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Database Info</h3>
               <svg className="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
               </svg>
@@ -189,7 +189,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-700"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Analytics</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Analytics</h3>
               <svg className="w-6 h-6 text-teal-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -203,7 +203,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-red-500"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Past Users</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Past Users</h3>
               <svg className="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
@@ -217,7 +217,7 @@ const SuperAdminDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-teal-600"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Admin Dashboard</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Admin Dashboard</h3>
               <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>

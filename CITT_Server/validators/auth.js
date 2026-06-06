@@ -82,6 +82,7 @@ const updateProfileSchema = z.object({
   name: z.string().min(2).max(100).optional(),
   email: z.string().email().optional(),
   phone: z.string().max(20).optional().nullable(),
+  campus: z.string().max(100).optional().nullable(),
 });
 
 module.exports = {

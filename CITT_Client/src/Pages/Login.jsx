@@ -137,7 +137,7 @@ const Login = () => {
 
               <button
                 onClick={handleGoogleLogin}
-                className="w-full flex items-center justify-center gap-3 px-5 py-2.5 bg-white text-slate-700 border-none rounded-md cursor-pointer hover:bg-gray-100 transition-colors font-semibold"
+                className="w-full flex items-center justify-center gap-3 px-5 py-2.5 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border-none rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors font-semibold"
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M19.9895 10.1871C19.9895 9.36767 19.9214 8.76973 19.7742 8.14966H10.1992V11.848H15.8195C15.7062 12.7671 15.0943 14.1512 13.7346 15.0813L13.7155 15.2051L16.7429 17.4969L16.9527 17.5174C18.879 15.7789 19.9895 13.221 19.9895 10.1871Z" fill="#4285F4"/>

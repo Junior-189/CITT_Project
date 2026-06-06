@@ -85,7 +85,7 @@ const ProjectAssignments = () => {
             { label: 'TC Members', count: tcMembers.length, color: 'border-orange-500' },
           ].map(s => (
             <div key={s.label} className={`bg-white rounded-xl p-4 border-l-4 ${s.color} shadow-sm text-center`}>
-              <p className="text-2xl font-bold text-slate-800">{s.count}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.count}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             </div>
           ))}
@@ -104,7 +104,7 @@ const ProjectAssignments = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search by project title or innovator name…"
-            className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white"
+            className="w-full border border-gray-300 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-800"
           />
         </div>
 
@@ -155,7 +155,7 @@ const ProjectAssignments = () => {
                           <select
                             value={form.type || ''}
                             onChange={e => setAssignForm(f => ({ ...f, [p.id]: { type: e.target.value, userId: '' } }))}
-                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white"
+                            className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-800"
                           >
                             <option value="">Select type…</option>
                             <option value="mentor">Mentor</option>

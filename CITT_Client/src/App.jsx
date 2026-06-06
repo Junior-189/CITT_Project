@@ -49,6 +49,7 @@ import FundingManagement from './Pages/admin/FundingManagement';
 import AdminSubmissions from './Pages/admin/AdminSubmissions';
 import AdminGallery from './Pages/admin/AdminGallery';
 import ProjectAssignments from './Pages/admin/ProjectAssignments';
+import ContactMessages from './Pages/admin/ContactMessages';
 
 //Gallery Page
 import Gallery from './Pages/Gallery';
@@ -73,6 +74,7 @@ import SubmittedProjects from './Pages/ipmanager/SubmittedProjects';
 //Auth Imports
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
+import { ThemeProvider } from './context/ThemeContext';
 import {
   ProtectedRoute,
   PublicRoute,
@@ -84,6 +86,7 @@ import {
 
 const App = () => (
   <LanguageProvider>
+    <ThemeProvider>
     <AuthProvider>
         <Router>
           <MainLayout>
@@ -120,6 +123,7 @@ const App = () => (
               <Route path="/admin/audit-logs" element={<AdminRoute><AuditLogs /></AdminRoute>} />
               <Route path="/admin/submissions" element={<AdminRoute><AdminSubmissions /></AdminRoute>} />
               <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
+              <Route path="/admin/contact" element={<AdminRoute><ContactMessages /></AdminRoute>} />
 
               {/* SuperAdmin Routes */}
               <Route path="/superadmin/dashboard" element={<SuperAdminRoute><SuperAdminDashboard /></SuperAdminRoute>} />
@@ -180,6 +184,7 @@ const App = () => (
           </MainLayout>
         </Router>
     </AuthProvider>
+    </ThemeProvider>
   </LanguageProvider>
 );
 

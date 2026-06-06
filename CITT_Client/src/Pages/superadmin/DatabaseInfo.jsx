@@ -31,7 +31,7 @@ const DatabaseInfo = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading database information...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading database information...</p>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ const DatabaseInfo = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Database Information</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Database Information</h1>
           <p className="text-gray-600 mt-2">Detailed view of database tables and records</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-800">
             <span className="mr-1"> </span> SuperAdmin Only
@@ -77,7 +77,7 @@ const DatabaseInfo = () => {
                   </div>
                   <div className="ml-4">
                     <p className="text-gray-600 text-sm">Total Tables</p>
-                    <p className="text-2xl font-bold text-gray-900">{overview.total_tables || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{overview.total_tables || 0}</p>
                   </div>
                 </div>
               </div>
@@ -91,7 +91,7 @@ const DatabaseInfo = () => {
                   </div>
                   <div className="ml-4">
                     <p className="text-gray-600 text-sm">Total Records</p>
-                    <p className="text-2xl font-bold text-gray-900">{overview.total_records || 0}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{overview.total_records || 0}</p>
                   </div>
                 </div>
               </div>
@@ -105,7 +105,7 @@ const DatabaseInfo = () => {
                   </div>
                   <div className="ml-4">
                     <p className="text-gray-600 text-sm">Database Size</p>
-                    <p className="text-2xl font-bold text-gray-900">{overview.database_size || 'N/A'}</p>
+                    <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{overview.database_size || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -133,7 +133,7 @@ const DatabaseInfo = () => {
           <div className="bg-white rounded-lg shadow-md overflow-hidden">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Table Name
@@ -152,7 +152,7 @@ const DatabaseInfo = () => {
                 <tbody className="bg-white divide-y divide-gray-200">
                   {tables && tables.length > 0 ? (
                     tables.map((table, index) => (
-                      <tr key={index} className="hover:bg-gray-50">
+                      <tr key={index} className="hover:bg-gray-50 dark:bg-slate-900">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
                             <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-teal-100 flex items-center justify-center">
@@ -161,20 +161,20 @@ const DatabaseInfo = () => {
                               </svg>
                             </div>
                             <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{table.name}</div>
-                              <div className="text-xs text-gray-500">{table.schema || 'public'}</div>
+                              <div className="text-sm font-medium text-gray-900 dark:text-slate-100">{table.name}</div>
+                              <div className="text-xs text-gray-500 dark:text-slate-400">{table.schema || 'public'}</div>
                             </div>
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900">{table.description || getTableDescription(table.name)}</div>
+                          <div className="text-sm text-gray-900 dark:text-slate-100">{table.description || getTableDescription(table.name)}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full bg-teal-100 text-teal-800">
                             {table.record_count || 0} records
                           </span>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                           {table.last_updated ? new Date(table.last_updated).toLocaleDateString() : 'N/A'}
                         </td>
                       </tr>
@@ -185,8 +185,8 @@ const DatabaseInfo = () => {
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
                         </svg>
-                        <h3 className="mt-2 text-sm font-medium text-gray-900">No tables found</h3>
-                        <p className="mt-1 text-sm text-gray-500">Database tables information is not available.</p>
+                        <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-slate-100">No tables found</h3>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">Database tables information is not available.</p>
                       </td>
                     </tr>
                   )}
@@ -203,17 +203,17 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Projects Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Registered Projects</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Registered Projects</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'projects')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Pending Approvals</span>
+                <span className="text-gray-600 dark:text-slate-400">Pending Approvals</span>
                 <span className="text-lg font-bold text-yellow-600">-</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Approved Projects</span>
+                <span className="text-gray-600 dark:text-slate-400">Approved Projects</span>
                 <span className="text-lg font-bold text-green-600">-</span>
               </div>
             </div>
@@ -224,17 +224,17 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Funding Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Funding Applications</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Total Funding Applications</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'funding')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Pending Review</span>
+                <span className="text-gray-600 dark:text-slate-400">Pending Review</span>
                 <span className="text-lg font-bold text-yellow-600">-</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Approved Funding</span>
+                <span className="text-gray-600 dark:text-slate-400">Approved Funding</span>
                 <span className="text-lg font-bold text-green-600">-</span>
               </div>
             </div>
@@ -245,17 +245,17 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Events Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Events</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Total Events</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'events')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Active Events</span>
+                <span className="text-gray-600 dark:text-slate-400">Active Events</span>
                 <span className="text-lg font-bold text-blue-600">-</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Past Events</span>
+                <span className="text-gray-600 dark:text-slate-400">Past Events</span>
                 <span className="text-lg font-bold text-purple-600">-</span>
               </div>
             </div>
@@ -266,17 +266,17 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">IP Management Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total IP Records</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Total IP Records</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'ip_management')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Pending Review</span>
+                <span className="text-gray-600 dark:text-slate-400">Pending Review</span>
                 <span className="text-lg font-bold text-yellow-600">-</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Approved IPs</span>
+                <span className="text-gray-600 dark:text-slate-400">Approved IPs</span>
                 <span className="text-lg font-bold text-green-600">-</span>
               </div>
             </div>
@@ -287,17 +287,17 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">User Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Total Users</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Total Users</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'users')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Active Users</span>
+                <span className="text-gray-600 dark:text-slate-400">Active Users</span>
                 <span className="text-lg font-bold text-green-600">-</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Inactive Users</span>
+                <span className="text-gray-600 dark:text-slate-400">Inactive Users</span>
                 <span className="text-lg font-bold text-red-600">-</span>
               </div>
             </div>
@@ -308,19 +308,19 @@ const DatabaseInfo = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">System Data</h3>
             <div className="space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Audit Logs</span>
-                <span className="text-lg font-bold text-gray-900">
+                <span className="text-gray-600 dark:text-slate-400">Audit Logs</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-slate-100">
                   {tables?.find(t => t.name === 'audit_logs')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Permissions</span>
+                <span className="text-gray-600 dark:text-slate-400">Permissions</span>
                 <span className="text-lg font-bold text-blue-600">
                   {tables?.find(t => t.name === 'role_permissions')?.record_count || 0}
                 </span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-600">Notifications</span>
+                <span className="text-gray-600 dark:text-slate-400">Notifications</span>
                 <span className="text-lg font-bold text-purple-600">
                   {tables?.find(t => t.name === 'notifications')?.record_count || 0}
                 </span>

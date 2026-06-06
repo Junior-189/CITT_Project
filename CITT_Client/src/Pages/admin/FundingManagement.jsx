@@ -281,7 +281,7 @@ const FundingManagement = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading funding applications...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading funding applications...</p>
         </div>
       </div>
     );
@@ -292,7 +292,7 @@ const FundingManagement = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Funding Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Funding Management</h1>
           <p className="text-gray-600 mt-2">Review, approve, and manage funding applications</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-800">
             <span className="mr-1"> </span> Admin Only
@@ -353,7 +353,7 @@ const FundingManagement = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by title or grant type..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
               />
             </div>
 
@@ -364,7 +364,7 @@ const FundingManagement = () => {
 	              <select
 	                value={filterStatus}
 	                onChange={(e) => setFilterStatus(e.target.value)}
-	                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+	                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
 	              >
 	                <option value="all">All Status</option>
 	                <option value="Under Review">Under Review</option>
@@ -396,8 +396,8 @@ const FundingManagement = () => {
             <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No Applications Found</h3>
-            <p className="mt-2 text-sm text-gray-600">
+            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-slate-100">No Applications Found</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
               No funding applications match your current filters.
             </p>
           </div>
@@ -407,7 +407,7 @@ const FundingManagement = () => {
               <div key={app.id} className="bg-white rounded-lg shadow-md p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900">{app.title}</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100">{app.title}</h3>
                     <p className="text-sm text-gray-500 mt-1">Application ID: {app.id}</p>
                     <div className="mt-2">
                       <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(app.status)}`}>
@@ -419,7 +419,7 @@ const FundingManagement = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-gray-600">Amount Requested</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">Amount Requested</p>
                     <p className="text-2xl font-bold text-blue-600">{(app.amountRequested || 0).toLocaleString()} TZS</p>
                     {app.amountApproved > 0 && (
                       <>
@@ -432,11 +432,11 @@ const FundingManagement = () => {
 
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Justification</p>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-slate-300">Justification</p>
                     <p className="text-sm text-gray-600 mt-1 line-clamp-3">{app.justification}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Submitted</p>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-slate-300">Submitted</p>
                     <p className="text-sm text-gray-600 mt-1">{formatDate(app.createdAt)}</p>
                     {app.approvedAt && (
                       <>
@@ -488,7 +488,7 @@ const FundingManagement = () => {
                 )}
 
                 {/* Actions */}
-                <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200">
+                <div className="flex flex-wrap gap-2 pt-4 border-t border-gray-200 dark:border-slate-700">
                   <button
                     onClick={() => openReviewModal(app)}
                     className="px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition font-medium"
@@ -516,7 +516,7 @@ const FundingManagement = () => {
                 {/* Modal header */}
                 <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-2xl flex items-center justify-between">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900">Application Review</h3>
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100">Application Review</h3>
                     <p className="text-sm text-gray-500 mt-1">Review the details before taking action</p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -641,7 +641,7 @@ const FundingManagement = () => {
                   {/* Review Section - Only for pending applications */}
                   {selectedApp.status === 'Under Review' && (
                     <div className="border-t border-gray-200 pt-5 space-y-4">
-                      <h4 className="text-lg font-semibold text-gray-900">Admin Review</h4>
+                      <h4 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Admin Review</h4>
 
                       {/* Approval Amount */}
                       <div>
@@ -652,7 +652,7 @@ const FundingManagement = () => {
                           type="number"
                           value={approvalAmount}
                           onChange={(e) => setApprovalAmount(e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 dark:text-slate-100"
                           placeholder="Enter amount to approve"
                         />
                         <p className="text-xs text-gray-500 mt-1">

@@ -95,7 +95,7 @@ const WorkspacePortal = () => {
   };
 
   return (
-    <main className="flex-1 bg-gray-50 overflow-auto">
+    <main className="flex-1 bg-gray-50 dark:bg-slate-900 overflow-auto">
       {/* Hero */}
       <div className="bg-gradient-to-br from-slate-800 via-teal-800 to-teal-700 text-white py-14 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -118,9 +118,9 @@ const WorkspacePortal = () => {
               { label: 'Completed', value: stats.completedProjects, color: 'border-green-500' },
               { label: 'Notifications', value: stats.unreadNotifications, color: 'border-red-400' },
             ].map(s => (
-              <div key={s.label} className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${s.color} text-center`}>
-                <p className="text-2xl font-bold text-slate-800">{s.value}</p>
-                <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
+              <div key={s.label} className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border-l-4 ${s.color} text-center">
+                <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.value}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium">{s.label}</p>
               </div>
             ))}
           </div>
@@ -137,19 +137,19 @@ const WorkspacePortal = () => {
               <div
                 key={card.role}
                 onClick={() => handleCardClick(card)}
-                className={`bg-white rounded-2xl p-8 shadow-sm border-2 cursor-pointer transition-all duration-200 flex flex-col items-center text-center hover:shadow-lg
+                className={`bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border-2 cursor-pointer transition-all duration-200 flex flex-col items-center text-center hover:shadow-lg
                   ${selected?.role === card.role
                     ? `${c.border} ring-4 ${c.ring} shadow-md`
                     : isMe
                     ? `${c.border} shadow-md`
-                    : 'border-gray-100 hover:border-gray-200'}
+                    : 'border-gray-100 dark:border-slate-700 hover:border-gray-200 dark:hover:border-slate-600'}
                   ${canGo ? 'hover:-translate-y-1' : ''}`}
               >
                 <div className={`w-24 h-24 rounded-full ${c.icon} flex items-center justify-center mb-5`}>
                   <Icon className="w-12 h-12" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-1">{card.title}</h3>
-                <p className="text-sm text-slate-500 leading-snug max-w-[180px]">{card.subtitle}</p>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1">{card.title}</h3>
+                <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug max-w-[180px]">{card.subtitle}</p>
                 {isMe && (
                   <span className={`mt-3 text-xs px-2.5 py-1 rounded-full font-semibold ${c.badge}`}>
                     Your Role
@@ -167,11 +167,11 @@ const WorkspacePortal = () => {
 
         {/* Detail panel when non-member clicks a card */}
         {selected && (
-          <div className={`rounded-2xl border-2 p-6 md:p-8 mb-8 ${selected.color.bg} ${selected.color.border}`}>
+          <div className={`rounded-2xl border-2 p-6 md:p-8 mb-8 dark:bg-slate-800 ${selected.color.bg} ${selected.color.border}`}>
             <div className="flex items-start justify-between mb-5">
               <div>
-                <h2 className="text-2xl font-bold text-slate-800">{selected.title} Workspace</h2>
-                <p className="text-slate-500 mt-1 text-sm">{selected.subtitle}</p>
+                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{selected.title} Workspace</h2>
+                <p className="text-slate-500 dark:text-slate-400 mt-1 text-sm">{selected.subtitle}</p>
               </div>
               <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 p-1">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -179,14 +179,14 @@ const WorkspacePortal = () => {
                 </svg>
               </button>
             </div>
-            <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wide mb-3">Responsibilities</h3>
+            <h3 className="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase tracking-wide mb-3">Responsibilities</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {selected.responsibilities.map((r, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 bg-white rounded-lg">
+                  <div key={i} className="flex items-start gap-3 p-3 bg-white dark:bg-slate-800 rounded-lg">
                   <span className={`w-6 h-6 rounded-full ${selected.color.icon} flex items-center justify-center text-xs font-bold flex-shrink-0`}>
                     {i + 1}
                   </span>
-                  <p className="text-sm text-slate-700">{r}</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-200">{r}</p>
                 </div>
               ))}
             </div>

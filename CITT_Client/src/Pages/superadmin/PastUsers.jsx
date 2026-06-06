@@ -90,7 +90,7 @@ const PastUsers = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading deleted users...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading deleted users...</p>
         </div>
       </div>
     );
@@ -101,7 +101,7 @@ const PastUsers = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Past Users (Deleted)</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Past Users (Deleted)</h1>
           <p className="text-gray-600 mt-2">View and restore deleted user accounts</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             SuperAdmin & Admin Only
@@ -147,7 +147,7 @@ const PastUsers = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Total Deleted Users</p>
-                <p className="text-2xl font-bold text-gray-900">{deletedUsers.length}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{deletedUsers.length}</p>
               </div>
             </div>
           </div>
@@ -198,7 +198,7 @@ const PastUsers = () => {
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
             />
           </div>
         </div>
@@ -209,8 +209,8 @@ const PastUsers = () => {
             <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No Deleted Users Found</h3>
-            <p className="mt-2 text-sm text-gray-600">
+            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-slate-100">No Deleted Users Found</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
               {searchTerm ? 'No users match your search criteria.' : 'There are no deleted users to display.'}
             </p>
           </div>
@@ -226,8 +226,8 @@ const PastUsers = () => {
                       </span>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">{user.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-slate-400">{user.email}</p>
                     </div>
                   </div>
                 </div>
@@ -297,12 +297,12 @@ const PastUsers = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Restore User Account
                       </h3>
                       <div className="mt-4">
                         <p className="text-sm text-gray-500 mb-4">
-                          Are you sure you want to restore the account for <strong className="text-gray-900">{selectedUser.name}</strong>?
+                          Are you sure you want to restore the account for <strong className="text-gray-900 dark:text-slate-100">{selectedUser.name}</strong>?
                         </p>
                         <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
                           <p className="text-xs text-green-700">

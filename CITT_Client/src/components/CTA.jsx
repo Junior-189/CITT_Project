@@ -22,13 +22,13 @@ const CTA = () => {
         <div className="flex justify-center gap-5 flex-wrap">
           <Link 
             to="/register" 
-            className="px-9 py-4 rounded-full no-underline font-semibold text-lg transition-all duration-300 inline-block bg-white text-slate-800 hover:transform hover:-translate-y-1 hover:shadow-2xl"
+            className="px-9 py-4 rounded-full no-underline font-semibold text-lg transition-all duration-300 inline-block bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 hover:transform hover:-translate-y-1 hover:shadow-2xl"
           >
             Register Now
           </Link>
           <Link 
             to="https://must.ac.tz/academics/centres/centre-for-innovation-and-technology-transfer" 
-            className="px-9 py-4 rounded-full no-underline font-semibold text-lg transition-all duration-300 inline-block bg-transparent text-white border-2 border-white hover:bg-white hover:text-slate-800"
+            className="px-9 py-4 rounded-full no-underline font-semibold text-lg transition-all duration-300 inline-block bg-transparent text-white border-2 border-white hover:bg-white dark:bg-slate-800 hover:text-slate-800 dark:text-slate-100"
           >
             Learn More
           </Link>

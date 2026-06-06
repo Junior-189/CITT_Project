@@ -294,12 +294,12 @@ const Events = () => {
   // Show loading indicator on initial load
   if (loading && events.length === 0 && !error) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 text-slate-800">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
         <div className="max-w-6xl mx-auto">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-600 mx-auto mb-4"></div>
-              <p className="text-slate-600 text-lg">Loading events...</p>
+              <p className="text-slate-600 dark:text-slate-400 text-lg">Loading events...</p>
             </div>
           </div>
         </div>
@@ -308,12 +308,12 @@ const Events = () => {
   }
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 text-slate-800">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-4xl font-bold text-slate-800">Events & Exhibitions</h1>
-          <p className="text-slate-600">
+          <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-100">Events & Exhibitions</h1>
+          <p className="text-slate-600 dark:text-slate-400">
             {isAdmin
               ? "Create, announce and manage innovation events — hackathons, workshops, challenges and exhibitions."
               : "Explore upcoming events and submit your innovative ideas."}
@@ -341,52 +341,44 @@ const Events = () => {
 
         {/* Toggle Buttons */}
         <div className="flex gap-3 mb-6">
-          <div className="inline-flex bg-slate-100 rounded-lg p-1">
+          <div className="inline-flex bg-slate-100 dark:bg-slate-700 rounded-lg p-1">
             {isAdmin ? (
               <>
                 <button onClick={() => setActiveView("events")}
-                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white dark:bg-slate-800 text-teal-700 shadow-sm" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100"}`}>
                   Manage Events
                 </button>
                 <button onClick={() => setActiveView("submissions")}
-                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white dark:bg-slate-800 text-teal-700 shadow-sm" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100"}`}>
                   Entry History
                 </button>
               </>
             ) : (
               <>
                 <button onClick={() => setActiveView("events")}
-                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "events" ? "bg-white dark:bg-slate-800 text-teal-700 shadow-sm" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100"}`}>
                   Upcoming Events
                 </button>
                 <button onClick={() => setActiveView("submissions")}
-                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white text-teal-700 shadow-sm" : "text-slate-600 hover:text-slate-800"}`}>
+                  className={`px-5 py-2 rounded-md text-sm font-semibold transition-colors ${activeView === "submissions" ? "bg-white dark:bg-slate-800 text-teal-700 shadow-sm" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100"}`}>
                   My Submissions
                 </button>
               </>
             )}
           </div>
-          {(user || profile) && (
-            <button
-              onClick={() => setShowSubmitForm(s => !s)}
-              className="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold rounded-lg transition-colors"
-            >
-              {showSubmitForm ? 'Close Form' : 'Submit Entry'}
-            </button>
-          )}
         </div>
 
         {/* Overview Cards */}
         {activeView === "events" && !isAdmin && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border-l-4 border-teal-600">
               <div className="flex items-center gap-3 mb-2">
                 <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <h3 className="font-bold text-slate-800 text-lg">Upcoming Events</h3>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">Upcoming Events</h3>
               </div>
-              <p className="text-slate-600 mt-2">Browse upcoming events and competitions.</p>
+              <p className="text-slate-600 dark:text-slate-400 mt-2">Browse upcoming events and competitions.</p>
               <div className="mt-4">
                 <button onClick={() => setActiveView("events")}
                   className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
@@ -394,14 +386,14 @@ const Events = () => {
                 </button>
               </div>
             </div>
-            <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border-l-4 border-teal-600">
               <div className="flex items-center gap-3 mb-2">
                 <svg className="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <h3 className="font-bold text-slate-800 text-lg">Submit Entry</h3>
+                <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">Submit Entry</h3>
               </div>
-              <p className="text-slate-600 mt-2">Submit your innovative ideas and compete for prizes.</p>
+              <p className="text-slate-600 dark:text-slate-400 mt-2">Submit your innovative ideas and compete for prizes.</p>
               <div className="mt-4">
                 <button onClick={() => { setActiveView("submissions"); setShowSubmitForm(true); }}
                   className="bg-teal-600 text-white px-4 py-2 rounded-lg hover:bg-teal-700">
@@ -416,29 +408,29 @@ const Events = () => {
         {activeView === "events" && isAdmin && (
           <div>
             {/* Create Event Form */}
-            <div className="bg-white rounded-xl p-6 shadow-md mb-6">
-              <h2 className="text-2xl font-bold text-slate-800 mb-4">Create New Event</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md mb-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">Create New Event</h2>
 
               <form onSubmit={handleCreateEvent} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Event Title *</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Event Title *</label>
                     <input
                       type="text"
                       placeholder="e.g., Innovation Hackathon 2025"
                       value={eventForm.title}
                       onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       required
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Event Type *</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Event Type *</label>
                     <select
                       value={eventForm.type}
                       onChange={(e) => setEventForm({ ...eventForm, type: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     >
                       <option value="hackathon">Hackathon</option>
                       <option value="workshop">Workshop</option>
@@ -451,102 +443,102 @@ const Events = () => {
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-medium mb-1">Description</label>
+                  <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Description</label>
                   <textarea
                     placeholder="Brief description of the event"
                     value={eventForm.description}
                     onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     rows="3"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Start Date</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Start Date</label>
                     <input
                       type="date"
                       value={eventForm.start_date}
                       onChange={(e) => setEventForm({ ...eventForm, start_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">End Date</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">End Date</label>
                     <input
                       type="date"
                       value={eventForm.end_date}
                       onChange={(e) => setEventForm({ ...eventForm, end_date: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Submission Deadline</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Submission Deadline</label>
                     <input
                       type="date"
                       value={eventForm.submission_deadline}
                       onChange={(e) => setEventForm({ ...eventForm, submission_deadline: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Location</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Location</label>
                     <input
                       type="text"
                       placeholder="e.g., CITT Innovation Hub"
                       value={eventForm.location}
                       onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Capacity</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Capacity</label>
                     <input
                       type="number"
                       placeholder="e.g., 100"
                       value={eventForm.capacity}
                       onChange={(e) => setEventForm({ ...eventForm, capacity: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Prize</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Prize</label>
                     <input
                       type="text"
                       placeholder="e.g., TZS 5,000,000"
                       value={eventForm.prize}
                       onChange={(e) => setEventForm({ ...eventForm, prize: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-medium mb-1">Requirements</label>
+                  <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Requirements</label>
                   <textarea
                     placeholder="Entry requirements (one per line)"
                     value={eventForm.requirements}
                     onChange={(e) => setEventForm({ ...eventForm, requirements: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                     rows="3"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-medium mb-1">Tags</label>
+                  <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Tags</label>
                   <input
                     type="text"
                     placeholder="e.g., hackathon, innovation, technology (comma separated)"
                     value={eventForm.tags}
                     onChange={(e) => setEventForm({ ...eventForm, tags: e.target.value })}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                   />
                 </div>
 
@@ -558,7 +550,7 @@ const Events = () => {
                     onChange={(e) => setEventForm({ ...eventForm, published: e.target.checked })}
                     className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
                   />
-                  <label htmlFor="published" className="text-slate-700">
+                  <label htmlFor="published" className="text-slate-700 dark:text-slate-200">
                     Publish event immediately
                   </label>
                 </div>
@@ -590,7 +582,7 @@ const Events = () => {
                         banner_image: "",
                       })
                     }
-                    className="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300"
+                    className="bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500"
                   >
                     Reset
                   </button>
@@ -600,40 +592,40 @@ const Events = () => {
 
             {/* List of All Events */}
             <div className="space-y-4">
-              <h3 className="text-xl font-bold text-slate-800 mb-2">All Events</h3>
+              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">All Events</h3>
 
-              {loading && <p className="text-slate-600">Loading events...</p>}
+              {loading && <p className="text-slate-600 dark:text-slate-400">Loading events...</p>}
 
               {!loading && events.length === 0 && (
-                <div className="bg-white rounded-xl p-8 shadow-md text-center">
-                  <p className="text-slate-600">No events created yet. Create your first event above.</p>
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md text-center">
+                  <p className="text-slate-600 dark:text-slate-400">No events created yet. Create your first event above.</p>
                 </div>
               )}
 
               {events.map((ev) => (
                 <div
                   key={ev.id}
-                  className="bg-white p-6 rounded-xl shadow-md border-l-4 border-teal-600"
+                  className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md border-l-4 border-teal-600"
                 >
                   <div className="flex flex-col md:flex-row md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <span className="bg-slate-100 px-3 py-1 rounded-full text-sm text-slate-800 font-medium">
+                        <span className="bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-sm text-slate-800 dark:text-slate-100 font-medium">
                           {ev.type}
                         </span>
                         {ev.published ? (
-                          <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-3 py-1 rounded-full text-sm font-medium">
                             Published
                           </span>
                         ) : (
-                          <span className="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-3 py-1 rounded-full text-sm font-medium">
                             Draft
                           </span>
                         )}
                       </div>
 
-                      <h4 className="text-xl font-bold text-slate-800 mb-2">{ev.title}</h4>
-                      <p className="text-slate-600 mb-2">{ev.description}</p>
+                      <h4 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{ev.title}</h4>
+                      <p className="text-slate-600 dark:text-slate-400 mb-2">{ev.description}</p>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-slate-500">
                         <p><strong>Start:</strong> {formatDate(ev.start_date)}</p>
@@ -650,7 +642,7 @@ const Events = () => {
                         onClick={() => handleTogglePublish(ev.id, ev.published)}
                         className={`px-4 py-2 rounded-lg font-medium ${
                           ev.published
-                            ? "bg-slate-200 text-slate-700 hover:bg-slate-300"
+                            ? "bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-500"
                             : "bg-teal-600 text-white hover:bg-teal-700"
                         }`}
                       >
@@ -686,13 +678,13 @@ const Events = () => {
         {/* Upcoming Events (Innovators) - activeView === "events" */}
         {activeView === "events" && !isAdmin && (
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Upcoming Events</h2>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">Upcoming Events</h2>
 
-            {loading && <p className="text-slate-600">Loading events...</p>}
+            {loading && <p className="text-slate-600 dark:text-slate-400">Loading events...</p>}
 
             {!loading && events.filter(e => e.published).length === 0 && (
-              <div className="bg-white rounded-xl p-8 shadow-md text-center">
-                <p className="text-slate-600">No upcoming events at the moment.</p>
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md text-center">
+                <p className="text-slate-600 dark:text-slate-400">No upcoming events at the moment.</p>
               </div>
             )}
 
@@ -701,18 +693,18 @@ const Events = () => {
               .map((ev) => (
                 <div
                   key={ev.id}
-                  className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600"
+                  className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border-l-4 border-teal-600"
                 >
                   <div className="flex flex-col md:flex-row justify-between gap-4">
                     <div className="flex-1">
-                      <span className="bg-slate-100 px-3 py-1 rounded-full text-sm text-slate-800 font-medium">
+                      <span className="bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-full text-sm text-slate-800 dark:text-slate-100 font-medium">
                         {ev.type}
                       </span>
 
-                      <h3 className="text-2xl font-bold text-slate-800 mt-2">{ev.title}</h3>
-                      <p className="text-slate-600 mt-2">{ev.description}</p>
+                      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mt-2">{ev.title}</h3>
+                      <p className="text-slate-600 dark:text-slate-400 mt-2">{ev.description}</p>
 
-                      <div className="mt-4 space-y-1 text-sm text-slate-600">
+                      <div className="mt-4 space-y-1 text-sm text-slate-600 dark:text-slate-400">
                         <p><strong>Start Date:</strong> {formatDate(ev.start_date)}</p>
                         <p><strong>End Date:</strong> {formatDate(ev.end_date)}</p>
                         <p><strong>Submission Deadline:</strong> {formatDate(ev.submission_deadline)}</p>
@@ -722,8 +714,8 @@ const Events = () => {
 
                       {ev.requirements && (
                         <div className="mt-3">
-                          <p className="text-slate-800 font-semibold">Requirements:</p>
-                          <p className="text-sm text-slate-600 whitespace-pre-line mt-1">
+                          <p className="text-slate-800 dark:text-slate-100 font-semibold">Requirements:</p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 whitespace-pre-line mt-1">
                             {ev.requirements}
                           </p>
                         </div>
@@ -752,27 +744,19 @@ const Events = () => {
         {activeView === "submissions" && (
           <div>
             <div className="flex justify-between items-center mb-5">
-              <h2 className="text-xl font-bold text-slate-800">{isAdmin ? 'Entry History' : 'My Submissions'}</h2>
-              {(user || profile) && (
-                <button
-                  onClick={() => setShowSubmitForm(s => !s)}
-                  className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-teal-700"
-                >
-                  {showSubmitForm ? 'Close Form' : 'Submit Entry'}
-                </button>
-              )}
+              <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">{isAdmin ? 'Entry History' : 'My Submissions'}</h2>
             </div>
 
             {showSubmitForm && (user || profile) && (
-              <div className="mb-6 bg-white border border-slate-200 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-800 mb-4">Submit Event Entry</h3>
+              <div className="mb-6 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Submit Event Entry</h3>
                 <form onSubmit={handleSubmitEntry} className="space-y-4">
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Select Event *</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Select Event *</label>
                     <select
                       value={submissionForm.eventId}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, eventId: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       required
                     >
                       <option value="">Choose an event</option>
@@ -782,59 +766,59 @@ const Events = () => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Project / Entry Title *</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Project / Entry Title *</label>
                     <input type="text" value={submissionForm.title}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, title: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="Enter your project title" required />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-slate-700 font-medium mb-1">Team Name</label>
+                      <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Team Name</label>
                       <input type="text" value={submissionForm.team_name}
                         onChange={(e) => setSubmissionForm({ ...submissionForm, team_name: e.target.value })}
-                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="Your team name" />
                     </div>
                     <div>
-                      <label className="block text-slate-700 font-medium mb-1">Team Members</label>
+                      <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Team Members</label>
                       <input type="text" value={submissionForm.members}
                         onChange={(e) => setSubmissionForm({ ...submissionForm, members: e.target.value })}
-                        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                         placeholder="List names, emails" />
                     </div>
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Project Description *</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Project Description *</label>
                     <textarea value={submissionForm.description}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, description: e.target.value })}
-                      rows="4" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      rows="4" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="Describe your project" required />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Problem Statement</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Problem Statement</label>
                     <textarea value={submissionForm.problem_statement}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, problem_statement: e.target.value })}
-                      rows="2" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      rows="2" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="What problem are you solving?" />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Proposed Solution</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Proposed Solution</label>
                     <textarea value={submissionForm.solution}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, solution: e.target.value })}
-                      rows="2" className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      rows="2" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="How does your solution work?" />
                   </div>
                   <div>
-                    <label className="block text-slate-700 font-medium mb-1">Pitch Video URL (optional)</label>
+                    <label className="block text-slate-700 dark:text-slate-200 font-medium mb-1">Pitch Video URL (optional)</label>
                     <input type="url" value={submissionForm.pitch_url}
                       onChange={(e) => setSubmissionForm({ ...submissionForm, pitch_url: e.target.value })}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
+                      className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                       placeholder="YouTube or Vimeo link" />
                   </div>
                   <div className="flex items-start gap-2 pt-2">
                     <input type="checkbox" id="terms" required className="mt-1" />
-                    <label htmlFor="terms" className="text-sm text-slate-600">
+                    <label htmlFor="terms" className="text-sm text-slate-600 dark:text-slate-400">
                       I confirm this submission is original and I agree to the event rules and terms.
                     </label>
                   </div>
@@ -842,6 +826,11 @@ const Events = () => {
                     <button type="submit" disabled={loading}
                       className="bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700 disabled:bg-slate-400 font-medium">
                       {loading ? "Submitting..." : "Submit Entry"}
+                    </button>
+                    <button type="button"
+                      onClick={() => setShowSubmitForm(false)}
+                      className="bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 font-medium">
+                      Cancel
                     </button>
                   </div>
                 </form>
@@ -855,8 +844,8 @@ const Events = () => {
             )}
 
             {(user || profile) && submissions.length === 0 && !showSubmitForm && (
-              <div className="bg-white rounded-xl p-8 shadow-md text-center">
-                <p className="text-slate-600">You haven't submitted to any events yet.</p>
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md text-center">
+                <p className="text-slate-600 dark:text-slate-400">You haven't submitted to any events yet.</p>
                 <button onClick={() => setShowSubmitForm(true)}
                   className="mt-4 bg-teal-600 text-white px-6 py-2 rounded-lg hover:bg-teal-700">
                   Submit Entry
@@ -867,24 +856,24 @@ const Events = () => {
             {/* Summary bar */}
             {submissions.length > 0 && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-blue-600">
-                  <p className="text-sm text-slate-600">Total Submissions</p>
-                  <p className="text-2xl font-bold text-slate-800">{submissions.length}</p>
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-blue-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Total Submissions</p>
+                  <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{submissions.length}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-600">
-                  <p className="text-sm text-slate-600">Approved / Finalist</p>
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-green-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Approved / Finalist</p>
                   <p className="text-2xl font-bold text-green-600">
                     {submissions.filter(s => s.status === "approved" || s.status === "finalist" || s.status === "winner").length}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-yellow-500">
-                  <p className="text-sm text-slate-600">Pending / Reviewing</p>
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-yellow-500">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Pending / Reviewing</p>
                   <p className="text-2xl font-bold text-yellow-600">
                     {submissions.filter(s => s.status === "submitted" || s.status === "reviewing").length}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-red-500">
-                  <p className="text-sm text-slate-600">Rejected</p>
+                <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-red-500">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Rejected</p>
                   <p className="text-2xl font-bold text-red-600">
                     {submissions.filter(s => s.status === "rejected").length}
                   </p>
@@ -896,16 +885,16 @@ const Events = () => {
               {submissions.map((s) => {
                 const isExpanded = expandedSubmission === s.id;
                 return (
-                <div key={s.id} className="bg-white rounded-xl shadow-md border-l-4 border-blue-600 overflow-hidden">
+                <div key={s.id} className="bg-white dark:bg-slate-800 rounded-xl shadow-md border-l-4 border-blue-600 overflow-hidden">
                   {/* Clickable header */}
                   <div
-                    className="p-6 cursor-pointer hover:bg-slate-50 transition-colors"
+                    className="p-6 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
                     onClick={() => setExpandedSubmission(isExpanded ? null : s.id)}
                   >
                     <div className="flex justify-between items-start">
                       <div>
-                        <h3 className="text-xl font-bold text-slate-800">{s.title}</h3>
-                        <p className="text-slate-600">Event: <strong>{s.event_title}</strong></p>
+                        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{s.title}</h3>
+                        <p className="text-slate-600 dark:text-slate-400">Event: <strong>{s.event_title}</strong></p>
                         <p className="text-sm text-slate-500 mt-1">
                           Team: {s.team_name || "Individual"}
                           {s.members && ` | Members: ${s.members}`}
@@ -913,18 +902,18 @@ const Events = () => {
                       </div>
                       <div className="text-right flex flex-col items-end gap-2">
                         <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          className={`px-3 py-1 rounded-full text-sm font-medium whitespace-nowrap ${
                             s.status === "winner"
-                              ? "bg-yellow-100 text-yellow-800"
+                              ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300"
                               : s.status === "finalist"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300"
                               : s.status === "approved"
-                              ? "bg-green-100 text-green-800"
+                              ? "bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300"
                               : s.status === "rejected"
-                              ? "bg-red-100 text-red-800"
+                              ? "bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-300"
                               : s.status === "reviewing"
-                              ? "bg-slate-100 text-slate-800"
-                              : "bg-blue-100 text-blue-800"
+                              ? "bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100"
+                              : "bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300"
                           }`}
                         >
                           {s.status}
@@ -932,7 +921,7 @@ const Events = () => {
                         <p className="text-xs text-slate-500">
                           Submitted: {formatDate(s.created_at)}
                         </p>
-                        <span className="text-xs text-teal-600 font-medium">
+                        <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
                           {isExpanded ? "Click to collapse" : "Click to view details"}
                         </span>
                       </div>
@@ -941,61 +930,61 @@ const Events = () => {
 
                   {/* Expandable detail section */}
                   {isExpanded && (
-                    <div className="px-6 pb-6 border-t border-slate-100 pt-4 bg-slate-50">
+                    <div className="px-6 pb-6 border-t border-slate-100 pt-4 bg-slate-50 dark:bg-slate-700">
                       {/* Description */}
                       <div className="mb-4">
-                        <h4 className="text-sm font-bold text-slate-700 mb-1">Project Description</h4>
-                        <p className="text-slate-700 whitespace-pre-line">{s.description || "—"}</p>
+                        <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Project Description</h4>
+                        <p className="text-slate-700 dark:text-slate-200 whitespace-pre-line">{s.description || "—"}</p>
                       </div>
 
                       {/* Problem Statement */}
                       {s.problem_statement && (
                         <div className="mb-4">
-                          <h4 className="text-sm font-bold text-slate-700 mb-1">Problem Statement</h4>
-                          <p className="text-slate-600 whitespace-pre-line">{s.problem_statement}</p>
+                          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Problem Statement</h4>
+                          <p className="text-slate-600 dark:text-slate-400 whitespace-pre-line">{s.problem_statement}</p>
                         </div>
                       )}
 
                       {/* Proposed Solution */}
                       {s.solution && (
                         <div className="mb-4">
-                          <h4 className="text-sm font-bold text-slate-700 mb-1">Proposed Solution</h4>
-                          <p className="text-slate-600 whitespace-pre-line">{s.solution}</p>
+                          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Proposed Solution</h4>
+                          <p className="text-slate-600 dark:text-slate-400 whitespace-pre-line">{s.solution}</p>
                         </div>
                       )}
 
                       {/* Team details */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                           <p className="text-xs font-semibold text-slate-500 mb-1">Team Name</p>
-                          <p className="text-slate-800 font-medium">{s.team_name || "Individual"}</p>
+                          <p className="text-slate-800 dark:text-slate-100 font-medium">{s.team_name || "Individual"}</p>
                         </div>
-                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                           <p className="text-xs font-semibold text-slate-500 mb-1">Team Members</p>
-                          <p className="text-slate-800 font-medium">{s.members || "—"}</p>
+                          <p className="text-slate-800 dark:text-slate-100 font-medium">{s.members || "—"}</p>
                         </div>
                       </div>
 
                       {/* Event info */}
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                           <p className="text-xs font-semibold text-slate-500 mb-1">Event</p>
-                          <p className="text-slate-800 font-medium">{s.event_title || "—"}</p>
+                          <p className="text-slate-800 dark:text-slate-100 font-medium">{s.event_title || "—"}</p>
                         </div>
-                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                           <p className="text-xs font-semibold text-slate-500 mb-1">Event Start Date</p>
-                          <p className="text-slate-800 font-medium">{formatDate(s.start_date)}</p>
+                          <p className="text-slate-800 dark:text-slate-100 font-medium">{formatDate(s.start_date)}</p>
                         </div>
-                        <div className="bg-white rounded-lg p-3 border border-slate-200">
+                        <div className="bg-white dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
                           <p className="text-xs font-semibold text-slate-500 mb-1">Submission Date</p>
-                          <p className="text-slate-800 font-medium">{formatDate(s.created_at)}</p>
+                          <p className="text-slate-800 dark:text-slate-100 font-medium">{formatDate(s.created_at)}</p>
                         </div>
                       </div>
 
                       {/* Pitch URL */}
                       {s.pitch_url && (
                         <div className="mb-4">
-                          <h4 className="text-sm font-bold text-slate-700 mb-1">Pitch Video</h4>
+                          <h4 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">Pitch Video</h4>
                           <a
                             href={s.pitch_url}
                             target="_blank"
@@ -1008,7 +997,7 @@ const Events = () => {
                       )}
 
                       {/* Submission ID */}
-                      <div className="pt-3 border-t border-slate-200">
+                      <div className="pt-3 border-t border-slate-200 dark:border-slate-700">
                         <span className="text-xs text-slate-400">Submission ID: {s.id}</span>
                       </div>
                     </div>

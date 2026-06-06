@@ -40,7 +40,8 @@ router.get('/me', authenticateToken, asyncHandler(async (req, res) => {
   const query = `
     SELECT
       id, firestore_id, name, email, phone, role,
-      university, campus, account_status, profile_photo_url,
+      university, campus, college, year_of_study,
+      profile_complete, account_status, profile_photo_url,
       created_at, updated_at, deleted_at
     FROM users
     WHERE id = $1 AND deleted_at IS NULL
@@ -209,7 +210,27 @@ router.put('/:id', authenticateToken, auditLog('users'), asyncHandler(async (req
  */
 router.post('/upload-photo', authenticateToken, profileUpload.single('photo'), asyncHandler(async (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No photo uploaded' });
-  const photoUrl = `/uploads/profiles/${req.file.filename}`;
+
+  // Optimize image with sharp: resize to max 800x800, compress
+  let finalPath = path.join(profileUploadDir, req.file.filename);
+  try {
+    const sharp = require('sharp');
+    const optimized = await sharp(req.file.path)
+      .resize(800, 800, { fit: 'inside', withoutEnlargement: true })
+      .jpeg({ quality: 80 })
+      .toBuffer();
+    const newFilename = `profile_${req.user.id}_${Date.now()}.jpg`;
+    const newPath = path.join(profileUploadDir, newFilename);
+    require('fs').writeFileSync(newPath, optimized);
+    // Remove original if it was renamed
+    if (req.file.filename !== newFilename && require('fs').existsSync(finalPath)) {
+      require('fs').unlinkSync(finalPath);
+    }
+    finalPath = newPath;
+  } catch (e) {
+    // Sharp not available or failed — use original file
+  }
+  const photoUrl = `/uploads/profiles/${path.basename(finalPath)}`;
   await pool.query(
     `UPDATE users SET profile_photo_url = $1, updated_at = NOW() WHERE id = $2`,
     [photoUrl, req.user.id]

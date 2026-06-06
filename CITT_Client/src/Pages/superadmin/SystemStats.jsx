@@ -31,7 +31,7 @@ const SystemStats = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading system statistics...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading system statistics...</p>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ const SystemStats = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">System Statistics</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">System Statistics</h1>
           <p className="text-gray-600 mt-2">Comprehensive system information and metrics</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             <span className="mr-1"> </span> SuperAdmin Only
@@ -136,23 +136,23 @@ const SystemStats = () => {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Users</span>
-                    <span className="text-2xl font-bold text-gray-900">{users.total || 0}</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total Users</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{users.total || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">SuperAdmins</span>
+                    <span className="text-gray-600 dark:text-slate-400">SuperAdmins</span>
                     <span className="text-xl font-bold text-purple-600">{users.super_admins || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Admins</span>
+                    <span className="text-gray-600 dark:text-slate-400">Admins</span>
                     <span className="text-xl font-bold text-teal-600">{users.admins || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">IP Managers</span>
+                    <span className="text-gray-600 dark:text-slate-400">IP Managers</span>
                     <span className="text-xl font-bold text-orange-600">{users.ip_managers || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Innovators</span>
+                    <span className="text-gray-600 dark:text-slate-400">Innovators</span>
                     <span className="text-xl font-bold text-blue-600">{users.innovators || 0}</span>
                   </div>
                 </div>
@@ -167,23 +167,23 @@ const SystemStats = () => {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Projects</span>
-                    <span className="text-2xl font-bold text-gray-900">{projects.total || 0}</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total Projects</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{projects.total || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Pending Approval</span>
+                    <span className="text-gray-600 dark:text-slate-400">Pending Approval</span>
                     <span className="text-xl font-bold text-yellow-600">{projects.pending || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Approved</span>
+                    <span className="text-gray-600 dark:text-slate-400">Approved</span>
                     <span className="text-xl font-bold text-green-600">{projects.approved || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">In Progress</span>
+                    <span className="text-gray-600 dark:text-slate-400">In Progress</span>
                     <span className="text-xl font-bold text-blue-600">{projects.in_progress || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Completed</span>
+                    <span className="text-gray-600 dark:text-slate-400">Completed</span>
                     <span className="text-xl font-bold text-purple-600">{projects.completed || 0}</span>
                   </div>
                 </div>
@@ -198,25 +198,25 @@ const SystemStats = () => {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Applications</span>
-                    <span className="text-2xl font-bold text-gray-900">{funding.total || 0}</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total Applications</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{funding.total || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Pending</span>
+                    <span className="text-gray-600 dark:text-slate-400">Pending</span>
                     <span className="text-xl font-bold text-yellow-600">{funding.pending || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Approved</span>
+                    <span className="text-gray-600 dark:text-slate-400">Approved</span>
                     <span className="text-xl font-bold text-green-600">{funding.approved || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Requested</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total Requested</span>
                     <span className="text-lg font-bold text-blue-600">
                       {funding.total_requested ? `${Number(funding.total_requested).toLocaleString()} TZS` : '0 TZS'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total Approved</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total Approved</span>
                     <span className="text-lg font-bold text-green-600">
                       {funding.total_approved ? `${Number(funding.total_approved).toLocaleString()} TZS` : '0 TZS'}
                     </span>
@@ -233,19 +233,19 @@ const SystemStats = () => {
               <div className="bg-white rounded-lg shadow-md p-6">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Total IP Records</span>
-                    <span className="text-2xl font-bold text-gray-900">{ip_management.total || 0}</span>
+                    <span className="text-gray-600 dark:text-slate-400">Total IP Records</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{ip_management.total || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Pending</span>
+                    <span className="text-gray-600 dark:text-slate-400">Pending</span>
                     <span className="text-xl font-bold text-yellow-600">{ip_management.pending || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Approved</span>
+                    <span className="text-gray-600 dark:text-slate-400">Approved</span>
                     <span className="text-xl font-bold text-green-600">{ip_management.approved || 0}</span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Rejected</span>
+                    <span className="text-gray-600 dark:text-slate-400">Rejected</span>
                     <span className="text-xl font-bold text-red-600">{ip_management.rejected || 0}</span>
                   </div>
                 </div>
@@ -261,22 +261,22 @@ const SystemStats = () => {
             <div className="flex items-center">
               <div className="h-3 w-3 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="text-sm text-gray-600">API Server</p>
-                <p className="font-medium text-gray-900">Operational</p>
+                <p className="text-sm text-gray-600 dark:text-slate-400">API Server</p>
+                <p className="font-medium text-gray-900 dark:text-slate-100">Operational</p>
               </div>
             </div>
             <div className="flex items-center">
               <div className="h-3 w-3 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="text-sm text-gray-600">Database</p>
-                <p className="font-medium text-gray-900">Connected</p>
+                <p className="text-sm text-gray-600 dark:text-slate-400">Database</p>
+                <p className="font-medium text-gray-900 dark:text-slate-100">Connected</p>
               </div>
             </div>
             <div className="flex items-center">
               <div className="h-3 w-3 bg-green-500 rounded-full mr-3"></div>
               <div>
-                <p className="text-sm text-gray-600">Authentication</p>
-                <p className="font-medium text-gray-900">Active</p>
+                <p className="text-sm text-gray-600 dark:text-slate-400">Authentication</p>
+                <p className="font-medium text-gray-900 dark:text-slate-100">Active</p>
               </div>
             </div>
           </div>

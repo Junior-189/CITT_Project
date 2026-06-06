@@ -53,11 +53,11 @@ const MySubmissions = () => {
 
   if (loading) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
         <div className="flex justify-center items-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading your submissions...</p>
+            <p className="text-slate-600 dark:text-slate-400">Loading your submissions...</p>
           </div>
         </div>
       </main>
@@ -65,11 +65,11 @@ const MySubmissions = () => {
   }
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-slate-800 mb-2">My Event Submissions</h1>
-        <p className="text-slate-600">Track your event submissions and their approval status</p>
+        <p className="text-slate-600 dark:text-slate-400">Track your event submissions and their approval status</p>
       </div>
 
       {error && (
@@ -153,7 +153,7 @@ const MySubmissions = () => {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-4 mb-3">
-                    <h3 className="text-xl font-bold text-slate-800">{submission.title}</h3>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{submission.title}</h3>
                     <span className={`px-4 py-1 rounded-full font-semibold text-sm ${getStatusColor(submission.status)}`}>
                       {getStatusIcon(submission.status)} {submission.status.charAt(0).toUpperCase() + submission.status.slice(1)}
                     </span>
@@ -161,27 +161,27 @@ const MySubmissions = () => {
                   <p className="text-slate-600 mb-2">
                     <strong>Event:</strong> {submission.event_title || 'Event details unavailable'}
                   </p>
-                  <p className="text-slate-600">
+                  <p className="text-slate-600 dark:text-slate-400">
                     <strong>Team:</strong> {submission.team_name || 'Not specified'}
                   </p>
                 </div>
               </div>
 
               {/* Submission Details Summary */}
-              <div className="grid grid-cols-3 gap-4 mb-4 py-4 border-y border-slate-200">
+              <div className="grid grid-cols-3 gap-4 mb-4 py-4 border-y border-slate-200 dark:border-slate-700">
                 <div>
-                  <p className="text-sm text-slate-600">Team Members</p>
-                  <p className="font-semibold text-slate-800">{submission.members || 'Not specified'}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Team Members</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">{submission.members || 'Not specified'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Submitted On</p>
-                  <p className="font-semibold text-slate-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Submitted On</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">
                     {new Date(submission.created_at).toLocaleDateString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-slate-600">Last Updated</p>
-                  <p className="font-semibold text-slate-800">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Last Updated</p>
+                  <p className="font-semibold text-slate-800 dark:text-slate-100">
                     {new Date(submission.updated_at).toLocaleDateString()}
                   </p>
                 </div>
@@ -229,7 +229,7 @@ const MySubmissions = () => {
                       <div className="space-y-3">
                         {submission.feedback.map((fb, idx) => (
                           <div key={idx} className="bg-white p-3 rounded-lg border-l-4 border-blue-600">
-                            <p className="text-slate-600">{fb.feedback}</p>
+                            <p className="text-slate-600 dark:text-slate-400">{fb.feedback}</p>
                             <p className="text-xs text-slate-500 mt-2">
                               {new Date(fb.created_at).toLocaleString()}
                             </p>

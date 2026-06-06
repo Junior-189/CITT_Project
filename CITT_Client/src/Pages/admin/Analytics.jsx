@@ -31,7 +31,7 @@ const Analytics = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading analytics...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading analytics...</p>
         </div>
       </div>
     );
@@ -56,7 +56,7 @@ const Analytics = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Analytics Dashboard</h1>
           <p className="text-gray-600 mt-2">System-wide statistics and insights</p>
         </div>
 
@@ -145,15 +145,15 @@ const Analytics = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Total IP Records</span>
-                  <span className="text-2xl font-bold text-gray-900">{ipManagement?.total_ip_records || 0}</span>
+                  <span className="text-gray-600 dark:text-slate-400">Total IP Records</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{ipManagement?.total_ip_records || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Pending</span>
+                  <span className="text-gray-600 dark:text-slate-400">Pending</span>
                   <span className="text-2xl font-bold text-yellow-600">{ipManagement?.pending_approval || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Approved</span>
+                  <span className="text-gray-600 dark:text-slate-400">Approved</span>
                   <span className="text-2xl font-bold text-green-600">{ipManagement?.approved || 0}</span>
                 </div>
               </div>
@@ -166,16 +166,16 @@ const Analytics = () => {
             <div className="bg-white rounded-lg shadow p-6">
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Total Events</span>
-                  <span className="text-2xl font-bold text-gray-900">{events?.total_events || 0}</span>
+                  <span className="text-gray-600 dark:text-slate-400">Total Events</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-slate-100">{events?.total_events || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Upcoming</span>
+                  <span className="text-gray-600 dark:text-slate-400">Upcoming</span>
                   <span className="text-2xl font-bold text-blue-600">{events?.upcoming_events || 0}</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Past Events</span>
-                  <span className="text-2xl font-bold text-gray-600">{events?.past_events || 0}</span>
+                  <span className="text-gray-600 dark:text-slate-400">Past Events</span>
+                  <span className="text-2xl font-bold text-gray-600 dark:text-slate-400">{events?.past_events || 0}</span>
                 </div>
               </div>
             </div>

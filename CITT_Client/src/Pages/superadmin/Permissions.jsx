@@ -98,7 +98,7 @@ const Permissions = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading permissions...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading permissions...</p>
         </div>
       </div>
     );
@@ -109,7 +109,7 @@ const Permissions = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">System Permissions</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">System Permissions</h1>
           <p className="text-gray-600 mt-2">Manage role-based access control and permissions</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             SuperAdmin Only
@@ -209,7 +209,7 @@ const Permissions = () => {
                         )}
                       </div>
                       <div className="ml-3">
-                        <p className="text-sm font-medium text-gray-900">{permission.name}</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-slate-100">{permission.name}</p>
                         <p className="text-xs text-gray-600 mt-1">{permission.description}</p>
                       </div>
                     </div>

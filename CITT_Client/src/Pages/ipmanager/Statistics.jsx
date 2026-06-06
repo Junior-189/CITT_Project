@@ -63,10 +63,10 @@ const Statistics = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading statistics...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading statistics...</p>
         </div>
       </div>
     );
@@ -74,7 +74,7 @@ const Statistics = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
@@ -88,31 +88,31 @@ const Statistics = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">IP Management Statistics</h1>
-          <p className="text-gray-600 mt-2">Comprehensive overview of intellectual property records</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">IP Management Statistics</h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-2">Comprehensive overview of intellectual property records</p>
         </div>
 
         {/* Overall Statistics */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Overview</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Overview</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Total IP Records</p>
-              <p className="text-3xl font-bold text-gray-900 mt-2">{stats.total}</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Total IP Records</p>
+              <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">{stats.total}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Approval Rate</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Approval Rate</p>
               <p className="text-3xl font-bold text-green-600 mt-2">{stats.approvalRate}%</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Total Processed</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Total Processed</p>
               <p className="text-3xl font-bold text-blue-600 mt-2">{stats.byStatus.approved + stats.byStatus.rejected}</p>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Pending Approval</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Pending Approval</p>
               <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.byStatus.pending}</p>
             </div>
           </div>
@@ -120,12 +120,12 @@ const Statistics = () => {
 
         {/* IP Type Statistics */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">By IP Type</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">By IP Type</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Patents</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">Patents</p>
                   <p className="text-3xl font-bold text-purple-600 mt-2">{stats.byType.Patent}</p>
                 </div>
                 <div className="p-3 bg-purple-100 rounded-lg">
@@ -135,10 +135,10 @@ const Statistics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Trademarks</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">Trademarks</p>
                   <p className="text-3xl font-bold text-orange-600 mt-2">{stats.byType.Trademark}</p>
                 </div>
                 <div className="p-3 bg-orange-100 rounded-lg">
@@ -148,10 +148,10 @@ const Statistics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Copyrights</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">Copyrights</p>
                   <p className="text-3xl font-bold text-blue-600 mt-2">{stats.byType.Copyright}</p>
                 </div>
                 <div className="p-3 bg-blue-100 rounded-lg">
@@ -161,10 +161,10 @@ const Statistics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Designs</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">Designs</p>
                   <p className="text-3xl font-bold text-teal-600 mt-2">{stats.byType.Design}</p>
                 </div>
                 <div className="p-3 bg-teal-100 rounded-lg">
@@ -174,14 +174,14 @@ const Statistics = () => {
                 </div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-gray-600 text-sm">Other</p>
-                  <p className="text-3xl font-bold text-gray-600 mt-2">{stats.byType.Other}</p>
+                  <p className="text-gray-600 dark:text-slate-400 text-sm">Other</p>
+                  <p className="text-3xl font-bold text-gray-600 dark:text-slate-400 mt-2">{stats.byType.Other}</p>
                 </div>
                 <div className="p-3 bg-gray-100 rounded-lg">
-                  <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-8 h-8 text-gray-600 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                   </svg>
                 </div>
@@ -192,24 +192,24 @@ const Statistics = () => {
 
         {/* Status Statistics */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">By Status</h2>
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">By Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Pending</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Pending</p>
               <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.byStatus.pending}</p>
               <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-yellow-600 h-2 rounded-full" style={{ width: `${stats.total > 0 ? (stats.byStatus.pending / stats.total) * 100 : 0}%` }}></div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Approved</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Approved</p>
               <p className="text-3xl font-bold text-green-600 mt-2">{stats.byStatus.approved}</p>
               <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-green-600 h-2 rounded-full" style={{ width: `${stats.total > 0 ? (stats.byStatus.approved / stats.total) * 100 : 0}%` }}></div>
               </div>
             </div>
-            <div className="bg-white rounded-lg shadow p-6">
-              <p className="text-gray-600 text-sm">Rejected</p>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
+              <p className="text-gray-600 dark:text-slate-400 text-sm">Rejected</p>
               <p className="text-3xl font-bold text-red-600 mt-2">{stats.byStatus.rejected}</p>
               <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
                 <div className="bg-red-600 h-2 rounded-full" style={{ width: `${stats.total > 0 ? (stats.byStatus.rejected / stats.total) * 100 : 0}%` }}></div>
@@ -221,15 +221,15 @@ const Statistics = () => {
         {/* Monthly Trend */}
         {stats.monthlyTrend.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Monthly Trend (Last 6 Months)</h2>
-            <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Monthly Trend (Last 6 Months)</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
               <div className="space-y-4">
                 {stats.monthlyTrend.map((item, index) => {
                   const maxCount = Math.max(...stats.monthlyTrend.map(m => m.count), 1);
                   return (
                     <div key={index}>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-sm font-medium text-gray-700">
+                        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                           {new Date(item.month + '-01').toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
                         </span>
                         <span className="text-sm font-bold text-teal-600">{item.count} submissions</span>
@@ -247,23 +247,23 @@ const Statistics = () => {
 
         {/* Performance Metrics */}
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Performance Metrics</h2>
-          <div className="bg-white rounded-lg shadow p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-4">Performance Metrics</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
-                <p className="text-gray-600 text-sm mb-2">Total Processed</p>
-                <p className="text-4xl font-bold text-gray-900">{stats.byStatus.approved + stats.byStatus.rejected}</p>
-                <p className="text-xs text-gray-500 mt-1">Approved + Rejected</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Total Processed</p>
+                <p className="text-4xl font-bold text-gray-900 dark:text-slate-100">{stats.byStatus.approved + stats.byStatus.rejected}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Approved + Rejected</p>
               </div>
-              <div className="text-center border-l border-r border-gray-200">
-                <p className="text-gray-600 text-sm mb-2">Success Rate</p>
+              <div className="text-center border-l border-r border-gray-200 dark:border-slate-700">
+                <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Success Rate</p>
                 <p className="text-4xl font-bold text-green-600">{stats.approvalRate}%</p>
-                <p className="text-xs text-gray-500 mt-1">Approval percentage</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Approval percentage</p>
               </div>
               <div className="text-center">
-                <p className="text-gray-600 text-sm mb-2">Pending Queue</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Pending Queue</p>
                 <p className="text-4xl font-bold text-yellow-600">{stats.byStatus.pending}</p>
-                <p className="text-xs text-gray-500 mt-1">Awaiting review</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Awaiting review</p>
               </div>
             </div>
           </div>

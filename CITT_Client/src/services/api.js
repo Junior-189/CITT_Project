@@ -42,27 +42,66 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response interceptor to handle auth failures (expired/invalid token)
+// Silent refresh: queue-based, one-at-a-time token refresh on 401
+let isRefreshing = false;
+let refreshQueue = [];
+
+const processQueue = (error, token = null) => {
+  refreshQueue.forEach(p => error ? p.reject(error) : p.resolve(token));
+  refreshQueue = [];
+};
+
+function doLogout() {
+  localStorage.removeItem('authToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('userProfile');
+  if (typeof window !== 'undefined' && window.location?.pathname !== '/login') {
+    window.location.href = '/login';
+  }
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    const originalRequest = error.config;
     const status = error.response?.status;
     const code = error.response?.data?.code;
+    const isAuthError = status === 401 || code === 'TOKEN_EXPIRED' || (status === 403 && code === 'INVALID_TOKEN');
 
-    const shouldLogout =
-      status === 401 ||
-      (status === 403 && code === 'INVALID_TOKEN') ||
-      code === 'TOKEN_EXPIRED';
+    // Don't try to refresh the refresh endpoint itself or the login endpoint
+    const isAuthEndpoint = originalRequest.url?.includes('/api/auth/login')
+      || originalRequest.url?.includes('/api/auth/refresh')
+      || originalRequest.url?.includes('/api/auth/register');
 
-    if (shouldLogout) {
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('userProfile');
+    if (isAuthError && !originalRequest._retry && !isAuthEndpoint) {
+      const storedRefreshToken = localStorage.getItem('refreshToken');
+      if (!storedRefreshToken) { doLogout(); return Promise.reject(error); }
 
-      if (typeof window !== 'undefined' && window.location?.pathname !== '/login') {
-        window.location.href = '/login';
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => refreshQueue.push({ resolve, reject }))
+          .then(token => { originalRequest.headers.Authorization = `Bearer ${token}`; return api(originalRequest); });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+      try {
+        const resp = await axios.post(`${API_BASE_URL}/api/auth/refresh`, { refreshToken: storedRefreshToken });
+        const newAccess = resp.data.accessToken;
+        const newRefresh = resp.data.refreshToken;
+        localStorage.setItem('authToken', newAccess);
+        localStorage.setItem('refreshToken', newRefresh);
+        api.defaults.headers.common.Authorization = `Bearer ${newAccess}`;
+        processQueue(null, newAccess);
+        originalRequest.headers.Authorization = `Bearer ${newAccess}`;
+        return api(originalRequest);
+      } catch (refreshErr) {
+        processQueue(refreshErr, null);
+        doLogout();
+        return Promise.reject(refreshErr);
+      } finally {
+        isRefreshing = false;
       }
     }
-
     return Promise.reject(error);
   }
 );

@@ -90,7 +90,7 @@ const ProjectApprovals = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading projects...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading projects...</p>
         </div>
       </div>
     );
@@ -101,7 +101,7 @@ const ProjectApprovals = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Project Approvals</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Project Approvals</h1>
           <p className="text-gray-600 mt-2">Review and manage project submissions</p>
         </div>
 
@@ -169,26 +169,26 @@ const ProjectApprovals = () => {
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No projects found</h3>
-              <p className="mt-1 text-sm text-gray-500">No projects with {filterStatus} status</p>
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-slate-100">No projects found</h3>
+              <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">No projects with {filterStatus} status</p>
             </div>
           ) : (
             projects.map((project) => (
               <div key={project.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
                 <div className="flex justify-between items-start">
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900">{project.title || project.project_title}</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-slate-100">{project.title || project.project_title}</h3>
                     <p className="text-gray-600 mt-2 line-clamp-2">{project.description}</p>
 
                     <div className="mt-4 flex flex-wrap gap-4">
                       <div>
-                        <span className="text-sm text-gray-500">Submitted by:</span>
-                        <p className="font-medium text-gray-900">{project.user_name || 'Unknown'}</p>
+                        <span className="text-sm text-gray-500 dark:text-slate-400">Submitted by:</span>
+                        <p className="font-medium text-gray-900 dark:text-slate-100">{project.user_name || 'Unknown'}</p>
                       </div>
 
                       {project.project_status && (
                         <div>
-                          <span className="text-sm text-gray-500">Project Status:</span>
+                          <span className="text-sm text-gray-500 dark:text-slate-400">Project Status:</span>
                           <span className={`ml-2 px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${projectStatusConfig[project.project_status]?.color || 'bg-gray-100 text-gray-800'}`}>
                             {projectStatusConfig[project.project_status]?.label || project.project_status}
                           </span>
@@ -196,8 +196,8 @@ const ProjectApprovals = () => {
                       )}
 
                       <div>
-                        <span className="text-sm text-gray-500">Submitted:</span>
-                        <p className="font-medium text-gray-900">{new Date(project.created_at).toLocaleDateString()}</p>
+                        <span className="text-sm text-gray-500 dark:text-slate-400">Submitted:</span>
+                        <p className="font-medium text-gray-900 dark:text-slate-100">{new Date(project.created_at).toLocaleDateString()}</p>
                       </div>
                     </div>
 
@@ -230,8 +230,8 @@ const ProjectApprovals = () => {
 
                 {/* Approval/Rejection Info */}
                 {project.approved_by_name && (
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-sm text-gray-600">
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-slate-700">
+                    <p className="text-sm text-gray-600 dark:text-slate-400">
                       {project.approval_status === 'approved' ? 'Approved' : 'Rejected'} by: <span className="font-medium">{project.approved_by_name}</span>
                       {project.approved_at && ` on ${new Date(project.approved_at).toLocaleDateString()}`}
                     </p>
@@ -246,7 +246,7 @@ const ProjectApprovals = () => {
         {totalPages > 1 && (
           <div className="mt-6 flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-700">
+              <p className="text-sm text-gray-700 dark:text-slate-300">
                 Page <span className="font-medium">{currentPage}</span> of{' '}
                 <span className="font-medium">{totalPages}</span>
               </p>
@@ -294,7 +294,7 @@ const ProjectApprovals = () => {
 
                       {/* Project Title */}
                       <div className="mb-6 p-4 bg-teal-50 border-l-4 border-teal-600 rounded">
-                        <h4 className="text-xl font-bold text-gray-900">
+                        <h4 className="text-xl font-bold text-gray-900 dark:text-slate-100">
                           {selectedProject.title || selectedProject.project_title}
                         </h4>
                       </div>
@@ -303,25 +303,25 @@ const ProjectApprovals = () => {
                       <div className="space-y-4 mb-6">
                         <div className="border-b border-gray-200 pb-3">
                           <span className="text-xs font-semibold text-gray-500 uppercase">Description</span>
-                          <p className="mt-1 text-gray-800">{selectedProject.description}</p>
+                          <p className="mt-1 text-gray-800 dark:text-slate-200">{selectedProject.description}</p>
                         </div>
 
                         {selectedProject.problem_statement && (
                           <div className="border-b border-gray-200 pb-3">
                             <span className="text-xs font-semibold text-gray-500 uppercase">Problem Being Solved</span>
-                            <p className="mt-1 text-gray-800">{selectedProject.problem_statement}</p>
+                            <p className="mt-1 text-gray-800 dark:text-slate-200">{selectedProject.problem_statement}</p>
                           </div>
                         )}
 
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <span className="text-xs font-semibold text-gray-500 uppercase">Category</span>
-                            <p className="mt-1 text-gray-800">{selectedProject.category}</p>
+                            <p className="mt-1 text-gray-800 dark:text-slate-200">{selectedProject.category}</p>
                           </div>
                           {selectedProject.institution && (
                             <div>
                               <span className="text-xs font-semibold text-gray-500 uppercase">Institution</span>
-                              <p className="mt-1 text-gray-800">{selectedProject.institution}</p>
+                              <p className="mt-1 text-gray-800 dark:text-slate-200">{selectedProject.institution}</p>
                             </div>
                           )}
                         </div>
@@ -333,23 +333,23 @@ const ProjectApprovals = () => {
                           </div>
                         )}
 
-                        <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200">
+                        <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-200 dark:border-slate-700">
                           <div>
                             <span className="text-xs font-semibold text-gray-500 uppercase">Submitted By</span>
-                            <p className="mt-1 text-gray-800">{selectedProject.user_name || 'Unknown'}</p>
-                            <p className="text-sm text-gray-600">{selectedProject.user_email}</p>
+                            <p className="mt-1 text-gray-800 dark:text-slate-200">{selectedProject.user_name || 'Unknown'}</p>
+                            <p className="text-sm text-gray-600 dark:text-slate-400">{selectedProject.user_email}</p>
                           </div>
                           <div>
                             <span className="text-xs font-semibold text-gray-500 uppercase">Submitted On</span>
-                            <p className="mt-1 text-gray-800">{new Date(selectedProject.created_at).toLocaleDateString()}</p>
-                            <p className="text-sm text-gray-600">{new Date(selectedProject.created_at).toLocaleTimeString()}</p>
+                            <p className="mt-1 text-gray-800 dark:text-slate-200">{new Date(selectedProject.created_at).toLocaleDateString()}</p>
+                            <p className="text-sm text-gray-600 dark:text-slate-400">{new Date(selectedProject.created_at).toLocaleTimeString()}</p>
                           </div>
                         </div>
                       </div>
 
                       {/* Approval/Reject form if action selected */}
                       {(approvalAction === 'approve' || approvalAction === 'reject') && (
-                        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 dark:border-slate-700">
                           <label className="block text-sm font-semibold text-gray-900 mb-2">
                             {approvalAction === 'approve' ? '✓ Approval Comments (Optional)' : '✗ Reason for Rejection (Required)'}
                           </label>
@@ -357,7 +357,7 @@ const ProjectApprovals = () => {
                             value={comments}
                             onChange={(e) => setComments(e.target.value)}
                             rows="4"
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder={approvalAction === 'approve' ? 'Add any comments or feedback for the innovator...' : 'Explain why this project is being rejected...'}
                             required={approvalAction === 'reject'}
                           />
@@ -390,7 +390,7 @@ const ProjectApprovals = () => {
 
                       {/* Approve/Reject buttons - only show when no action selected */}
                       {approvalAction === 'view' && (
-                        <div className="flex gap-3 mt-8 pt-6 border-t border-gray-200">
+                        <div className="flex gap-3 mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
                           <button
                             type="button"
                             onClick={() => setApprovalAction('approve')}

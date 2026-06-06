@@ -53,8 +53,8 @@ const ReviewMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => {
       <div className="bg-white rounded-2xl w-full max-w-3xl my-6">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
-            <h2 className="font-bold text-lg text-slate-800">{project.title}</h2>
-            <p className="text-xs text-gray-500">{project.innovator_name || 'Innovator'} · {completedCount}/9 stages completed</p>
+            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">{project.title}</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">{project.innovator_name || 'Innovator'} · {completedCount}/9 stages completed</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
@@ -78,14 +78,14 @@ const ReviewMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => {
             const isOpen = expanded === stageNum;
             return (
               <div key={stageNum}>
-                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50"
+                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900"
                   onClick={() => setExpanded(isOpen ? null : stageNum)}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
                     <Icon className={`w-4 h-4 ${cfg.color}`} />
                   </div>
                   <div className="flex-1">
                     <span className="text-xs text-gray-400">Stage {stageNum}</span>
-                    <p className="text-sm font-semibold text-slate-800">{name}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{name}</p>
                   </div>
                   <span className={`hidden sm:inline text-xs px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                   {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
@@ -95,7 +95,7 @@ const ReviewMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => {
                     {record?.submission_notes && (
                       <div className="mt-3 p-3 bg-white border rounded-lg text-sm">
                         <p className="font-semibold text-gray-700 mb-1">Innovator's notes:</p>
-                        <p className="text-gray-600">{record.submission_notes}</p>
+                        <p className="text-gray-600 dark:text-slate-400">{record.submission_notes}</p>
                       </div>
                     )}
                     {status === 'submitted' && (
@@ -164,7 +164,7 @@ const TechnicalCommitteeDashboard = () => {
             { label: 'Milestones Submitted', count: projects.reduce((acc, p) => acc + (p.submitted_milestones || 0), 0), color: 'border-yellow-400' },
           ].map(s => (
             <div key={s.label} className={`bg-white rounded-xl p-4 border-l-4 ${s.color} shadow-sm text-center`}>
-              <p className="text-2xl font-bold text-slate-800">{s.count}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.count}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             </div>
           ))}
@@ -189,7 +189,7 @@ const TechnicalCommitteeDashboard = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500">{p.innovator_name || 'Unknown'} · {p.category}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">{p.innovator_name || 'Unknown'} · {p.category}</p>
                     </div>
                     <button onClick={() => setReviewProject(p)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-xs font-semibold">

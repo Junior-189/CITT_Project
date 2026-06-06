@@ -31,7 +31,7 @@ const Analytics = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading analytics data...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading analytics data...</p>
         </div>
       </div>
     );
@@ -65,7 +65,7 @@ const Analytics = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Analytics Dashboard</h1>
           <p className="text-gray-600 mt-2">Comprehensive analytics and visualizations</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             SuperAdmin & Admin Only
@@ -138,7 +138,7 @@ const Analytics = () => {
               {/* Super Admin Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                     Super Admins
                   </span>
                   <span className="text-sm font-bold text-purple-600">
@@ -156,7 +156,7 @@ const Analytics = () => {
               {/* Admin Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                     Admins
                   </span>
                   <span className="text-sm font-bold text-teal-600">
@@ -174,7 +174,7 @@ const Analytics = () => {
               {/* IP Manager Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                     IP Managers
                   </span>
                   <span className="text-sm font-bold text-orange-600">
@@ -192,7 +192,7 @@ const Analytics = () => {
               {/* Innovators Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                     Innovators
                   </span>
                   <span className="text-sm font-bold text-blue-600">
@@ -209,7 +209,7 @@ const Analytics = () => {
             </div>
 
             {/* Pie Chart Visual Representation */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
               <div className="flex justify-center items-center">
                 <div className="relative w-48 h-48">
                   <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -260,8 +260,8 @@ const Analytics = () => {
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-gray-900">{users?.total || 0}</p>
-                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{users?.total || 0}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">Total</p>
                     </div>
                   </div>
                 </div>
@@ -294,7 +294,7 @@ const Analytics = () => {
               {/* Approved Bar */}
               <div>
                 <div className="flex justify-between items-center mb-1">
-                  <span className="text-sm font-medium text-gray-700">Approved</span>
+                  <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Approved</span>
                   <span className="text-sm font-bold text-green-600">
                     {projects?.approved || 0} ({getProjectStatusPercentage(projects?.approved, projects?.total)}%)
                   </span>
@@ -363,7 +363,7 @@ const Analytics = () => {
             </div>
 
             {/* Pie Chart Visual */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
               <div className="flex justify-center items-center">
                 <div className="relative w-48 h-48">
                   <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -381,8 +381,8 @@ const Analytics = () => {
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-gray-900">{projects?.total || 0}</p>
-                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{projects?.total || 0}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">Total</p>
                     </div>
                   </div>
                 </div>
@@ -396,19 +396,19 @@ const Analytics = () => {
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Funding Statistics</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="border-l-4 border-green-500 pl-4">
-              <p className="text-sm text-gray-600">Total Requested</p>
+              <p className="text-sm text-gray-600 dark:text-slate-400">Total Requested</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">
                 {funding?.total_amount ? `${(funding.total_amount / 1000000).toFixed(2)}M TZS` : '0 TZS'}
               </p>
             </div>
             <div className="border-l-4 border-blue-500 pl-4">
-              <p className="text-sm text-gray-600">Total Approved</p>
+              <p className="text-sm text-gray-600 dark:text-slate-400">Total Approved</p>
               <p className="text-2xl font-bold text-green-600 mt-1">
                 {funding?.approved_amount ? `${(funding.approved_amount / 1000000).toFixed(2)}M TZS` : '0 TZS'}
               </p>
             </div>
             <div className="border-l-4 border-yellow-500 pl-4">
-              <p className="text-sm text-gray-600">Pending Review</p>
+              <p className="text-sm text-gray-600 dark:text-slate-400">Pending Review</p>
               <p className="text-2xl font-bold text-yellow-600 mt-1">
                 {funding?.pending || 0} applications
               </p>

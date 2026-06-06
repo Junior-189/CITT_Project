@@ -120,7 +120,7 @@ const UserManagement = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading users...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading users...</p>
         </div>
       </div>
     );
@@ -132,7 +132,7 @@ const UserManagement = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">User Management</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">User Management</h1>
             <p className="text-gray-600 mt-2">Manage user accounts and permissions</p>
           </div>
           <button onClick={() => { setShowAddModal(true); setAddError(''); setAddSuccess(''); }}
@@ -170,7 +170,7 @@ const UserManagement = () => {
                 placeholder="Search by name or email..."
                 value={searchTerm}
                 onChange={handleSearch}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent text-gray-900 dark:text-slate-100"
               />
             </div>
 
@@ -212,7 +212,7 @@ const UserManagement = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-gray-50 dark:bg-slate-900">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     User
@@ -237,13 +237,13 @@ const UserManagement = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {users.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan="6" className="px-6 py-12 text-center text-gray-500 dark:text-slate-400">
                       No users found
                     </td>
                   </tr>
                 ) : (
                   users.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50">
+                    <tr key={user.id} className="hover:bg-gray-50 dark:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
@@ -254,22 +254,22 @@ const UserManagement = () => {
                             </div>
                           </div>
                           <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-slate-100">{user.name}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{user.email}</div>
+                        <div className="text-sm text-gray-900 dark:text-slate-100">{user.email}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${rolesConfig[user.role]?.color || 'bg-gray-100 text-gray-800'}`}>
                           {rolesConfig[user.role]?.label || user.role}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {user.university || '-'}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {new Date(user.created_at).toLocaleDateString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -308,7 +308,7 @@ const UserManagement = () => {
               </div>
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-sm text-gray-700 dark:text-slate-300">
                     Page <span className="font-medium">{currentPage}</span> of{' '}
                     <span className="font-medium">{totalPages}</span>
                   </p>
@@ -356,11 +356,11 @@ const UserManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Delete User
                       </h3>
                       <div className="mt-2">
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-gray-500 dark:text-slate-400">
                           Are you sure you want to delete <strong>{userToDelete?.name}</strong>? This action cannot be undone.
                         </p>
                       </div>
@@ -396,8 +396,8 @@ const UserManagement = () => {
             <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-bold text-gray-900">Add New User</h2>
-                  <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600">
+                  <h2 className="text-lg font-bold text-gray-900 dark:text-slate-100">Add New User</h2>
+                  <button onClick={() => setShowAddModal(false)} className="text-gray-400 hover:text-gray-600 dark:text-slate-400">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
                 </div>

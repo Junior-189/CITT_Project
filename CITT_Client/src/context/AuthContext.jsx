@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import axios from "axios";
+import api from '../services/api';
 
 // Base URL for backend API
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
@@ -166,13 +167,14 @@ export const AuthProvider = ({ children }) => {
         photoURL: firebaseUser.photoURL
       });
 
-      const { token: jwtToken, user: backendUser } = response.data;
+      const { accessToken, refreshToken: newRefreshToken, user: backendUser } = response.data;
 
       // Store JWT token and user data
-      setToken(jwtToken);
+      setToken(accessToken);
       setProfile(backendUser);
       setRole(backendUser.role);
-      localStorage.setItem("authToken", jwtToken);
+      localStorage.setItem("authToken", accessToken);
+      localStorage.setItem("refreshToken", newRefreshToken);
       localStorage.setItem("userProfile", JSON.stringify(backendUser));
 
       // Return the backend user data
@@ -191,10 +193,10 @@ export const AuthProvider = ({ children }) => {
         password
       });
 
-      const { token: jwtToken, user: backendUser } = response.data;
+      const { accessToken, refreshToken: newRefreshToken, user: backendUser } = response.data;
 
       // Store authentication data
-      setToken(jwtToken);
+      setToken(accessToken);
       setProfile(backendUser);
       setRole(backendUser.role);
       setJustAuthenticated(true);
@@ -207,7 +209,8 @@ export const AuthProvider = ({ children }) => {
         isJWTLogin: true // Flag to indicate this is JWT-only login
       });
       
-      localStorage.setItem("authToken", jwtToken);
+      localStorage.setItem("authToken", accessToken);
+      localStorage.setItem("refreshToken", newRefreshToken);
       localStorage.setItem("userProfile", JSON.stringify(backendUser));
 
       // Also sign in to Firebase if user has firestore_id
@@ -256,16 +259,20 @@ export const AuthProvider = ({ children }) => {
         role: "innovator" // Default role
       });
 
-      const { token: jwtToken, user: backendUser } = response.data;
+      // Registration returns pending status - no tokens issued
+      const { user: backendUser, pending } = response.data;
+
+      if (pending) {
+        // Account pending approval - show message, don't set auth
+        setJustAuthenticated(true);
+        return backendUser;
+      }
 
       // Store authentication data
-      setToken(jwtToken);
       setProfile(backendUser);
       setRole(backendUser.role);
-      setUser({ email, displayName: name }); // Set a basic user object
+      setUser({ email, displayName: name });
       setJustAuthenticated(true);
-      localStorage.setItem("authToken", jwtToken);
-      localStorage.setItem("userProfile", JSON.stringify(backendUser));
 
       // Show profile form after registration
       setShowProfileForm(true);
@@ -279,7 +286,11 @@ export const AuthProvider = ({ children }) => {
 
   // 🔹 Logout user (both Firebase and clear local storage)
   const logout = async () => {
-    await signOut(auth);
+    try {
+      const storedRefreshToken = localStorage.getItem("refreshToken");
+      await api.post('/api/auth/logout', { refreshToken: storedRefreshToken }).catch(() => {});
+    } catch {}
+    try { await signOut(auth); } catch {}
     handleLogout();
   };
 
@@ -290,6 +301,7 @@ export const AuthProvider = ({ children }) => {
     setRole(null);
     setToken(null);
     localStorage.removeItem("authToken");
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("userProfile");
   };
 

@@ -57,7 +57,7 @@ const IPManagerDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Total IP Records</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.total_records || 0}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{stats.total_records || 0}</p>
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@ const IPManagerDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Pending Approval</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pending || 0}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{stats.pending || 0}</p>
               </div>
             </div>
           </div>
@@ -85,7 +85,7 @@ const IPManagerDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Approved</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.approved || 0}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{stats.approved || 0}</p>
               </div>
             </div>
           </div>
@@ -99,7 +99,7 @@ const IPManagerDashboard = () => {
               </div>
               <div className="ml-4">
                 <p className="text-gray-600 text-sm">Rejected</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.rejected || 0}</p>
+                <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{stats.rejected || 0}</p>
               </div>
             </div>
           </div>
@@ -112,7 +112,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">IP Records</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">IP Records</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -125,7 +125,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Pending Approvals</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Pending Approvals</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
               </svg>
@@ -138,7 +138,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Statistics</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Statistics</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
@@ -151,7 +151,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Analytics</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Analytics</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -164,7 +164,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Submitted IPs</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Submitted IPs</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
               </svg>
@@ -177,7 +177,7 @@ const IPManagerDashboard = () => {
             className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Submitted Projects</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Submitted Projects</h3>
               <svg className="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -190,14 +190,14 @@ const IPManagerDashboard = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Submissions</h2>
             {recentSubmissions.length === 0 ? (
-              <p className="text-sm text-gray-500">No recent submissions</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400">No recent submissions</p>
             ) : (
               <ul className="space-y-3">
                 {recentSubmissions.map((s) => (
                   <li key={s.id} className="p-3 border rounded-lg flex justify-between items-center">
                     <div>
-                      <p className="font-medium text-gray-900">{s.title || s.ip_title || 'Untitled'}</p>
-                      <p className="text-xs text-gray-500">{s.user_name || s.submitter || ''} — {s.created_at ? new Date(s.created_at).toLocaleString() : ''}</p>
+                      <p className="font-medium text-gray-900 dark:text-slate-100">{s.title || s.ip_title || 'Untitled'}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">{s.user_name || s.submitter || ''} — {s.created_at ? new Date(s.created_at).toLocaleString() : ''}</p>
                     </div>
                     <div>
                       <span className={`px-2 py-1 rounded-full text-sm ${s.approval_status === 'pending' ? 'bg-yellow-100 text-yellow-800' : s.approval_status === 'approved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>

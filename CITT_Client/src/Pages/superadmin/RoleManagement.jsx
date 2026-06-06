@@ -244,7 +244,7 @@ const RoleManagement = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading users...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading users...</p>
         </div>
       </div>
     );
@@ -255,7 +255,7 @@ const RoleManagement = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">Role Management</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Role Management</h1>
           <p className="text-gray-600 mt-2">Manage user roles and permissions</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             SuperAdmin Only
@@ -294,7 +294,7 @@ const RoleManagement = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Add New User</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">Add New User</h2>
               <p className="text-sm text-gray-600 mt-1">Create a new user account for any system role</p>
             </div>
             <button
@@ -363,7 +363,7 @@ const RoleManagement = () => {
               <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No users found</h3>
+              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-slate-100">No users found</h3>
             </div>
           ) : (
             users.map((user) => (
@@ -376,8 +376,8 @@ const RoleManagement = () => {
                       </span>
                     </div>
                     <div className="ml-3">
-                      <h3 className="text-lg font-semibold text-gray-900">{user.name}</h3>
-                      <p className="text-sm text-gray-600">{user.email}</p>
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">{user.name}</h3>
+                      <p className="text-sm text-gray-600 dark:text-slate-400">{user.email}</p>
                     </div>
                   </div>
                 </div>
@@ -437,7 +437,7 @@ const RoleManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Add New User
                       </h3>
                       <div className="mt-4 space-y-4">
@@ -447,7 +447,7 @@ const RoleManagement = () => {
                             type="text"
                             value={addFormData.name}
                             onChange={(e) => setAddFormData({ ...addFormData, name: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter full name"
                           />
                         </div>
@@ -457,7 +457,7 @@ const RoleManagement = () => {
                             type="email"
                             value={addFormData.email}
                             onChange={(e) => setAddFormData({ ...addFormData, email: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter email address"
                           />
                         </div>
@@ -466,7 +466,7 @@ const RoleManagement = () => {
                           <select
                             value={addFormData.role}
                             onChange={(e) => setAddFormData({ ...addFormData, role: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                           >
                             {Object.entries(rolesConfig).map(([role, config]) => (
                               <option key={role} value={role}>{config.label}</option>
@@ -479,7 +479,7 @@ const RoleManagement = () => {
                             type="text"
                             value={addFormData.phone}
                             onChange={(e) => setAddFormData({ ...addFormData, phone: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter phone number (optional)"
                           />
                         </div>
@@ -501,7 +501,7 @@ const RoleManagement = () => {
                             type="password"
                             value={addFormData.password}
                             onChange={(e) => setAddFormData({ ...addFormData, password: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Minimum 6 characters"
                           />
                         </div>
@@ -511,7 +511,7 @@ const RoleManagement = () => {
                             type="password"
                             value={addFormData.confirmPassword}
                             onChange={(e) => setAddFormData({ ...addFormData, confirmPassword: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Confirm password"
                           />
                         </div>
@@ -561,7 +561,7 @@ const RoleManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Change User Role
                       </h3>
                       <div className="mt-4">
@@ -580,7 +580,7 @@ const RoleManagement = () => {
                         <select
                           value={newRole}
                           onChange={(e) => setNewRole(e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 text-gray-900"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 text-gray-900 dark:text-slate-100"
                         >
                           {Object.entries(rolesConfig).map(([role, config]) => (
                             <option key={role} value={role}>
@@ -633,7 +633,7 @@ const RoleManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Delete User Account
                       </h3>
                       <div className="mt-4">
@@ -699,7 +699,7 @@ const RoleManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Edit User Information
                       </h3>
                       <div className="mt-4">
@@ -711,7 +711,7 @@ const RoleManagement = () => {
                             type="text"
                             value={editFormData.name}
                             onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter name"
                           />
                         </div>
@@ -724,7 +724,7 @@ const RoleManagement = () => {
                             type="email"
                             value={editFormData.email}
                             onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter email"
                           />
                         </div>
@@ -733,7 +733,7 @@ const RoleManagement = () => {
                           <select
                             value={editFormData.role || userToEdit.role}
                             onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                           >
                             {Object.keys(rolesConfig).map(r => (
                               <option key={r} value={r}>{rolesConfig[r].label}</option>
@@ -747,7 +747,7 @@ const RoleManagement = () => {
                             type="password"
                             value={editPassword}
                             onChange={(e) => setEditPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter new password to reset"
                           />
                         </div>
@@ -758,7 +758,7 @@ const RoleManagement = () => {
                             type="password"
                             value={editConfirmPassword}
                             onChange={(e) => setEditConfirmPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
                             placeholder="Confirm new password"
                           />
                         </div>
@@ -807,7 +807,7 @@ const RoleManagement = () => {
                       </svg>
                     </div>
                     <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-slate-100">
                         Change Password
                       </h3>
                       <div className="mt-4">
@@ -823,7 +823,7 @@ const RoleManagement = () => {
                             type="password"
                             value={newPassword}
                             onChange={(e) => setNewPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-slate-100"
                             placeholder="Enter new password"
                           />
                         </div>
@@ -836,12 +836,12 @@ const RoleManagement = () => {
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-gray-900"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 dark:text-slate-100"
                             placeholder="Confirm new password"
                           />
                         </div>
 
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 dark:text-slate-400">
                           Password must be at least 6 characters long.
                         </p>
                       </div>

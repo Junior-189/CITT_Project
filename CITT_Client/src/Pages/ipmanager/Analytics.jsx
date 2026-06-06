@@ -67,10 +67,10 @@ const Analytics = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading analytics data...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading analytics data...</p>
         </div>
       </div>
     );
@@ -78,7 +78,7 @@ const Analytics = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
@@ -94,11 +94,11 @@ const Analytics = () => {
   const maxMonthlyCount = Math.max(...analyticsData.monthlyTrends.map(m => m.count), 1);
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-900">IP Management Analytics</h1>
-          <p className="text-gray-600 mt-2">Detailed analytics and visualizations for IP activities</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">IP Management Analytics</h1>
+          <p className="text-gray-600 dark:text-slate-400 mt-2">Detailed analytics and visualizations for IP activities</p>
         </div>
 
         {/* Overview Cards */}
@@ -159,8 +159,8 @@ const Analytics = () => {
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* IP Type Distribution */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">IP Type Distribution</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">IP Type Distribution</h2>
             <div className="space-y-4">
               {[
                 { label: 'Patents', key: 'Patent', color: 'purple', icon: '' },
@@ -171,7 +171,7 @@ const Analytics = () => {
               ].map(({ label, key, color, icon }) => (
                 <div key={key}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700 flex items-center">
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300 flex items-center">
                       <span className="mr-2">{icon}</span> {label}
                     </span>
                     <span className={`text-sm font-bold text-${color}-600`}>
@@ -189,7 +189,7 @@ const Analytics = () => {
             </div>
 
             {/* Pie Chart Visual */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
               <div className="flex justify-center items-center">
                 <div className="relative w-48 h-48">
                   <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -207,8 +207,8 @@ const Analytics = () => {
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-gray-900">{analyticsData.total}</p>
-                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{analyticsData.total}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">Total</p>
                     </div>
                   </div>
                 </div>
@@ -217,8 +217,8 @@ const Analytics = () => {
           </div>
 
           {/* Status Distribution */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-900 mb-6">Status Distribution</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Status Distribution</h2>
             <div className="space-y-4">
               {[
                 { label: 'Pending', key: 'pending', barColor: 'bg-yellow-500', textColor: 'text-yellow-600', icon: '' },
@@ -227,7 +227,7 @@ const Analytics = () => {
               ].map(({ label, key, barColor, textColor, icon }) => (
                 <div key={key}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700 flex items-center">
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300 flex items-center">
                       <span className="mr-2">{icon}</span> {label}
                     </span>
                     <span className={`text-sm font-bold ${textColor}`}>
@@ -245,7 +245,7 @@ const Analytics = () => {
             </div>
 
             {/* Pie Chart Visual */}
-            <div className="mt-6 pt-6 border-t border-gray-200">
+            <div className="mt-6 pt-6 border-t border-gray-200 dark:border-slate-700">
               <div className="flex justify-center items-center">
                 <div className="relative w-48 h-48">
                   <svg viewBox="0 0 100 100" className="transform -rotate-90">
@@ -260,8 +260,8 @@ const Analytics = () => {
                   </svg>
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="text-center">
-                      <p className="text-2xl font-bold text-gray-900">{analyticsData.total}</p>
-                      <p className="text-xs text-gray-500">Total</p>
+                      <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{analyticsData.total}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">Total</p>
                     </div>
                   </div>
                 </div>
@@ -271,14 +271,14 @@ const Analytics = () => {
         </div>
 
         {/* Monthly Trends */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Monthly Trends (Last 6 Months)</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-8">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Monthly Trends (Last 6 Months)</h2>
           <div className="space-y-4">
             {analyticsData.monthlyTrends.length > 0 ? (
               analyticsData.monthlyTrends.map((item, index) => (
                 <div key={index}>
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium text-gray-700">
+                    <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                       {new Date(item.month + '-01').toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}
                     </span>
                     <span className="text-sm font-bold text-teal-600">{item.count} submissions</span>
@@ -292,29 +292,29 @@ const Analytics = () => {
                 </div>
               ))
             ) : (
-              <p className="text-gray-500 text-center py-4">No monthly trend data available</p>
+              <p className="text-gray-500 dark:text-slate-400 text-center py-4">No monthly trend data available</p>
             )}
           </div>
         </div>
 
         {/* Performance Summary */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Performance Summary</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-slate-100 mb-6">Performance Summary</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="text-center">
-              <p className="text-gray-600 text-sm mb-2">Total Processed</p>
-              <p className="text-4xl font-bold text-gray-900">{analyticsData.byStatus.approved + analyticsData.byStatus.rejected}</p>
-              <p className="text-xs text-gray-500 mt-1">Approved + Rejected</p>
+              <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Total Processed</p>
+              <p className="text-4xl font-bold text-gray-900 dark:text-slate-100">{analyticsData.byStatus.approved + analyticsData.byStatus.rejected}</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Approved + Rejected</p>
             </div>
-            <div className="text-center border-l border-r border-gray-200">
-              <p className="text-gray-600 text-sm mb-2">Success Rate</p>
+            <div className="text-center border-l border-r border-gray-200 dark:border-slate-700">
+              <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Success Rate</p>
               <p className="text-4xl font-bold text-green-600">{analyticsData.approvalRate}%</p>
-              <p className="text-xs text-gray-500 mt-1">Approval percentage</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Approval percentage</p>
             </div>
             <div className="text-center">
-              <p className="text-gray-600 text-sm mb-2">Pending Queue</p>
+              <p className="text-gray-600 dark:text-slate-400 text-sm mb-2">Pending Queue</p>
               <p className="text-4xl font-bold text-yellow-600">{analyticsData.byStatus.pending}</p>
-              <p className="text-xs text-gray-500 mt-1">Awaiting review</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">Awaiting review</p>
             </div>
           </div>
         </div>

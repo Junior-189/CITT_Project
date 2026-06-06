@@ -45,6 +45,7 @@ const galleryRoutes = require('./routes/gallery');
 const milestonesRoutes = require('./routes/milestones');
 const departmentsRoutes = require('./routes/departments');
 const mentorWorkspaceRoutes = require('./routes/mentorWorkspace');
+const contactRoutes = require('./routes/contact');
 
 // ============================================
 // LOGGING MIDDLEWARE
@@ -225,7 +226,7 @@ const rotateRefreshToken = async (oldToken) => {
   const newRefreshToken = generateRefreshToken();
   const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  // await storeRefreshTokenInDb(oldRecord.user_id, newRefreshToken, oldRecord.family, expiresAt);
+  await storeRefreshTokenInDb(oldRecord.user_id, newRefreshToken, oldRecord.family, expiresAt);
 
   const userResult = await pool.query(
     'SELECT id, email, role, name FROM users WHERE id = $1',
@@ -367,7 +368,7 @@ app.post('/api/auth/login',
     const family = generateTokenFamily();
     const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    // await storeRefreshTokenInDb(user.id, refreshToken, family, refreshExpiresAt);
+    await storeRefreshTokenInDb(user.id, refreshToken, family, refreshExpiresAt);
     await storeRefreshTokenFamily(family, 7 * 24 * 60 * 60);
 
     logActivity({
@@ -487,12 +488,21 @@ app.post('/api/auth/firebase-register',
 
     if (userExists.rows.length > 0) {
       const existingUser = userExists.rows[0];
+
+      if (existingUser.deleted_at) return res.status(401).json({ error: 'Invalid account' });
+      if (existingUser.account_status === 'pending') {
+        return res.status(403).json({ error: 'account_pending', message: `Hi ${existingUser.name}, your account is awaiting admin approval.` });
+      }
+      if (existingUser.account_status === 'rejected') {
+        return res.status(403).json({ error: 'account_rejected', message: 'Your account was not approved. Contact CITT administration.' });
+      }
+
       const accessToken = generateAccessToken(existingUser);
       const refreshToken = generateRefreshToken();
       const family = generateTokenFamily();
       const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-      // await storeRefreshTokenInDb(existingUser.id, refreshToken, family, refreshExpiresAt);
+      await storeRefreshTokenInDb(existingUser.id, refreshToken, family, refreshExpiresAt);
       await storeRefreshTokenFamily(family, 7 * 24 * 60 * 60);
 
       return res.json({
@@ -505,26 +515,18 @@ app.post('/api/auth/firebase-register',
 
     const result = await pool.query(
       `INSERT INTO users
-       (firestore_id, name, email, phone, password, role, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
-       RETURNING id, firestore_id, name, email, phone, role, created_at`,
+       (firestore_id, name, email, phone, password, role, account_status, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, 'pending', NOW(), NOW())
+       RETURNING id, firestore_id, name, email, phone, role, account_status, created_at`,
       [uid, displayName || 'User', email, phoneNumber || null, null, 'innovator']
     );
 
     const user = result.rows[0];
-    const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken();
-    const family = generateTokenFamily();
-    const refreshExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-
-    // await storeRefreshTokenInDb(user.id, refreshToken, family, refreshExpiresAt);
-    await storeRefreshTokenFamily(family, 7 * 24 * 60 * 60);
 
     res.status(201).json({
-      message: 'User registered and saved to PostgreSQL',
-      accessToken,
-      refreshToken,
-      user
+      message: 'Registration successful. Your account is awaiting admin approval.',
+      pending: true,
+      user: { id: user.id, name: user.name, email: user.email, role: user.role, account_status: 'pending' }
     });
   })
 );
@@ -561,25 +563,6 @@ app.post('/api/auth/set-password',
     });
   })
 );
-
-/**
- * GET /api/auth/me
- * Get current user profile
- */
-app.get('/api/auth/me', authenticateToken, asyncHandler(async (req, res) => {
-  const result = await pool.query(
-    `SELECT id, name, email, phone, role, university, campus, college, year_of_study,
-            profile_complete, firestore_id, profile_photo_url, account_status, created_at, updated_at
-     FROM users WHERE id = $1 AND deleted_at IS NULL`,
-    [req.user.id]
-  );
-
-  if (result.rows.length === 0) {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
-  res.json(result.rows[0]);
-}));
 
 /**
  * PUT /api/auth/change-password
@@ -778,7 +761,7 @@ app.put('/api/users/:id', authenticateToken,
   validate(updateProfileSchema),
   asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, email, phone } = req.body;
+  const { name, email, phone, campus } = req.body;
 
   if (req.user.id !== parseInt(id) && !isAdmin(req.user.role)) {
     return res.status(403).json({ error: 'You can only update your own profile' });
@@ -787,10 +770,10 @@ app.put('/api/users/:id', authenticateToken,
   const result = await pool.query(
     `UPDATE users
      SET name = COALESCE($1, name), email = COALESCE($2, email),
-         phone = COALESCE($3, phone), updated_at = NOW()
-     WHERE id = $4
-     RETURNING id, name, email, phone, role, created_at, updated_at`,
-    [name, email, phone, id]
+         phone = COALESCE($3, phone), campus = COALESCE($4, campus), updated_at = NOW()
+     WHERE id = $5
+     RETURNING id, name, email, phone, role, campus, created_at, updated_at`,
+    [name, email, phone, campus || null, id]
   );
 
   if (result.rows.length === 0) return res.status(404).json({ error: 'User not found' });
@@ -897,6 +880,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/departments', departmentsRoutes);
 app.use('/api/workspace', mentorWorkspaceRoutes);
+app.use('/api/contact', contactRoutes);
 app.use('/api/projects', milestonesRoutes);
 
 // ============================================

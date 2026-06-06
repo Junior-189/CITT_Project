@@ -72,7 +72,7 @@ const SubmittedProjects = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-gradient-to-r from-slate-800 to-teal-700 rounded-lg shadow-md p-6 mb-6 text-white">
           <h1 className="text-3xl font-bold">Submitted Projects</h1>
@@ -88,19 +88,19 @@ const SubmittedProjects = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <input
               type="text"
               placeholder="Search by title, innovator, or institution..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
             />
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -109,18 +109,18 @@ const SubmittedProjects = () => {
             </select>
             <button
               onClick={() => { setSearch(''); setStatusFilter(''); setPage(1); }}
-              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300"
             >
               Reset Filters
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md overflow-hidden">
           {loading ? (
-            <div className="p-12 text-center text-gray-500">Loading...</div>
+            <div className="p-12 text-center text-gray-500 dark:text-slate-400">Loading...</div>
           ) : filteredProjects.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
+            <div className="p-12 text-center text-gray-500 dark:text-slate-400">
               <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
@@ -129,30 +129,30 @@ const SubmittedProjects = () => {
           ) : (
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Innovator</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Institution</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Project</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Innovator</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Institution</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Approval</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Submitted</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200">
                   {filteredProjects.map((proj) => (
-                    <tr key={proj.id} className="hover:bg-gray-50">
+                    <tr key={proj.id} className="hover:bg-gray-50 dark:bg-slate-900">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{proj.title || 'Untitled'}</div>
-                        <div className="text-xs text-gray-500">{(proj.description || '').substring(0, 50)}{(proj.description || '').length > 50 ? '...' : ''}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-slate-100">{proj.title || 'Untitled'}</div>
+                        <div className="text-xs text-gray-500 dark:text-slate-400">{(proj.description || '').substring(0, 50)}{(proj.description || '').length > 50 ? '...' : ''}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm text-gray-900">{proj.user_name || 'Unknown'}</div>
-                        <div className="text-xs text-gray-500">{proj.user_email}</div>
+                        <div className="text-sm text-gray-900 dark:text-slate-100">{proj.user_name || 'Unknown'}</div>
+                        <div className="text-xs text-gray-500 dark:text-slate-400">{proj.user_email}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm text-gray-900">{proj.institution || 'N/A'}</span>
+                        <span className="text-sm text-gray-900 dark:text-slate-100">{proj.institution || 'N/A'}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(proj.approval_status)}`}>
@@ -164,7 +164,7 @@ const SubmittedProjects = () => {
                           {proj.project_status || 'submitted'}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-slate-400">
                         {proj.created_at ? new Date(proj.created_at).toLocaleDateString() : 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -185,9 +185,9 @@ const SubmittedProjects = () => {
 
         {pagination.pages > 1 && (
           <div className="mt-6 flex justify-center gap-2">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
-            <span className="px-4 py-2 text-gray-700">Page {page} of {pagination.pages}</span>
-            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
+            <span className="px-4 py-2 text-gray-700 dark:text-slate-300">Page {page} of {pagination.pages}</span>
+            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
           </div>
         )}
 
@@ -197,48 +197,48 @@ const SubmittedProjects = () => {
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div className="fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity" onClick={() => { setShowModal(false); setSelectedProject(null); }}></div>
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-              <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Project Details</h3>
+              <div className="relative inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+                <div className="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Project Details</h3>
                   <div className="space-y-4">
                     <div>
-                      <p className="font-semibold text-gray-700 text-sm">Title</p>
-                      <p className="text-gray-900">{selectedProject.title || 'Untitled'}</p>
+                      <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Title</p>
+                      <p className="text-gray-900 dark:text-slate-100">{selectedProject.title || 'Untitled'}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Innovator</p>
-                        <p className="text-gray-900">{selectedProject.user_name || 'N/A'}</p>
-                        <p className="text-xs text-gray-500">{selectedProject.user_email}</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Innovator</p>
+                        <p className="text-gray-900 dark:text-slate-100">{selectedProject.user_name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400">{selectedProject.user_email}</p>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Institution</p>
-                        <p className="text-gray-900">{selectedProject.institution || 'N/A'}</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Institution</p>
+                        <p className="text-gray-900 dark:text-slate-100">{selectedProject.institution || 'N/A'}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Category</p>
-                        <p className="text-gray-900">{selectedProject.category || 'N/A'}</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Category</p>
+                        <p className="text-gray-900 dark:text-slate-100">{selectedProject.category || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Submitted</p>
-                        <p className="text-gray-900">{selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'N/A'}</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Submitted</p>
+                        <p className="text-gray-900 dark:text-slate-100">{selectedProject.created_at ? new Date(selectedProject.created_at).toLocaleDateString() : 'N/A'}</p>
                       </div>
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-700 text-sm">Description</p>
-                      <p className="text-gray-600 text-sm mt-1">{selectedProject.description || 'No description available'}</p>
+                      <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Description</p>
+                      <p className="text-gray-600 dark:text-slate-400 text-sm mt-1">{selectedProject.description || 'No description available'}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Approval Status</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Approval Status</p>
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(selectedProject.approval_status)}`}>
                           {selectedProject.approval_status || 'pending'}
                         </span>
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Project Status</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Project Status</p>
                         <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getProjectStatusColor(selectedProject.project_status)}`}>
                           {selectedProject.project_status || 'submitted'}
                         </span>
@@ -246,8 +246,8 @@ const SubmittedProjects = () => {
                     </div>
                     {selectedProject.approved_by_name && (
                       <div>
-                        <p className="font-semibold text-gray-700 text-sm">Reviewed By</p>
-                        <p className="text-gray-900">{selectedProject.approved_by_name}</p>
+                        <p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">Reviewed By</p>
+                        <p className="text-gray-900 dark:text-slate-100">{selectedProject.approved_by_name}</p>
                       </div>
                     )}
                     {selectedProject.rejection_reason && (
@@ -258,10 +258,10 @@ const SubmittedProjects = () => {
                     )}
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="bg-gray-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                   <button
                     onClick={() => { setShowModal(false); setSelectedProject(null); }}
-                    className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-gray-700 font-medium hover:bg-gray-50 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:bg-slate-900 sm:w-auto sm:text-sm"
                   >
                     Close
                   </button>

@@ -45,7 +45,7 @@ const TopNavbar = ({ sidebarOpen, onToggleSidebar }) => {
               )}
             </button>
             <Link to="/" className="flex items-center gap-3 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center flex-shrink-0 shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center flex-shrink-0 shadow-sm">
                 <span className="text-teal-700 font-bold text-base">C</span>
               </div>
               <div className="hidden md:block">

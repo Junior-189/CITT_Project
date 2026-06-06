@@ -43,7 +43,7 @@ const Hero = () => {
   };
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-slate-800 to-teal-700 text-white rounded-xl p-10 text-center mb-10 min-h-[60vh] flex flex-col justify-center">
         <h2 className="text-4xl font-bold mb-2.5">
@@ -72,14 +72,14 @@ const Hero = () => {
 
       {/* Search Results Section */}
       {searchResults && (
-        <section className="mb-10 bg-slate-50 rounded-xl p-8 border-l-4 border-teal-600">
+        <section className="mb-10 bg-slate-50 dark:bg-slate-700 rounded-xl p-8 border-l-4 border-teal-600">
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-slate-800">
+            <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
               Search Results {searchResults.total > 0 && <span className="text-teal-600">({searchResults.total} found)</span>}
             </h3>
             <button
               onClick={clearSearch}
-              className="px-4 py-2 bg-slate-300 text-slate-800 rounded-md hover:bg-slate-400 transition-colors font-semibold"
+              className="px-4 py-2 bg-slate-300 text-slate-800 dark:text-slate-100 rounded-md hover:bg-slate-400 transition-colors font-semibold"
             >
               Clear Search
             </button>
@@ -88,18 +88,18 @@ const Hero = () => {
           {/* Events Results */}
           {searchResults.events && searchResults.events.length > 0 && (
             <div className="mb-8">
-              <h4 className="text-xl font-bold text-slate-700 mb-4 border-b-2 border-teal-600 pb-2">
+              <h4 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-4 border-b-2 border-teal-600 pb-2">
                 📅 Events ({searchResults.events.length})
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {searchResults.events.map((event) => (
                   <div
                     key={event.id}
-                    className="bg-white rounded-lg p-4 border border-slate-200 hover:shadow-lg hover:border-teal-600 transition-all cursor-pointer"
+                    className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-teal-600 transition-all cursor-pointer"
                     onClick={() => navigate(`/events?id=${event.id}`)}
                   >
-                    <h5 className="font-bold text-slate-800 text-lg mb-2 line-clamp-2">{event.title}</h5>
-                    <p className="text-sm text-slate-600 mb-3 line-clamp-2">{event.description}</p>
+                    <h5 className="font-bold text-slate-800 dark:text-slate-100 text-lg mb-2 line-clamp-2">{event.title}</h5>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">{event.description}</p>
                     <div className="flex justify-between items-center text-sm text-slate-500">
                       <span className="bg-teal-100 text-teal-700 px-3 py-1 rounded-full">{event.category}</span>
                       {event.location && <span>{event.location}</span>}
@@ -118,19 +118,19 @@ const Hero = () => {
           {/* Users Results */}
           {searchResults.users && searchResults.users.length > 0 && (
             <div>
-              <h4 className="text-xl font-bold text-slate-700 mb-4 border-b-2 border-teal-600 pb-2">
+              <h4 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-4 border-b-2 border-teal-600 pb-2">
                 👥 Users ({searchResults.users.length})
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {searchResults.users.map((user) => (
                   <div
                     key={user.id}
-                    className="bg-white rounded-lg p-4 border border-slate-200 hover:shadow-lg hover:border-teal-600 transition-all cursor-pointer"
+                    className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700 hover:shadow-lg hover:border-teal-600 transition-all cursor-pointer"
                     onClick={() => navigate(`/profile/${user.id}`)}
                   >
-                    <h5 className="font-bold text-slate-800 text-lg mb-2">{user.name}</h5>
-                    <p className="text-sm text-slate-600 mb-2">{user.email}</p>
-                    {user.phone && <p className="text-sm text-slate-600 mb-2">📱 {user.phone}</p>}
+                    <h5 className="font-bold text-slate-800 dark:text-slate-100 text-lg mb-2">{user.name}</h5>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">{user.email}</p>
+                    {user.phone && <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">📱 {user.phone}</p>}
                     <p className="text-xs text-slate-500">
                       Joined: {new Date(user.created_at).toLocaleDateString()}
                     </p>
@@ -143,7 +143,7 @@ const Hero = () => {
           {/* No Results Message */}
           {searchResults.total === 0 && (
             <div className="text-center py-8">
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-slate-600 dark:text-slate-400">
                 No results found for "<strong>{keyword}</strong>"
               </p>
               <p className="text-sm text-slate-500 mt-2">Try searching for different keywords</p>
@@ -164,12 +164,12 @@ const Hero = () => {
         {/* Register Your Innovation */}
         <div
           onClick={() => navigate('/login')}
-          className="bg-white rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
+          className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
         >
-          <h3 className="text-slate-800 font-bold text-xl mb-2.5">
+          <h3 className="text-slate-800 dark:text-slate-100 font-bold text-xl mb-2.5">
             Register Your Innovation
           </h3>
-          <p className="text-slate-700">
+          <p className="text-slate-700 dark:text-slate-200">
             Submit details of your research or startup idea for funding and collaboration opportunities.
           </p>
         </div>
@@ -177,12 +177,12 @@ const Hero = () => {
         {/* Funding Opportunities */}
         <div
           onClick={() => navigate('/funding')}
-          className="bg-white rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
+          className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
         >
-          <h3 className="text-slate-800 font-bold text-xl mb-2.5">
+          <h3 className="text-slate-800 dark:text-slate-100 font-bold text-xl mb-2.5">
             Funding Opportunities
           </h3>
-          <p className="text-slate-700">
+          <p className="text-slate-700 dark:text-slate-200">
             Explore available grants, sponsorships, and investments for innovators and research projects.
           </p>
         </div>
@@ -190,12 +190,12 @@ const Hero = () => {
         {/* Intellectual Property */}
         <div
           onClick={() => navigate('/ip')}
-          className="bg-white rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
+          className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
         >
-          <h3 className="text-slate-800 font-bold text-xl mb-2.5">
+          <h3 className="text-slate-800 dark:text-slate-100 font-bold text-xl mb-2.5">
             Intellectual Property
           </h3>
-          <p className="text-slate-700">
+          <p className="text-slate-700 dark:text-slate-200">
             Protect your innovation by registering patents, trademarks, and copyrights through ITTMS.
           </p>
         </div>
@@ -203,12 +203,12 @@ const Hero = () => {
         {/* Events & Exhibitions */}
         <div
           onClick={() => navigate('/events')}
-          className="bg-white rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
+          className="bg-white dark:bg-slate-800 rounded-xl p-5 shadow-md cursor-pointer hover:shadow-lg hover:scale-[1.02] transition-transform duration-300"
         >
-          <h3 className="text-slate-800 font-bold text-xl mb-2.5">
+          <h3 className="text-slate-800 dark:text-slate-100 font-bold text-xl mb-2.5">
             Events & Exhibitions
           </h3>
-          <p className="text-slate-700">
+          <p className="text-slate-700 dark:text-slate-200">
             Stay informed about innovation challenges, exhibitions, and university-wide tech events.
           </p>
         </div>

@@ -534,17 +534,17 @@ const Funding = () => {
 	  const isInnovator = role === "innovator";
 
   return (
-    <main className="flex-1 px-8 md:px-16 py-10 overflow-auto bg-gray-50 text-slate-800">
+    <main className="flex-1 px-8 md:px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-800 mb-2">Funding & Investment Management</h1>
-          <p className="text-slate-600">
+          <h1 className="text-4xl font-bold text-slate-800 dark:text-slate-100 mb-2">Funding & Investment Management</h1>
+          <p className="text-slate-600 dark:text-slate-400">
             Submit funding applications, track approvals & disbursements, and manage investor pledges.
           </p>
         </div>
 
         {/* tabs */}
-	        <div className="flex gap-2 mb-6 border-b border-slate-200">
+	        <div className="flex gap-2 mb-6 border-b border-slate-200 dark:border-slate-700">
 	          <Tab name="overview" activeTab={activeTab} setActiveTab={setActiveTab}>Overview</Tab>
 	          <Tab name="apply" activeTab={activeTab} setActiveTab={setActiveTab}>Apply for Funding</Tab>
 	          <Tab name="applications" activeTab={activeTab} setActiveTab={setActiveTab}>{isReviewer ? "Applications" : "My Applications"}</Tab>
@@ -573,17 +573,17 @@ const Funding = () => {
         )}
 
         {activeTab === "apply" && (
-          <div className="bg-white rounded-xl p-8 shadow-md max-w-4xl mb-8">
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Submit Funding Application</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md max-w-4xl mb-8">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">Submit Funding Application</h2>
             {!profile?.id && <div className="mb-4 text-red-600">Please log in to submit an application.</div>}
             <form onSubmit={handleSubmit} className="space-y-6">
 	              <div>
-	                <label className="block text-slate-700 font-semibold mb-2">Project (optional)</label>
+	                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Project (optional)</label>
 	                <select
 	                  name="projectId"
 	                  value={form.projectId}
 	                  onChange={handleChange}
-	                  className="w-full px-4 py-2 border rounded"
+	                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
 	                  disabled={projectsLoading}
 	                >
 	                  <option value="">{projectsLoading ? "Loading projects..." : "No linked project"}</option>
@@ -600,19 +600,19 @@ const Funding = () => {
 	              </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Title</label>
-                <input name="title" value={form.title} onChange={handleChange} required className="w-full px-4 py-2 border rounded" />
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Title</label>
+                <input name="title" value={form.title} onChange={handleChange} required className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100" />
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-2">Funding Amount Requested (TZS)</label>
-                  <input name="amountRequested" value={form.amountRequested} onChange={handleChange} required type="number" className="w-full px-4 py-2 border rounded" />
+                  <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Funding Amount Requested (TZS)</label>
+                  <input name="amountRequested" value={form.amountRequested} onChange={handleChange} required type="number" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100" />
                 </div>
 
                 <div>
-                  <label className="block text-slate-700 font-semibold mb-2">Grant Type</label>
-                  <select name="grantType" value={form.grantType} onChange={handleChange} className="w-full px-4 py-2 border rounded">
+                  <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Grant Type</label>
+                  <select name="grantType" value={form.grantType} onChange={handleChange} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100">
                     <option value="research">Research Grant</option>
                     <option value="startup">Startup Funding</option>
                     <option value="innovation">Innovation Grant</option>
@@ -622,17 +622,17 @@ const Funding = () => {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Project Justification</label>
-                <textarea name="justification" value={form.justification} onChange={handleChange} rows={5} className="w-full px-4 py-2 border rounded" required />
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Project Justification</label>
+                <textarea name="justification" value={form.justification} onChange={handleChange} rows={5} className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100" required />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Upload Budget Document (PDF/XLSX)</label>
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Upload Budget Document (PDF/XLSX)</label>
                 <input name="budgetFile" type="file" onChange={handleChange} accept=".pdf,.xlsx,.xls,.docx" className="px-2 py border rounded" />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Upload Supporting Documents (multiple)</label>
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Upload Supporting Documents (multiple)</label>
                 <input name="supportingFiles" type="file" onChange={handleChange} accept=".pdf,.jpg,.png,.xlsx,.docx" multiple className="px-2 py border rounded" />
               </div>
 
@@ -648,7 +648,7 @@ const Funding = () => {
                     budgetFile: null,
                     supportingFiles: [],
                   });
-                }} className="bg-slate-200 px-6 py-2 rounded-lg">Reset</button>
+                }} className="bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500">Reset</button>
               </div>
             </form>
           </div>
@@ -656,9 +656,9 @@ const Funding = () => {
 
         {activeTab === "applications" && (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-slate-800">Funding Applications</h2>
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Funding Applications</h2>
             {loading && <p>Loading...</p>}
-            {!loading && applications.length === 0 && <p className="text-slate-600">No applications found.</p>}
+            {!loading && applications.length === 0 && <p className="text-slate-600 dark:text-slate-400">No applications found.</p>}
 
             <div className="grid gap-4">
               {applications.map((app) => {
@@ -667,11 +667,11 @@ const Funding = () => {
                 const editLabel = app.approval_status === 'rejected' ? 'Edit & Resubmit' : 'Edit Application';
 
                 return (
-                <div key={app.id} className="bg-white rounded-xl p-6 shadow-md">
+                <div key={app.id} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md">
 	                  <div className="flex justify-between items-start mb-3">
 	                    <div>
-	                      <h3 className="text-xl font-bold text-slate-800">{app.title}</h3>
-	                      <p className="text-slate-600 text-sm">
+	                      <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{app.title}</h3>
+	                      <p className="text-slate-600 dark:text-slate-400 text-sm">
 	                        ID: {app.id}
 	                        {app.user_name ? ` • By: ${app.user_name}` : ""}
 	                        {app.approval_status ? ` • Approval: ${app.approval_status}` : ""}
@@ -679,13 +679,13 @@ const Funding = () => {
 	                      </p>
 	                    </div>
 	                    <div className="text-right">
-	                      <p className="text-slate-600">
+	                      <p className="text-slate-600 dark:text-slate-400">
 	                        Requested: <strong>{Number(app.amount || 0).toLocaleString()} {app.currency || "TZS"}</strong>
 	                      </p>
 	                    </div>
 	                  </div>
 
-	                  <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-600">
+	                  <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-400">
 	                    <div>
 	                      <p className="font-semibold">Grant Type</p>
 	                      <p>{app.grant_type || "—"}</p>
@@ -702,7 +702,7 @@ const Funding = () => {
 	                    </div>
 	                  </div>
 
-	                  <p className="mt-4 text-slate-700">{app.description || "—"}</p>
+	                  <p className="mt-4 text-slate-700 dark:text-slate-200">{app.description || "—"}</p>
 
 	                  <div className="mt-4 flex gap-3 flex-wrap">
 	                    {isReviewer && app.approval_status === "pending" && (
@@ -738,18 +738,18 @@ const Funding = () => {
 
                   {/* Expandable Details Section */}
                   {expandedApp === app.id && (
-                    <div className="mt-6 pt-6 border-t border-slate-200">
+                    <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
                       {editingApp === app.id ? (
                         /* Edit Form */
                         <div className="space-y-4">
-                          <h4 className="text-lg font-bold text-slate-800 mb-4">Edit Application</h4>
+                          <h4 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">Edit Application</h4>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-2">Project (optional)</label>
+                            <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Project (optional)</label>
                             <select
                               value={editForm.projectId}
                               onChange={(e) => setEditForm({ ...editForm, projectId: e.target.value })}
-                              className="w-full px-4 py-2 border rounded"
+                              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
                               disabled={projectsLoading}
                             >
                               <option value="">{projectsLoading ? "Loading projects..." : "No linked project"}</option>
@@ -762,31 +762,31 @@ const Funding = () => {
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-2">Title</label>
+                            <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Title</label>
                             <input
                               type="text"
                               value={editForm.title}
                               onChange={(e) => setEditForm({...editForm, title: e.target.value})}
-                              className="w-full px-4 py-2 border rounded"
+                              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-2">Amount Requested (TZS)</label>
+                            <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Amount Requested (TZS)</label>
                             <input
                               type="number"
                               value={editForm.amountRequested}
                               onChange={(e) => setEditForm({...editForm, amountRequested: e.target.value})}
-                              className="w-full px-4 py-2 border rounded"
+                              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
                             />
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-2">Grant Type</label>
+                            <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Grant Type</label>
                             <select
                               value={editForm.grantType}
                               onChange={(e) => setEditForm({...editForm, grantType: e.target.value})}
-                              className="w-full px-4 py-2 border rounded"
+                              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
                             >
                               <option value="research">Research Grant</option>
                               <option value="startup">Startup Funding</option>
@@ -796,12 +796,12 @@ const Funding = () => {
                           </div>
 
                           <div>
-                            <label className="block text-slate-700 font-semibold mb-2">Project Justification</label>
+                            <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Project Justification</label>
                             <textarea
                               value={editForm.justification}
                               onChange={(e) => setEditForm({...editForm, justification: e.target.value})}
                               rows={5}
-                              className="w-full px-4 py-2 border rounded"
+                              className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100"
                             />
                           </div>
 
@@ -815,7 +815,7 @@ const Funding = () => {
                             </button>
                             <button
                               onClick={handleCancelEdit}
-                              className="bg-slate-200 text-slate-700 px-6 py-2 rounded-lg hover:bg-slate-300"
+                              className="bg-slate-200 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300"
                             >
                               Cancel
                             </button>
@@ -826,34 +826,34 @@ const Funding = () => {
                         <div className="space-y-4">
                           <div className="grid md:grid-cols-2 gap-4">
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Application ID</p>
-                              <p className="text-slate-800">{app.id}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Application ID</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.id}</p>
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Status</p>
-                              <p className="text-slate-800">{app.approval_status || app.status}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Status</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.approval_status || app.status}</p>
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Submitted By</p>
-                              <p className="text-slate-800">{app.user_name || "—"}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Submitted By</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.user_name || "—"}</p>
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Submitted On</p>
-                              <p className="text-slate-800">{app.created_at ? new Date(app.created_at).toLocaleString() : "—"}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Submitted On</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.created_at ? new Date(app.created_at).toLocaleString() : "—"}</p>
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Funding Status</p>
-                              <p className="text-slate-800">{app.funding_status || "—"}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Funding Status</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.funding_status || "—"}</p>
                             </div>
                             <div>
-                              <p className="text-sm font-semibold text-slate-700">Project ID</p>
-                              <p className="text-slate-800">{app.project_id || "Not linked"}</p>
+                              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Project ID</p>
+                              <p className="text-slate-800 dark:text-slate-100">{app.project_id || "Not linked"}</p>
                             </div>
                           </div>
 
                           <div>
-                            <p className="text-sm font-semibold text-slate-700 mb-2">Full Description</p>
-                            <p className="text-slate-800 whitespace-pre-wrap">{app.description || "—"}</p>
+                            <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-2">Full Description</p>
+                            <p className="text-slate-800 dark:text-slate-100 whitespace-pre-wrap">{app.description || "—"}</p>
                           </div>
 
                           {app.rejection_reason && (
@@ -886,31 +886,31 @@ const Funding = () => {
           const approvedApps = applications.filter(a => a.approval_status === "approved" || a.funding_status === "approved");
           return (
           <div>
-            <h2 className="text-2xl font-bold text-slate-800 mb-4">Investor Portal - Approved Projects</h2>
-            <p className="text-slate-600 mb-6">
+            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-4">Investor Portal - Approved Projects</h2>
+            <p className="text-slate-600 dark:text-slate-400 mb-6">
               Browse all projects approved by Admin and IP Manager with their estimated approved funds.
             </p>
 
             {approvedApps.length === 0 ? (
-              <div className="bg-white rounded-xl p-12 text-center shadow-md">
-                <p className="text-slate-600 text-lg">No approved projects available for investment yet.</p>
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-12 text-center shadow-md">
+                <p className="text-slate-600 dark:text-slate-400 text-lg">No approved projects available for investment yet.</p>
               </div>
             ) : (
               <>
                 {/* Summary bar */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-teal-600">
-                    <p className="text-sm text-slate-600">Approved Projects</p>
-                    <p className="text-2xl font-bold text-slate-800">{approvedApps.length}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-teal-600">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Approved Projects</p>
+                    <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{approvedApps.length}</p>
                   </div>
-                  <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-blue-600">
-                    <p className="text-sm text-slate-600">Total Requested</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-blue-600">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Total Requested</p>
                     <p className="text-2xl font-bold text-blue-600">
                       {approvedApps.reduce((s, a) => s + Number(a.amount || 0), 0).toLocaleString()} TZS
                     </p>
                   </div>
-                  <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-600">
-                    <p className="text-sm text-slate-600">Total Approved Funds</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-xl p-4 shadow-md border-l-4 border-green-600">
+                    <p className="text-sm text-slate-600 dark:text-slate-400">Total Approved Funds</p>
                     <p className="text-2xl font-bold text-green-600">
                       {approvedApps.reduce((s, a) => s + Number(a.amount_approved || a.amount || 0), 0).toLocaleString()} TZS
                     </p>
@@ -919,10 +919,10 @@ const Funding = () => {
 
                 <div className="grid md:grid-cols-2 gap-6">
                   {approvedApps.map(app => (
-                    <div key={app.id} className="bg-white rounded-xl p-6 shadow-md">
+                    <div key={app.id} className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md">
                       <div className="flex justify-between items-start mb-3">
                         <div>
-                          <h3 className="text-xl font-bold text-slate-800">{app.title}</h3>
+                          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">{app.title}</h3>
                           {app.project_title && (
                             <p className="text-sm text-teal-600 font-medium mt-1">
                               Project: {app.project_title}
@@ -937,9 +937,9 @@ const Funding = () => {
                         </span>
                       </div>
 
-                      <p className="text-slate-600 text-sm mb-4 line-clamp-3">{app.description}</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm mb-4 line-clamp-3">{app.description}</p>
 
-                      <div className="grid grid-cols-2 gap-3 mb-4 bg-slate-50 rounded-lg p-3">
+                      <div className="grid grid-cols-2 gap-3 mb-4 bg-slate-50 dark:bg-slate-700 rounded-lg p-3">
                         <div>
                           <p className="text-xs text-slate-500">Amount Requested</p>
                           <p className="text-lg font-bold text-blue-600">
@@ -956,12 +956,12 @@ const Funding = () => {
 
                       <div className="text-xs text-slate-500 mb-4 space-y-1">
                         {app.approved_by_name && (
-                          <p>Approved by: <strong className="text-slate-700">{app.approved_by_name}</strong></p>
+                          <p>Approved by: <strong className="text-slate-700 dark:text-slate-200">{app.approved_by_name}</strong></p>
                         )}
                         {app.approved_at && (
-                          <p>Approved on: <strong className="text-slate-700">{new Date(app.approved_at).toLocaleDateString()}</strong></p>
+                          <p>Approved on: <strong className="text-slate-700 dark:text-slate-200">{new Date(app.approved_at).toLocaleDateString()}</strong></p>
                         )}
-                        <p>Funding Status: <strong className="text-slate-700">{app.funding_status || 'approved'}</strong></p>
+                        <p>Funding Status: <strong className="text-slate-700 dark:text-slate-200">{app.funding_status || 'approved'}</strong></p>
                       </div>
 
                       <button onClick={() => {
@@ -1033,13 +1033,13 @@ const Funding = () => {
           };
 
           return (
-          <div className="bg-white rounded-xl p-8 shadow-md">
-            <h2 className="text-2xl font-bold mb-4">Generate Financial Reports</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-8 shadow-md">
+            <h2 className="text-2xl font-bold mb-4 text-slate-800 dark:text-slate-100">Generate Financial Reports</h2>
 
             <div className="grid md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Report Scope</label>
-                <select className="w-full px-4 py-2 border rounded" id="reportScope">
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Report Scope</label>
+                <select className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100" id="reportScope">
                   <option value="all">All Projects</option>
                   <option value="my">My Projects Only</option>
                   <option value="approved">Approved Projects Only</option>
@@ -1047,8 +1047,8 @@ const Funding = () => {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-2">Export Format</label>
-                <select id="reportFormat" className="w-full px-4 py-2 border rounded">
+                <label className="block text-slate-700 dark:text-slate-200 font-semibold mb-2">Export Format</label>
+                <select id="reportFormat" className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100">
                   <option value="csv">Excel (CSV)</option>
                   <option value="pdf">PDF (Print)</option>
                 </select>
@@ -1087,36 +1087,36 @@ const Funding = () => {
                   `Total Requested: ${totalRequested.toLocaleString()} TZS\n` +
                   `Total Approved: ${totalApproved.toLocaleString()} TZS`
                 );
-              }} className="bg-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300 transition font-medium">
+              }} className="bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200 px-6 py-2 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition font-medium">
                 Preview Summary
               </button>
             </div>
 
             {/* Report preview table */}
             <div className="border rounded-lg overflow-hidden">
-              <div className="bg-slate-50 px-4 py-3 border-b">
-                <h3 className="font-semibold text-slate-700">Report Data Preview</h3>
+              <div className="bg-slate-50 dark:bg-slate-700 px-4 py-3 border-b">
+                <h3 className="font-semibold text-slate-700 dark:text-slate-200">Report Data Preview</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-sm text-slate-800 dark:text-slate-200">
                   <thead>
-                    <tr className="bg-slate-100">
-                      <th className="text-left px-3 py-2">Title</th>
-                      <th className="text-left px-3 py-2">Grant Type</th>
-                      <th className="text-right px-3 py-2">Requested (TZS)</th>
-                      <th className="text-right px-3 py-2">Approved (TZS)</th>
-                      <th className="text-left px-3 py-2">Status</th>
-                      <th className="text-left px-3 py-2">Approved By</th>
+                    <tr className="bg-slate-100 dark:bg-slate-700">
+                      <th className="text-left px-3 py-2 text-slate-700 dark:text-slate-200">Title</th>
+                      <th className="text-left px-3 py-2 text-slate-700 dark:text-slate-200">Grant Type</th>
+                      <th className="text-right px-3 py-2 text-slate-700 dark:text-slate-200">Requested (TZS)</th>
+                      <th className="text-right px-3 py-2 text-slate-700 dark:text-slate-200">Approved (TZS)</th>
+                      <th className="text-left px-3 py-2 text-slate-700 dark:text-slate-200">Status</th>
+                      <th className="text-left px-3 py-2 text-slate-700 dark:text-slate-200">Approved By</th>
                     </tr>
                   </thead>
                   <tbody>
                     {applications.length === 0 ? (
-                      <tr><td colSpan={6} className="text-center py-6 text-slate-500">No data available</td></tr>
+                      <tr><td colSpan={6} className="text-center py-6 text-slate-500 dark:text-slate-400">No data available</td></tr>
                     ) : (
                       applications.slice(0, 10).map(a => (
-                        <tr key={a.id} className="border-t hover:bg-slate-50">
-                          <td className="px-3 py-2 text-slate-800">{a.title}</td>
-                          <td className="px-3 py-2 text-slate-600">{a.grant_type || "—"}</td>
+                        <tr key={a.id} className="border-t border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                          <td className="px-3 py-2 text-slate-800 dark:text-slate-100">{a.title}</td>
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{a.grant_type || "—"}</td>
                           <td className="px-3 py-2 text-right text-blue-600 font-medium">{Number(a.amount || 0).toLocaleString()}</td>
                           <td className="px-3 py-2 text-right text-green-600 font-medium">{Number(a.amount_approved || 0).toLocaleString()}</td>
                           <td className="px-3 py-2">
@@ -1126,21 +1126,21 @@ const Funding = () => {
                               'bg-yellow-100 text-yellow-800'
                             }`}>{a.approval_status}</span>
                           </td>
-                          <td className="px-3 py-2 text-slate-600">{a.approved_by_name || "—"}</td>
+                          <td className="px-3 py-2 text-slate-600 dark:text-slate-400">{a.approved_by_name || "—"}</td>
                         </tr>
                       ))
                     )}
                   </tbody>
                 </table>
                 {applications.length > 10 && (
-                  <div className="text-center py-2 text-sm text-slate-500 border-t">
+                  <div className="text-center py-2 text-sm text-slate-500 dark:text-slate-400 border-t border-slate-200 dark:border-slate-700">
                     Showing 10 of {applications.length} entries. Generate full report for complete data.
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="mt-6 text-sm text-slate-600">
+            <div className="mt-6 text-sm text-slate-600 dark:text-slate-400">
               <p><strong>Note:</strong> CSV exports are Excel-friendly and include all numeric data for calculations. Use Print &rarr; Save as PDF from the browser dialog to get a printable PDF report.</p>
             </div>
           </div>
@@ -1160,7 +1160,7 @@ function Tab({ name, children, activeTab, setActiveTab }) {
   return (
     <button
       onClick={() => setActiveTab(name)}
-      className={`px-6 py-3 font-semibold transition-colors ${active ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-600 hover:text-slate-800"}`}
+      className={`px-6 py-3 font-semibold transition-colors ${active ? "text-teal-600 border-b-2 border-teal-600" : "text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:text-slate-100"}`}
     >
       {children}
     </button>
@@ -1169,14 +1169,14 @@ function Tab({ name, children, activeTab, setActiveTab }) {
 
 function FeatureCard({ icon, emoji, title, description, children }) {
   return (
-    <div className="bg-white rounded-xl p-6 shadow-md border-l-4 border-teal-600">
+    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border-l-4 border-teal-600">
       <div className="flex items-start gap-4">
         <span className="text-4xl">
           {icon ? icon : emoji}
         </span>
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-slate-800 mb-2">{title}</h3>
-          <p className="text-slate-600 mb-4">{description}</p>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2">{title}</h3>
+          <p className="text-slate-600 dark:text-slate-400 mb-4">{description}</p>
           <div>{children}</div>
         </div>
       </div>

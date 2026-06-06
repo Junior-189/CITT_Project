@@ -122,11 +122,11 @@ const AdminSubmissions = () => {
 
   if (loading) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
         <div className="flex justify-center items-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading submissions...</p>
+            <p className="text-slate-600 dark:text-slate-400">Loading submissions...</p>
           </div>
         </div>
       </main>
@@ -134,11 +134,11 @@ const AdminSubmissions = () => {
   }
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-4xl font-bold text-slate-800 mb-2">Event Submissions Management</h1>
-        <p className="text-slate-600">Review and approve/reject user event submissions</p>
+        <p className="text-slate-600 dark:text-slate-400">Review and approve/reject user event submissions</p>
       </div>
 
       {error && (
@@ -186,7 +186,7 @@ const AdminSubmissions = () => {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold text-slate-800">{submission.title}</h3>
+                      <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">{submission.title}</h3>
                       <p className="text-slate-600 text-sm mb-2">
                         Event: <strong>{submission.event_title || 'Unknown Event'}</strong>
                       </p>
@@ -198,13 +198,13 @@ const AdminSubmissions = () => {
                       {getStatusIcon(submission.status)} {submission.status.toUpperCase()}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 text-sm text-slate-600">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-slate-600 dark:text-slate-400">
                     <div>
-                      <p className="text-xs font-semibold text-slate-700">Submitted By</p>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Submitted By</p>
                       <p>User #{submission.user_id}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-700">Submitted On</p>
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Submitted On</p>
                       <p>{new Date(submission.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
@@ -223,29 +223,29 @@ const AdminSubmissions = () => {
               </h2>
 
               {/* Submission Info */}
-              <div className="space-y-4 mb-6 pb-6 border-b border-slate-200">
+              <div className="space-y-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                 <div>
                   <p className="text-xs font-semibold text-slate-700 uppercase">Event</p>
-                  <p className="text-slate-800">{selectedSubmission.event_title || 'Unknown'}</p>
+                  <p className="text-slate-800 dark:text-slate-100">{selectedSubmission.event_title || 'Unknown'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-700 uppercase">Team Name</p>
-                  <p className="text-slate-800">{selectedSubmission.team_name || 'Not specified'}</p>
+                  <p className="text-slate-800 dark:text-slate-100">{selectedSubmission.team_name || 'Not specified'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-700 uppercase">Team Members</p>
-                  <p className="text-slate-800">{selectedSubmission.members || 'Not specified'}</p>
+                  <p className="text-slate-800 dark:text-slate-100">{selectedSubmission.members || 'Not specified'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-slate-700 uppercase">Submitted</p>
-                  <p className="text-slate-800">
+                  <p className="text-slate-800 dark:text-slate-100">
                     {new Date(selectedSubmission.created_at).toLocaleString()}
                   </p>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="mb-6 pb-6 border-b border-slate-200">
+              <div className="mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-semibold text-slate-700 uppercase mb-2">Description</p>
                 <p className="text-slate-600 text-sm bg-slate-50 p-3 rounded-lg">
                   {selectedSubmission.description || 'No description provided'}
@@ -253,7 +253,7 @@ const AdminSubmissions = () => {
               </div>
 
               {/* Problem Statement */}
-              <div className="mb-6 pb-6 border-b border-slate-200">
+              <div className="mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-semibold text-slate-700 uppercase mb-2">Problem Statement</p>
                 <p className="text-slate-600 text-sm bg-slate-50 p-3 rounded-lg">
                   {selectedSubmission.problem_statement || 'Not provided'}
@@ -261,7 +261,7 @@ const AdminSubmissions = () => {
               </div>
 
               {/* Solution */}
-              <div className="mb-6 pb-6 border-b border-slate-200">
+              <div className="mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-semibold text-slate-700 uppercase mb-2">Proposed Solution</p>
                 <p className="text-slate-600 text-sm bg-slate-50 p-3 rounded-lg">
                   {selectedSubmission.solution || 'Not provided'}
@@ -270,7 +270,7 @@ const AdminSubmissions = () => {
 
               {/* Pitch URL */}
               {selectedSubmission.pitch_url && (
-                <div className="mb-6 pb-6 border-b border-slate-200">
+                <div className="mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                   <p className="text-xs font-semibold text-slate-700 uppercase mb-2">Pitch URL</p>
                   <a
                     href={selectedSubmission.pitch_url}
@@ -284,7 +284,7 @@ const AdminSubmissions = () => {
               )}
 
               {/* Status Update */}
-              <div className="mb-6 pb-6 border-b border-slate-200">
+              <div className="mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-semibold text-slate-700 uppercase mb-3">Update Status</p>
                 <div className="space-y-2">
                   {['submitted', 'reviewing', 'approved', 'rejected'].map(status => (
@@ -324,7 +324,7 @@ const AdminSubmissions = () => {
             </div>
           ) : (
             <div className="bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl p-6 sticky top-10 text-center">
-              <p className="text-slate-600">Select a submission to view details and manage</p>
+              <p className="text-slate-600 dark:text-slate-400">Select a submission to view details and manage</p>
             </div>
           )}
         </div>

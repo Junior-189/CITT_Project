@@ -122,7 +122,7 @@ const HorizontalStepper = ({ milestones, activeStepId, onStepClick }) => {
                       ? 'bg-blue-500 border-blue-500 text-white'
                       : isRejected
                       ? 'bg-red-400 border-red-400 text-white'
-                      : 'bg-white border-gray-300 text-gray-400'
+                      : 'bg-white dark:bg-slate-800 border-gray-300 dark:border-slate-600 text-gray-400'
                     }`}
                 >
                   {isCompleted ? (
@@ -206,7 +206,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
   // Completed — read-only view
   if (isCompleted) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border-2 border-teal-200 p-6 md:p-8">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-2 border-teal-200 p-6 md:p-8">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 rounded-full bg-teal-600 flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -221,7 +221,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
         {milestone?.submission_notes && (
           <div className="p-4 bg-teal-50 rounded-xl border border-teal-100">
             <p className="text-xs font-bold text-teal-600 mb-2 uppercase tracking-wide">Your Submission</p>
-            <p className="text-sm text-slate-700 whitespace-pre-wrap">{milestone.submission_notes}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">{milestone.submission_notes}</p>
           </div>
         )}
         {milestone?.approval_notes && (
@@ -231,9 +231,9 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
           </div>
         )}
         {comments.filter(c => c.stage_number === stage.id).map(c => (
-          <div key={c.id} className="mt-2 bg-slate-50 border-l-4 border-teal-500 rounded p-3">
-            <p className="text-xs font-semibold text-slate-600">{c.commenter_name} ({c.commenter_role})</p>
-            <p className="text-sm text-slate-700 mt-1">{c.comment}</p>
+          <div key={c.id} className="mt-2 bg-slate-50 dark:bg-slate-700 border-l-4 border-teal-500 rounded p-3">
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">{c.commenter_name} ({c.commenter_role})</p>
+            <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">{c.comment}</p>
             <p className="text-xs text-slate-400 mt-1">{new Date(c.created_at).toLocaleString()}</p>
           </div>
         ))}
@@ -244,7 +244,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
   // Submitted — awaiting review
   if (isSubmittedForReview) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border-2 border-blue-200 p-6 md:p-8">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-2 border-blue-200 p-6 md:p-8">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
             <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,13 +259,13 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
         {milestone?.submission_notes && (
           <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
             <p className="text-xs font-bold text-blue-600 mb-2 uppercase tracking-wide">Your Submitted Answers</p>
-            <p className="text-sm text-slate-700 whitespace-pre-wrap">{milestone.submission_notes}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">{milestone.submission_notes}</p>
           </div>
         )}
         {comments.filter(c => c.stage_number === stage.id).map(c => (
-          <div key={c.id} className="mt-2 bg-slate-50 border-l-4 border-teal-500 rounded p-3">
-            <p className="text-xs font-semibold text-slate-600">{c.commenter_name} ({c.commenter_role})</p>
-            <p className="text-sm text-slate-700 mt-1">{c.comment}</p>
+          <div key={c.id} className="mt-2 bg-slate-50 dark:bg-slate-700 border-l-4 border-teal-500 rounded p-3">
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-400">{c.commenter_name} ({c.commenter_role})</p>
+            <p className="text-sm text-slate-700 dark:text-slate-200 mt-1">{c.comment}</p>
             <p className="text-xs text-slate-400 mt-1">{new Date(c.created_at).toLocaleString()}</p>
           </div>
         ))}
@@ -277,7 +277,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
   const isRejected = status === 'rejected';
 
   return (
-    <div className={`bg-white rounded-2xl shadow-sm border-2 p-6 md:p-8 ${isRejected ? 'border-red-200' : 'border-teal-200'}`}>
+    <div className={`bg-white dark:bg-slate-800 rounded-2xl shadow-sm border-2 p-6 md:p-8 ${isRejected ? 'border-red-200' : 'border-teal-200'}`}>
       {/* Card Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2 mb-2">
@@ -286,7 +286,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
           </span>
           {isRejected && <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">Revision Required</span>}
         </div>
-        <h3 className="text-2xl font-bold text-slate-800 mb-1">{stage.name}</h3>
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-1">{stage.name}</h3>
         <p className="text-slate-500 text-sm">{stage.description}</p>
       </div>
 
@@ -300,10 +300,10 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
 
       {/* Questions */}
       <div className="space-y-5 mb-6">
-        <p className="text-sm font-bold text-slate-700 border-b pb-2">Please answer the following questions about this stage:</p>
+        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 border-b pb-2">Please answer the following questions about this stage:</p>
         {stage.questions.map((q, i) => (
           <div key={q.key}>
-            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+            <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5">
               {i + 1}. {q.label}
               {q.required ? <span className="text-red-500 ml-1">*</span> : <span className="text-slate-400 ml-1 text-xs">(optional)</span>}
             </label>
@@ -314,7 +314,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
               className={`w-full border rounded-xl px-4 py-3 text-sm resize-none h-28 focus:ring-2 focus:outline-none transition-colors
                 ${errors[q.key]
                   ? 'border-red-400 focus:ring-red-200 bg-red-50'
-                  : 'border-gray-200 focus:ring-teal-300 focus:border-teal-400'
+                  : 'border-gray-200 dark:border-slate-700 focus:ring-teal-300 focus:border-teal-400'
                 }`}
             />
             {errors[q.key] && (
@@ -328,14 +328,14 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
       </div>
 
       {/* File Upload */}
-      <div className="mb-6 p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-teal-300 transition-colors">
-        <p className="text-sm font-bold text-slate-700 mb-1">
+      <div className="mb-6 p-4 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-xl hover:border-teal-300 transition-colors">
+        <p className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-1">
           Upload Proof / Supporting Document
           <span className="text-slate-400 font-normal ml-1 text-xs">(Optional — but strongly recommended)</span>
         </p>
         <p className="text-xs text-slate-400 mb-3">Accepted: PDF, Word, JPG, PNG — Max 10MB. This could be a photo of the prototype, a report, a receipt, or any evidence of completion.</p>
         <label className="cursor-pointer">
-          <div className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${filePreview ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 border-gray-200 hover:bg-teal-50 hover:border-teal-200'}`}>
+          <div className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${filePreview ? 'bg-teal-50 border-teal-200' : 'bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700 hover:bg-teal-50 hover:border-teal-200'}`}>
             <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
               <svg className="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -349,7 +349,7 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
                 </>
               ) : (
                 <>
-                  <p className="text-sm font-semibold text-slate-700">Click to upload a file</p>
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">Click to upload a file</p>
                   <p className="text-xs text-slate-400">or drag and drop here</p>
                 </>
               )}
@@ -360,11 +360,11 @@ const StageCard = ({ stage, milestone, onSubmit, isSubmitting, comments = [] }) 
       </div>
 
       {/* Info note */}
-      <div className="mb-6 p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-start gap-2">
+      <div className="mb-6 p-3 bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl flex items-start gap-2">
         <svg className="w-4 h-4 text-slate-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <p className="text-xs text-slate-600">
+        <p className="text-xs text-slate-600 dark:text-slate-400">
           <strong>Note:</strong> If you have received funding or registered intellectual property at this stage, you may also upload those documents here as optional proof before continuing.
         </p>
       </div>
@@ -475,7 +475,7 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-2 md:p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[95vh] flex flex-col">
         {/* Modal Header */}
         <div className="flex items-start justify-between p-5 border-b border-gray-100 flex-shrink-0">
           <div className="flex-1 min-w-0 pr-4">
@@ -483,16 +483,16 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
             <p className="text-xs text-gray-400 mt-0.5">{project.category} · {project.institution}</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full flex-shrink-0">
-            <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gray-500 dark:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
         {/* Progress Bar */}
-        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex-shrink-0">
+        <div className="px-5 py-3 bg-gray-50 dark:bg-slate-900 border-b border-gray-100 flex-shrink-0">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-xs font-semibold text-slate-600">Overall Progress</span>
+            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Overall Progress</span>
             <span className="text-xs font-bold text-teal-600">{progressPct}% — {completedCount}/9 stages completed</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -513,7 +513,7 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h3 className="font-bold text-slate-700 text-lg mb-2">Awaiting Project Approval</h3>
+              <h3 className="font-bold text-slate-700 dark:text-slate-200 text-lg mb-2">Awaiting Project Approval</h3>
               <p className="text-slate-500 text-sm max-w-sm mx-auto">
                 Your project is currently under review by the DII Director or Admin. Milestone tracking will be unlocked once your project is approved.
               </p>
@@ -526,7 +526,7 @@ const ProjectViewModal = ({ project, onClose, onSubmitMilestone }) => {
           ) : (
             <div className="p-4 md:p-6 space-y-6">
               {/* Horizontal Stepper */}
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-gray-100 shadow-sm p-4">
                 <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide mb-4 text-center">Milestone Progress</p>
                 <HorizontalStepper
                   milestones={milestones}
@@ -714,13 +714,13 @@ const Projects = () => {
         />
       )}
 
-      <main className="flex-1 px-4 md:px-8 py-8 overflow-auto bg-gray-50 text-slate-800">
+      <main className="flex-1 px-4 md:px-8 py-8 overflow-auto bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
         <div className="max-w-6xl mx-auto">
 
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">My Projects</h1>
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">My Projects</h1>
               <p className="text-gray-500 text-sm mt-1">Track your innovation journey</p>
             </div>
             <button
@@ -731,11 +731,13 @@ const Projects = () => {
             </button>
           </div>
 
-          {/* Overview */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 mb-6">
-            <h2 className="text-base font-bold text-slate-800 mb-1">Projects Module</h2>
-            <p className="text-sm text-slate-500">Register your innovations and track them through CITT's 9-stage commercialization pipeline. Submit milestone work for review and receive feedback from your assigned team.</p>
-          </div>
+          {/* Overview — only shown when innovator has no projects yet */}
+          {!loading && projects.length === 0 && (
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700 shadow-sm p-5 mb-6">
+              <h2 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-1">Projects Module</h2>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Register your innovations and track them through CITT's 9-stage commercialization pipeline. Submit milestone work for review and receive feedback from your assigned team.</p>
+            </div>
+          )}
 
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
@@ -746,8 +748,8 @@ const Projects = () => {
               { label: 'In Progress', count: stats.in_progress, color: 'border-blue-500' },
               { label: 'Completed', count: stats.completed, color: 'border-teal-500' },
             ].map(s => (
-              <div key={s.label} className={`bg-white rounded-xl p-4 shadow-sm border-l-4 ${s.color} text-center`}>
-                <p className="text-2xl font-bold text-slate-800">{s.count}</p>
+              <div key={s.label} className={`bg-white dark:bg-slate-800 rounded-xl p-4 shadow-sm border-l-4 ${s.color} text-center`}>
+                <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.count}</p>
                 <p className="text-xs text-gray-500 font-medium mt-0.5">{s.label}</p>
               </div>
             ))}
@@ -762,7 +764,7 @@ const Projects = () => {
 
           {/* Registration Form */}
           {showForm && (
-            <form onSubmit={handleSubmit} className="bg-white rounded-xl p-7 shadow-md mb-8 border border-gray-100">
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-xl p-7 shadow-md mb-8 border border-gray-100">
               <h2 className="text-xl font-bold mb-5 text-teal-700">Project Registration Form</h2>
 
               {formError && (
@@ -830,7 +832,7 @@ const Projects = () => {
               <div className="mt-5">
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input type="checkbox" name="termsAgreed" checked={formData.termsAgreed} onChange={handleChange} className="mt-1" required />
-                  <span className="text-xs text-slate-600">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">
                     I confirm that all project information, problem statement, and funding details provided are accurate and truthful.
                   </span>
                 </label>
@@ -838,7 +840,7 @@ const Projects = () => {
 
               <div className="mt-5 flex justify-end gap-3">
                 <button type="button" onClick={() => { setShowForm(false); setFormData(EMPTY_FORM); }}
-                  className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg text-sm font-semibold transition-colors">
+                  className="px-5 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold transition-colors">
                   Cancel
                 </button>
                 <button type="submit" disabled={submitting}
@@ -851,12 +853,12 @@ const Projects = () => {
 
           {/* Projects List */}
           <div>
-            <h2 className="text-lg font-bold text-slate-800 mb-4">
+            <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4">
               Your Projects <span className="text-gray-400 font-normal text-sm">({projects.length})</span>
             </h2>
 
             {loading && (
-              <div className="text-center py-12 text-gray-500">Loading projects…</div>
+              <div className="text-center py-12 text-gray-500 dark:text-slate-400">Loading projects…</div>
             )}
 
             {listError && (
@@ -864,7 +866,7 @@ const Projects = () => {
             )}
 
             {!loading && projects.length === 0 && (
-              <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
+              <div className="text-center py-16 bg-white dark:bg-slate-800 rounded-xl border border-gray-100">
                 <p className="text-gray-400 text-lg mb-2">No projects yet</p>
                 <p className="text-gray-400 text-sm">Click "Register Project" to get started.</p>
               </div>
@@ -872,26 +874,26 @@ const Projects = () => {
 
             <div className="space-y-4">
               {projects.map((project) => (
-                <div key={project.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                <div key={project.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 shadow-sm">
                   {editingId === project.id ? (
                     /* Inline Edit Form */
                     <div>
-                      <h3 className="font-bold text-slate-800 mb-4">Edit Project</h3>
+                      <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">Edit Project</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                           <label className="block text-xs font-semibold mb-1">Title</label>
                           <input value={editData.title || ''} onChange={e => setEditData(d => ({ ...d, title: e.target.value }))}
-                            className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none" />
+                            className="w-full border border-gray-300 dark:border-slate-600 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none" />
                         </div>
                         <div>
                           <label className="block text-xs font-semibold mb-1">Institution</label>
                           <input value={editData.institution || ''} onChange={e => setEditData(d => ({ ...d, institution: e.target.value }))}
-                            className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none" />
+                            className="w-full border border-gray-300 dark:border-slate-600 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none" />
                         </div>
                         <div className="md:col-span-2">
                           <label className="block text-xs font-semibold mb-1">Description</label>
                           <textarea rows={3} value={editData.description || ''} onChange={e => setEditData(d => ({ ...d, description: e.target.value }))}
-                            className="w-full border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none resize-none" />
+                            className="w-full border border-gray-300 dark:border-slate-600 rounded-lg p-2 text-sm focus:ring-2 focus:ring-teal-500 outline-none resize-none" />
                         </div>
                       </div>
                       <div className="flex gap-3">
@@ -908,7 +910,7 @@ const Projects = () => {
                     <div>
                       <div className="flex items-start justify-between gap-3 flex-wrap">
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-slate-800 text-base truncate">{project.title}</h3>
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-base truncate">{project.title}</h3>
                           <p className="text-xs text-gray-500 mt-0.5">{project.category} · {project.institution}</p>
                         </div>
                         <div className="flex items-center gap-2 flex-wrap">
@@ -924,7 +926,7 @@ const Projects = () => {
                       </div>
 
                       {project.description && (
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">{project.description}</p>
+                        <p className="text-sm text-gray-600 dark:text-slate-400 mt-2 line-clamp-2">{project.description}</p>
                       )}
 
                       {project.admin_feedback && (
@@ -944,7 +946,7 @@ const Projects = () => {
                         {['pending', 'rejected'].includes(project.approval_status) && (
                           <button
                             onClick={() => { setEditingId(project.id); setEditData({ title: project.title, description: project.description, institution: project.institution }); }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold transition-colors"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-xs font-semibold transition-colors"
                           >
                             <Edit2 className="w-3.5 h-3.5" /> Edit
                           </button>

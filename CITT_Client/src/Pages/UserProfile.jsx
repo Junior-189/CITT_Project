@@ -31,11 +31,11 @@ const UserProfile = () => {
 
   if (loading) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
         <div className="flex justify-center items-center h-96">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto mb-4"></div>
-            <p className="text-slate-600">Loading user profile...</p>
+            <p className="text-slate-600 dark:text-slate-400">Loading user profile...</p>
           </div>
         </div>
       </main>
@@ -44,7 +44,7 @@ const UserProfile = () => {
 
   if (error) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
         <div className="bg-red-50 border-l-4 border-red-600 p-6 rounded-r-lg mb-6">
           <p className="text-red-700 font-semibold">{error}</p>
         </div>
@@ -60,7 +60,7 @@ const UserProfile = () => {
 
   if (!user) {
     return (
-      <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+      <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
         <div className="text-center py-10">
           <p className="text-slate-600 text-lg">User not found</p>
           <button
@@ -75,7 +75,7 @@ const UserProfile = () => {
   }
 
   return (
-    <main className="flex-1 px-16 py-10 overflow-auto bg-white">
+    <main className="flex-1 px-16 py-10 overflow-auto bg-white dark:bg-slate-800">
       {/* Header Section */}
       <div className="bg-gradient-to-r from-slate-800 to-teal-700 text-white rounded-xl p-8 mb-8">
         <div className="flex items-start justify-between">
@@ -105,7 +105,7 @@ const UserProfile = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 mb-6 border-b border-slate-200">
+      <div className="flex gap-4 mb-6 border-b border-slate-200 dark:border-slate-700">
         <button
           onClick={() => setActiveTab('profile')}
           className={`px-6 py-3 font-semibold transition-colors border-b-2 ${
@@ -194,7 +194,7 @@ const UserProfile = () => {
 
       {/* Additional Info */}
       <div className="mt-8 grid grid-cols-3 gap-6">
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
           <h3 className="text-lg font-bold text-slate-800 mb-4">Statistics</h3>
           <p className="text-slate-600 text-sm mb-3">Account Status: <span className="text-green-600 font-semibold">Active</span></p>
           <p className="text-slate-600 text-sm">Member Duration: <span className="font-semibold">
@@ -202,13 +202,13 @@ const UserProfile = () => {
           </span></p>
         </div>
 
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
           <h3 className="text-lg font-bold text-slate-800 mb-4">Account Information</h3>
           <p className="text-slate-600 text-sm mb-3">Role: <span className="font-semibold capitalize">{user.role || 'innovator'}</span></p>
           <p className="text-slate-600 text-sm">Account Type: <span className="font-semibold">Standard</span></p>
         </div>
 
-        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+        <div className="bg-slate-50 rounded-xl p-6 border border-slate-200 dark:border-slate-700">
           <h3 className="text-lg font-bold text-slate-800 mb-4">Timeline</h3>
           <p className="text-slate-600 text-sm mb-3">Registered: <span className="font-semibold">
             {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}

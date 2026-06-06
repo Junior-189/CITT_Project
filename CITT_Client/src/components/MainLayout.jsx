@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import TopNavbar from './TopNavbar';
 import Sidebar from './Sidebar';
-import Topbar from './Topbar';
 import Header from './Header';
 import Footer from './Footer';
 import CTA from './CTA';
@@ -38,10 +37,9 @@ const MainLayout = ({ children }) => {
   const handleSidebarToggle = () => setSidebarOpen(prev => !prev);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[#0a1f33]">
-      <Topbar />
+    <div className="h-screen flex flex-col overflow-hidden bg-[#0a1f33] dark:bg-slate-900">
       <Header />
-      <div className="flex flex-1 overflow-hidden bg-white relative">
+      <div className="flex flex-1 overflow-hidden bg-white dark:bg-slate-800 dark:bg-slate-900 relative">
         <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
         <div className="flex-1 flex flex-col overflow-hidden">
           <TopNavbar sidebarOpen={sidebarOpen} onToggleSidebar={handleSidebarToggle} />

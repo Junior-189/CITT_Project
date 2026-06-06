@@ -244,7 +244,7 @@ const AuditLogs = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-700 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading audit logs...</p>
+          <p className="mt-4 text-gray-600 dark:text-slate-400">Loading audit logs...</p>
         </div>
       </div>
     );
@@ -256,7 +256,7 @@ const AuditLogs = () => {
         {/* Header */}
         <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Audit Logs</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Audit Logs</h1>
             <p className="text-gray-600 mt-2">View all system activity and user actions</p>
             <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
               SuperAdmin & Admin Only
@@ -336,7 +336,7 @@ const AuditLogs = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
               >
                 <option value="all">All Actions</option>
                 {Object.entries(actionTypes).map(([type, config]) => (
@@ -356,7 +356,7 @@ const AuditLogs = () => {
                 value={filterUser}
                 onChange={(e) => setFilterUser(e.target.value)}
                 placeholder="Enter user email, role, or ID"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
               />
             </div>
 
@@ -381,8 +381,8 @@ const AuditLogs = () => {
             <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">No Logs Available</h3>
-            <p className="mt-2 text-sm text-gray-600">
+            <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-slate-100">No Logs Available</h3>
+            <p className="mt-2 text-sm text-gray-600 dark:text-slate-400">
               No audit logs found. Activity will appear here once users perform actions in the system.
             </p>
           </div>
@@ -391,7 +391,7 @@ const AuditLogs = () => {
             <div className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-slate-900">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Timestamp
@@ -417,8 +417,8 @@ const AuditLogs = () => {
                       const userLabel = log.user_email || (log.user_id ? `User #${log.user_id}` : 'Anonymous');
 
                       return (
-                        <tr key={log.id || index} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <tr key={log.id || index} className="hover:bg-gray-50 dark:bg-slate-900">
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-slate-100">
                           {formatDate(log.created_at || log.timestamp)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -429,10 +429,10 @@ const AuditLogs = () => {
                               </span>
                             </div>
                             <div className="ml-3">
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-sm font-medium text-gray-900 dark:text-slate-100">
                                 {userLabel}
                               </p>
-                              <p className="text-xs text-gray-500">{log.user_role || ''}</p>
+                              <p className="text-xs text-gray-500 dark:text-slate-400">{log.user_role || ''}</p>
                             </div>
                           </div>
                         </td>
@@ -482,7 +482,7 @@ const AuditLogs = () => {
                 </div>
                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-sm text-gray-700">
+                    <p className="text-sm text-gray-700 dark:text-slate-300">
                       Showing <span className="font-medium">{indexOfFirstLog + 1}</span> to{' '}
                       <span className="font-medium">{Math.min(indexOfLastLog, logs.length)}</span> of{' '}
                       <span className="font-medium">{logs.length}</span> results

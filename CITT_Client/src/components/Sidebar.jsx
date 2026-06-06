@@ -41,7 +41,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/funding', label: 'Funding', icon: DollarSign, protected: true },
     { path: '/ip', label: 'IP Management', icon: FileText, protected: true },
     { path: '/events', label: 'Events', icon: Calendar, protected: true },
-    { path: '/workspace', label: 'Workspace', icon: Briefcase, protected: true },
     { path: '/gallery', label: 'Gallery', icon: Image },
     { path: '/contact', label: 'Contact', icon: Mail },
   ];
@@ -66,6 +65,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/admin/funding', label: 'Funding Management', icon: DollarSign },
     { path: '/events', label: 'Events', icon: Calendar },
     { path: '/admin/gallery', label: 'Gallery', icon: Image },
+    { path: '/admin/contact', label: 'Messages', icon: Mail },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileBarChart },
     { path: '/workspace', label: 'Workspace Portal', icon: Briefcase },
@@ -178,7 +178,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       {/* Sidebar */}
       <aside
         className={`
-          bg-white border-r-2 border-teal-600
+          bg-white dark:bg-slate-800 border-r-2 border-teal-600 dark:border-teal-700
           transition-all duration-300 ease-in-out
           flex flex-col flex-shrink-0
           z-40 h-full lg:h-screen
@@ -188,20 +188,19 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             : 'w-0 lg:w-14 lg:relative lg:inset-auto'
           }
         `}
-        style={{ backgroundColor: '#ffffff' }}
       >
           {/* Sidebar Header */}
-          <div className={`flex items-center border-b border-teal-100 transition-all duration-300 ${isOpen ? 'justify-between p-4' : 'justify-center p-3'}`}>
+          <div className={`flex items-center border-b border-teal-100 dark:border-slate-700 transition-all duration-300 bg-white dark:bg-slate-800 ${isOpen ? 'justify-between p-4' : 'justify-center p-3'}`}>
 
             {/* Logo and Branding — only visible when open */}
             {isOpen && (
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">
+                <div className="w-10 h-10 bg-slate-800 dark:bg-teal-700 rounded-full flex items-center justify-center text-white font-bold text-xs shrink-0">
                   CITT
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-sm font-bold text-slate-800 leading-tight truncate">Centre for Innovation</span>
-                  <span className="text-xs text-slate-500 leading-tight truncate">and Technology Transfer</span>
+                  <span className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight truncate">Centre for Innovation</span>
+                  <span className="text-xs text-slate-500 dark:text-slate-400 leading-tight truncate">and Technology Transfer</span>
                 </div>
               </div>
             )}
@@ -221,7 +220,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex-1 py-4 bg-white overflow-x-hidden overflow-y-auto" style={{ backgroundColor: '#ffffff' }}>
+          <nav className="flex-1 py-4 bg-white dark:bg-slate-800 overflow-x-hidden overflow-y-auto">
             <ul className="space-y-1 px-2">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -233,8 +232,8 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       onClick={() => { if (window.innerWidth < 1024) setIsOpen(false); }}
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
                         active 
-                          ? 'bg-teal-50 text-teal-600 font-medium' 
-                          : 'text-slate-700 hover:bg-slate-100'
+                          ? 'bg-teal-50 dark:bg-slate-700 text-teal-600 dark:text-teal-400 font-medium' 
+                          : 'text-slate-700 dark:text-slate-200 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-700'
                       }`}
                     >
                       <Icon size={20} className="shrink-0" />
@@ -247,9 +246,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           </nav>
           {/* Role Badge at bottom — always shown when sidebar has any width */}
           {isAuthenticated && (
-            <div className={`border-t border-slate-200 bg-white transition-all duration-300 flex-shrink-0 ${isOpen ? 'p-4' : 'p-2'}`}
-              style={{ backgroundColor: '#ffffff' }}
-            >
+            <div className={`border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 transition-all duration-300 flex-shrink-0 ${isOpen ? 'p-4' : 'p-2'}`}>
               <div className={`flex items-center ${isOpen ? 'gap-3' : 'justify-center'}`}>
                 {/* Role color dot */}
                 <div className={`shrink-0 rounded-full flex items-center justify-center font-bold text-white w-8 h-8 text-xs ${getRoleDotClass(role)}`}
@@ -260,11 +257,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                 {/* Role label and name — only when sidebar is open */}
                 {isOpen && (
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold leading-tight truncate text-slate-700">
+                    <p className="text-sm font-bold leading-tight truncate text-slate-700 dark:text-slate-200">
                       {getRoleLabel()}
                     </p>
                     {profile?.name && (
-                      <p className="text-xs text-slate-500 truncate leading-tight mt-0.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 truncate leading-tight mt-0.5">
                         {profile.name}
                       </p>
                     )}

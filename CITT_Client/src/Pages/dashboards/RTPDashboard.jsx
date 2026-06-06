@@ -39,7 +39,7 @@ const ReadOnlyMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => 
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
             <h2 className="font-bold text-lg">{project.title}</h2>
-            <p className="text-xs text-gray-500">{completedCount}/9 stages completed</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">{completedCount}/9 stages completed</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
@@ -58,20 +58,20 @@ const ReadOnlyMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => 
             const isOpen = expanded === stageNum;
             return (
               <div key={stageNum}>
-                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50"
+                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900"
                   onClick={() => setExpanded(isOpen ? null : stageNum)}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${cfg.bg}`}>
                     <Icon className={`w-4 h-4 ${cfg.color}`} />
                   </div>
                   <div className="flex-1">
                     <span className="text-xs text-gray-400">Stage {stageNum}</span>
-                    <p className="text-sm font-semibold text-slate-800">{name}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{name}</p>
                   </div>
                   <span className={`text-xs px-2 py-0.5 rounded-full ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                   {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                 </button>
                 {isOpen && record?.submission_notes && (
-                  <div className="px-6 pb-4 bg-gray-50 border-t text-sm text-gray-600">
+                  <div className="px-6 pb-4 bg-gray-50 border-t text-sm text-gray-600 dark:text-slate-400">
                     <p className="mt-3"><strong>Notes:</strong> {record.submission_notes}</p>
                   </div>
                 )}
@@ -122,7 +122,7 @@ const RTPDashboard = () => {
             { label: 'Completed', count: projects.filter(p => p.project_status === 'completed').length, color: 'border-purple-500' },
           ].map(s => (
             <div key={s.label} className={`bg-white rounded-xl p-4 border-l-4 ${s.color} shadow-sm text-center`}>
-              <p className="text-2xl font-bold text-slate-800">{s.count}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.count}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             </div>
           ))}
@@ -144,7 +144,7 @@ const RTPDashboard = () => {
                         <h3 className="font-semibold text-slate-800 truncate">{p.title}</h3>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${badgeClass}`}>{p.approval_status}</span>
                       </div>
-                      <p className="text-xs text-gray-500">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
+                      <p className="text-xs text-gray-500 dark:text-slate-400">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
                     </div>
                     <button onClick={() => setViewProject(p)}
                       className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold">

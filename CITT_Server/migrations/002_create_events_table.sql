@@ -28,12 +28,22 @@ CREATE INDEX IF NOT EXISTS idx_events_start_date ON events(start_date);
 CREATE INDEX IF NOT EXISTS idx_events_created_by ON events(created_by);
 CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
 
--- Add constraint to ensure valid event types
+-- Ensure all columns exist (in case events was created by migration 019 without them)
+ALTER TABLE events ADD COLUMN IF NOT EXISTS submission_deadline DATE;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS banner_image TEXT;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS capacity INTEGER;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS requirements TEXT;
+ALTER TABLE events ADD COLUMN IF NOT EXISTS prize VARCHAR(255);
+ALTER TABLE events ADD COLUMN IF NOT EXISTS tags TEXT;
+
+-- Add constraint to ensure valid event types (idempotent)
+ALTER TABLE events DROP CONSTRAINT IF EXISTS check_event_type;
 ALTER TABLE events
   ADD CONSTRAINT check_event_type
   CHECK (type IN ('hackathon', 'workshop', 'challenge', 'exhibition', 'seminar', 'conference'));
 
--- Add check to ensure dates are logical
+-- Add check to ensure dates are logical (idempotent)
+ALTER TABLE events DROP CONSTRAINT IF EXISTS check_event_dates;
 ALTER TABLE events
   ADD CONSTRAINT check_event_dates
   CHECK (
@@ -63,7 +73,8 @@ CREATE INDEX IF NOT EXISTS idx_submissions_event ON event_submissions(event_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_user ON event_submissions(user_id);
 CREATE INDEX IF NOT EXISTS idx_submissions_status ON event_submissions(status);
 
--- Add constraint for submission status
+-- Add constraint for submission status (idempotent)
+ALTER TABLE event_submissions DROP CONSTRAINT IF EXISTS check_submission_status;
 ALTER TABLE event_submissions
   ADD CONSTRAINT check_submission_status
   CHECK (status IN ('submitted', 'under_review', 'reviewed', 'finalist', 'winner', 'rejected'));
@@ -88,9 +99,12 @@ CREATE TABLE IF NOT EXISTS submission_feedback (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Insert sample events for testing
-INSERT INTO events (title, type, description, start_date, end_date, submission_deadline, location, capacity, requirements, prize, tags, published, created_by)
-VALUES
+-- Insert sample events for testing (only if no events exist to avoid duplicates)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM events LIMIT 1) THEN
+    INSERT INTO events (title, type, description, start_date, end_date, submission_deadline, location, capacity, requirements, prize, tags, published, created_by)
+    VALUES
   (
     'Innovation Hackathon 2025',
     'hackathon',
@@ -144,6 +158,9 @@ Budget breakdown',
     false,
     (SELECT id FROM users WHERE role = 'superAdmin' LIMIT 1)
   );
+  END IF;
+END;
+$$;
 
 COMMENT ON TABLE events IS 'Events created by admins/superAdmins';
 COMMENT ON TABLE event_submissions IS 'User submissions for events';

@@ -5,7 +5,7 @@ const Header = () => {
     <div className="bg-slate-800 text-white text-center py-5 px-2.5">
       <div className="flex items-center justify-between max-w-6xl mx-auto flex-wrap gap-4">
         <div className="flex-shrink-0">
-          <div className="bg-white w-[140px] h-[140px] rounded-full flex items-center justify-center overflow-hidden p-2" style={{ border: '3px solid rgb(60 133 125)' }}>
+          <div className="bg-white dark:bg-slate-800 w-[140px] h-[140px] rounded-full flex items-center justify-center overflow-hidden p-2" style={{ border: '3px solid rgb(60 133 125)' }}>
             <img 
               src="/tz-logo.jpg" 
               alt="Tanzania Logo" 
@@ -28,7 +28,7 @@ const Header = () => {
           </p>
         </div>
         <div className="flex-shrink-0">
-          <div className="bg-white w-[140px] h-[140px] rounded-full flex items-center justify-center overflow-hidden " style={{ border: '3px solid rgb(60 133 125)' }}>
+          <div className="bg-white dark:bg-slate-800 w-[140px] h-[140px] rounded-full flex items-center justify-center overflow-hidden " style={{ border: '3px solid rgb(60 133 125)' }}>
             <img 
               src="/must-logo.png" 
               alt="MUST Logo" 

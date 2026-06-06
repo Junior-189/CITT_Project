@@ -53,8 +53,8 @@ const ReviewMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => {
       <div className="bg-white rounded-2xl w-full max-w-3xl my-6">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
-            <h2 className="font-bold text-lg text-slate-800">{project.title}</h2>
-            <p className="text-xs text-gray-500">Milestone Review — {completedCount}/9 stages completed</p>
+            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">{project.title}</h2>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Milestone Review — {completedCount}/9 stages completed</p>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
@@ -78,24 +78,24 @@ const ReviewMilestoneModal = ({ project, onClose, getAuthenticatedAxios }) => {
             const isOpen = expanded === stageNum;
             return (
               <div key={stageNum}>
-                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50"
+                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900"
                   onClick={() => setExpanded(isOpen ? null : stageNum)}>
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${cfg.bg}`}>
                     <Icon className={`w-4 h-4 ${cfg.color}`} />
                   </div>
                   <div className="flex-1">
                     <span className="text-xs text-gray-400">Stage {stageNum}</span>
-                    <p className="text-sm font-semibold text-slate-800">{name}</p>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{name}</p>
                   </div>
                   <span className={`hidden sm:inline text-xs px-2 py-0.5 rounded-full font-medium ${cfg.bg} ${cfg.color}`}>{cfg.label}</span>
                   {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
                 </button>
                 {isOpen && (
-                  <div className="px-6 pb-4 bg-gray-50">
+                  <div className="px-6 pb-4 bg-gray-50 dark:bg-slate-900">
                     {record?.submission_notes && (
                       <div className="p-3 bg-white border rounded-lg text-sm mb-3">
                         <p className="font-semibold text-gray-700 mb-1">Innovator's submission:</p>
-                        <p className="text-gray-600">{record.submission_notes}</p>
+                        <p className="text-gray-600 dark:text-slate-400">{record.submission_notes}</p>
                       </div>
                     )}
                     {record?.rejection_reason && (
@@ -233,7 +233,7 @@ const DIIDashboard = () => {
             { label: 'Completed', count: completed.length, color: 'border-purple-500' },
           ].map(s => (
             <div key={s.label} className={`bg-white rounded-xl p-4 border-l-4 ${s.color} shadow-sm text-center`}>
-              <p className="text-2xl font-bold text-slate-800">{s.count}</p>
+              <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{s.count}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             </div>
           ))}
@@ -258,8 +258,8 @@ const DIIDashboard = () => {
               <div key={p.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
                 <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
                   <div>
-                    <h3 className="font-bold text-slate-800">{p.title}</h3>
-                    <p className="text-xs text-gray-500">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
+                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{p.title}</h3>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
                   </div>
                   <span className="px-2.5 py-1 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">Pending</span>
                 </div>
@@ -319,7 +319,7 @@ const DIIDashboard = () => {
                 <div key={p.id} className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center gap-4 flex-wrap">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-slate-800 truncate">{p.title}</h3>
-                    <p className="text-xs text-gray-500">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{p.innovator_name || p.user_name || 'Unknown'} · {p.category}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="flex-1 bg-gray-200 rounded-full h-2">
                         <div className="bg-teal-500 h-2 rounded-full" style={{ width: `${pct}%` }} />

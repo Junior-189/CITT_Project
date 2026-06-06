@@ -112,7 +112,7 @@ const Unauthorized = () => {
           <p className="text-sm text-gray-400 mb-2">
             Need access to this page?
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-slate-400">
             Contact your administrator to request the necessary permissions.
           </p>
         </div>
