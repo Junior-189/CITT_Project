@@ -46,6 +46,7 @@ const milestonesRoutes = require('./routes/milestones');
 const departmentsRoutes = require('./routes/departments');
 const mentorWorkspaceRoutes = require('./routes/mentorWorkspace');
 const contactRoutes = require('./routes/contact');
+const cmsRoutes = require('./routes/cms');
 
 // ============================================
 // LOGGING MIDDLEWARE
@@ -881,6 +882,7 @@ app.use('/api/gallery', galleryRoutes);
 app.use('/api/departments', departmentsRoutes);
 app.use('/api/workspace', mentorWorkspaceRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/cms', cmsRoutes);
 app.use('/api/projects', milestonesRoutes);
 
 // ============================================

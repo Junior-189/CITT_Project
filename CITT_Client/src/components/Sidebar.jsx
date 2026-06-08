@@ -24,6 +24,7 @@ import {
   Building2,
   UserCheck,
   Briefcase,
+  Layers,
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -54,6 +55,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/superadmin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/superadmin/audit-logs', label: 'Audit Logs', icon: FileBarChart },
     { path: '/superadmin/database', label: 'Database Info', icon: Settings },
+    { path: '/admin/cms', label: 'CMS', icon: Layers },
     { path: '/departments', label: 'Departments', icon: Building2 },
   ];
 
@@ -66,6 +68,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/events', label: 'Events', icon: Calendar },
     { path: '/admin/gallery', label: 'Gallery', icon: Image },
     { path: '/admin/contact', label: 'Messages', icon: Mail },
+    { path: '/admin/cms', label: 'CMS', icon: Layers },
     { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileBarChart },
     { path: '/workspace', label: 'Workspace Portal', icon: Briefcase },

@@ -329,88 +329,49 @@ export const AuthProvider = ({ children }) => {
 
   // 🔹 Save user profile to Firestore (for both Google & normal registration)
   const saveProfile = async (data) => {
-    try {
-      console.log("💾 Saving profile...", data);
-      
-      // Prepare profile data
-      const profileData = {
-        fullName: data.fullName,
-        phone: data.phone,
-        university: data.university,
-        college: data.college,
-        category: data.category,
-        yearOfStudy: data.yearOfStudy || "",
-        role: data.role || "innovator",
-        profileComplete: true,
-        email: user?.email || profile?.email,
-        name: data.fullName || user?.displayName || profile?.name,
-      };
+    const profileData = {
+      fullName: data.fullName,
+      phone: data.phone,
+      university: data.university,
+      college: data.college,
+      category: data.category,
+      yearOfStudy: data.yearOfStudy || "",
+      role: data.role || "innovator",
+      profileComplete: true,
+      email: user?.email || profile?.email,
+      name: data.fullName || user?.displayName || profile?.name,
+    };
 
-      // Update backend profile via API (faster than Firestore)
-      if (token) {
-        console.log("📤 Updating backend profile...");
-        try {
-          await axios.put(`${API_BASE_URL}/api/auth/me`, {
-            name: profileData.fullName,
-            email: profileData.email,
-            phone: profileData.phone,
-          }, {
-            headers: { Authorization: `Bearer ${token}` },
-            timeout: 5000 // 5 second timeout
-          });
-          console.log("Backend profile updated successfully");
-        } catch (apiError) {
-          console.error("Failed to update backend profile:", apiError);
-          throw new Error("Failed to save profile to backend: " + (apiError.response?.data?.error || apiError.message));
-        }
-      } else {
-        throw new Error("No authentication token found");
+    if (token) {
+      try {
+        await axios.put(`${API_BASE_URL}/api/auth/me`, {
+          name: profileData.fullName,
+          email: profileData.email,
+          phone: profileData.phone,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+          timeout: 5000
+        });
+      } catch (apiError) {
+        throw new Error("Failed to save profile to backend: " + (apiError.response?.data?.error || apiError.message));
       }
-
-      // If user has Firebase UID, save to Firestore (secondary - don't block on this)
-      if (user?.uid) {
-        console.log("Saving to Firestore...");
-        try {
-          const userRef = doc(db, "users", user.uid);
-          await setDoc(userRef, {
-            ...profileData,
-            createdAt: new Date().toISOString(),
-          });
-          console.log("Firestore updated successfully");
-        } catch (firestoreError) {
-          console.warn("Firestore update failed (non-critical):", firestoreError);
-        }
-      }
-
-      // Update local state
-      console.log("📝 Updating local state...");
-      setProfile(profileData);
-      setShowProfileForm(false);
-      console.log("Profile saved successfully!");
-    } catch (error) {
-      console.error("Failed to save profile:", error);
-      throw error;
+    } else {
+      throw new Error("No authentication token found");
     }
+
+    if (user?.uid) {
+      try {
+        const userRef = doc(db, "users", user.uid);
+        await setDoc(userRef, {
+          ...profileData,
+          createdAt: new Date().toISOString(),
+        });
+      } catch {}
+    }
+
+    setProfile(profileData);
+    setShowProfileForm(false);
   };
-
-  // 🔹 Role-based helper functions
-  const hasRole = (requiredRole) => {
-    if (!role) return false;
-    return role === requiredRole;
-  };
-
-  const hasAnyRole = (requiredRoles) => {
-    if (!role) return false;
-    return requiredRoles.includes(role);
-  };
-
-  const isSuperAdmin = () => role === "superAdmin";
-  const isAdmin = () => role === "admin";
-  const isIPManager = () => role === "ipManager";
-  const isInnovator = () => role === "innovator";
-
-  // 🔹 Check if user has admin privileges (admin or superAdmin)
-  const hasAdminAccess = () => hasAnyRole(["admin", "superAdmin"]);
 
   // 🔹 Role-based route map covering all 11 roles
   const ROLE_ROUTES = {
@@ -466,14 +427,7 @@ export const AuthProvider = ({ children }) => {
         justAuthenticated,
         setJustAuthenticated,
 
-        // Role-based helpers
-        hasRole,
-        hasAnyRole,
-        isSuperAdmin,
-        isAdmin,
-        isIPManager,
-        isInnovator,
-        hasAdminAccess,
+        // Role-based navigation
         getRouteForRole,
 
         // Utility

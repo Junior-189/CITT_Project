@@ -50,6 +50,10 @@ import AdminSubmissions from './Pages/admin/AdminSubmissions';
 import AdminGallery from './Pages/admin/AdminGallery';
 import ProjectAssignments from './Pages/admin/ProjectAssignments';
 import ContactMessages from './Pages/admin/ContactMessages';
+import CmsDashboard from './Pages/admin/cms/CmsDashboard';
+import CmsPages from './Pages/admin/cms/CmsPages';
+import CmsPosts from './Pages/admin/cms/CmsPosts';
+import CmsCategories from './Pages/admin/cms/CmsCategories';
 
 //Gallery Page
 import Gallery from './Pages/Gallery';
@@ -124,6 +128,10 @@ const App = () => (
               <Route path="/admin/submissions" element={<AdminRoute><AdminSubmissions /></AdminRoute>} />
               <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
               <Route path="/admin/contact" element={<AdminRoute><ContactMessages /></AdminRoute>} />
+              <Route path="/admin/cms" element={<AdminRoute><CmsDashboard /></AdminRoute>} />
+              <Route path="/admin/cms/pages" element={<AdminRoute><CmsPages /></AdminRoute>} />
+              <Route path="/admin/cms/posts" element={<AdminRoute><CmsPosts /></AdminRoute>} />
+              <Route path="/admin/cms/categories" element={<AdminRoute><CmsCategories /></AdminRoute>} />
 
               {/* SuperAdmin Routes */}
               <Route path="/superadmin/dashboard" element={<SuperAdminRoute><SuperAdminDashboard /></SuperAdminRoute>} />

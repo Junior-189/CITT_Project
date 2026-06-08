@@ -53,38 +53,3 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children;
   }
 }
-
-export function LoadingSpinner({ message = 'Loading...' }: { message?: string }) {
-  return (
-    <div className="flex flex-col items-center justify-center py-12">
-      <div className="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-3" />
-      <p className="text-gray-500 text-sm">{message}</p>
-    </div>
-  );
-}
-
-export function LoadingPage() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <LoadingSpinner message="Loading CITT..." />
-    </div>
-  );
-}
-
-export function EmptyState({
-  icon = '?',
-  title = 'No data found',
-  description = 'There is nothing to display at this time.',
-}: {
-  icon?: string;
-  title?: string;
-  description?: string;
-}) {
-  return (
-    <div className="text-center py-12 px-4">
-      <div className="text-4xl mb-4 opacity-50">{icon}</div>
-      <h3 className="text-lg font-semibold text-gray-700 mb-2">{title}</h3>
-      <p className="text-gray-500 text-sm max-w-md mx-auto">{description}</p>
-    </div>
-  );
-}
