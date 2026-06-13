@@ -9,8 +9,6 @@ const pool = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 const { checkRole } = require('../middleware/roleAuth');
 const { asyncHandler } = require('../middleware/errorHandler');
-const { upload } = require('../middleware/upload');
-
 // ============================================
 // PUBLIC ENDPOINTS (no auth required)
 // ============================================
@@ -95,7 +93,7 @@ router.get('/public/categories', asyncHandler(async (req, res) => {
 
 router.get('/pages',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { page = 1, limit = 50, status } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
@@ -126,7 +124,7 @@ router.get('/pages',
 
 router.post('/pages',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { slug, title, content, status = 'draft' } = req.body;
     const existing = await pool.query('SELECT id FROM cms_pages WHERE slug = $1', [slug]);
@@ -143,7 +141,7 @@ router.post('/pages',
 
 router.put('/pages/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { slug, title, content, status } = req.body;
     const { id } = req.params;
@@ -168,7 +166,7 @@ router.put('/pages/:id',
 
 router.delete('/pages/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const result = await pool.query('DELETE FROM cms_pages WHERE id = $1 RETURNING id', [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Page not found' });
@@ -180,7 +178,7 @@ router.delete('/pages/:id',
 
 router.get('/posts',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { page = 1, limit = 50, status, category } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
@@ -217,7 +215,7 @@ router.get('/posts',
 
 router.post('/posts',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { slug, title, excerpt, content, featured_image, category_id, status = 'draft' } = req.body;
     const existing = await pool.query('SELECT id FROM cms_posts WHERE slug = $1', [slug]);
@@ -236,7 +234,7 @@ router.post('/posts',
 
 router.put('/posts/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { slug, title, excerpt, content, featured_image, category_id, status } = req.body;
     const { id } = req.params;
@@ -252,7 +250,7 @@ router.put('/posts/:id',
       `UPDATE cms_posts SET
          slug = COALESCE($1, slug), title = COALESCE($2, title),
          excerpt = COALESCE($3, excerpt), content = COALESCE($4, content),
-         featured_image = COALESCE($5, featured_image), category_id = $6,
+         featured_image = COALESCE($5, featured_image), category_id = COALESCE($6, category_id),
          status = COALESCE($7, status),
          published_at = COALESCE($8, published_at),
          updated_at = NOW()
@@ -266,7 +264,7 @@ router.put('/posts/:id',
 
 router.delete('/posts/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const result = await pool.query('DELETE FROM cms_posts WHERE id = $1 RETURNING id', [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Post not found' });
@@ -278,7 +276,7 @@ router.delete('/posts/:id',
 
 router.get('/categories',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const result = await pool.query('SELECT * FROM cms_categories ORDER BY name');
     res.json(result.rows);
@@ -287,7 +285,7 @@ router.get('/categories',
 
 router.post('/categories',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { name, slug } = req.body;
     const existing = await pool.query('SELECT id FROM cms_categories WHERE slug = $1 OR name = $2', [slug, name]);
@@ -303,7 +301,7 @@ router.post('/categories',
 
 router.put('/categories/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const { name, slug } = req.body;
     const { id } = req.params;
@@ -325,23 +323,11 @@ router.put('/categories/:id',
 
 router.delete('/categories/:id',
   authenticateToken,
-  checkRole(['admin', 'superAdmin']),
+  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
   asyncHandler(async (req, res) => {
     const result = await pool.query('DELETE FROM cms_categories WHERE id = $1 RETURNING id', [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: 'Category not found' });
     res.json({ message: 'Category deleted successfully' });
-  })
-);
-
-// --- Image Upload ---
-
-router.post('/upload',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin']),
-  upload.single('image'),
-  asyncHandler(async (req, res) => {
-    if (!req.file) return res.status(400).json({ error: 'No image file provided' });
-    res.json({ url: `/uploads/${req.file.filename}` });
   })
 );
 

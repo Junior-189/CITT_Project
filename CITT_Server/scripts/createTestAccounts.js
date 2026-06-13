@@ -82,13 +82,13 @@ async function createAccount(account) {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(account.password, 10);
+    const hashedPassword = await bcrypt.hash(account.password, 12);
 
     // Insert account
     const result = await pool.query(
       `INSERT INTO users
-       (name, email, password, phone, role, university, college, year_of_study, profile_complete, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
+       (name, email, password, phone, role, university, college, year_of_study, profile_complete, account_status, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'approved', NOW(), NOW())
        RETURNING id, name, email, role`,
       [
         account.name,

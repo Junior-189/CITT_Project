@@ -97,12 +97,12 @@ const PastUsers = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Past Users (Deleted)</h1>
-          <p className="text-gray-600 mt-2">View and restore deleted user accounts</p>
+          <p className="text-gray-600 dark:text-slate-400 mt-2">View and restore deleted user accounts</p>
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-teal-100 text-teal-600">
             SuperAdmin & Admin Only
           </div>
@@ -138,7 +138,7 @@ const PastUsers = () => {
 
         {/* Statistics */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
             <div className="flex items-center">
               <div className="p-3 bg-red-100 rounded-lg">
                 <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -146,13 +146,13 @@ const PastUsers = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-gray-600 text-sm">Total Deleted Users</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Total Deleted Users</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-slate-100">{deletedUsers.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
             <div className="flex items-center">
               <div className="p-3 bg-yellow-100 rounded-lg">
                 <svg className="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -160,13 +160,13 @@ const PastUsers = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-gray-600 text-sm">Can Be Restored</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Can Be Restored</p>
                 <p className="text-2xl font-bold text-yellow-600">{deletedUsers.length}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6">
             <div className="flex items-center">
               <div className="p-3 bg-blue-100 rounded-lg">
                 <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,7 +174,7 @@ const PastUsers = () => {
                 </svg>
               </div>
               <div className="ml-4">
-                <p className="text-gray-600 text-sm">Recently Deleted</p>
+                <p className="text-gray-600 dark:text-slate-400 text-sm">Recently Deleted</p>
                 <p className="text-2xl font-bold text-blue-600">
                   {deletedUsers.filter(u => {
                     const deletedDate = new Date(u.deleted_at);
@@ -188,7 +188,7 @@ const PastUsers = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4 mb-6">
           <div className="flex items-center">
             <svg className="w-5 h-5 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -198,14 +198,14 @@ const PastUsers = () => {
               placeholder="Search by name or email..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100 placeholder:text-gray-400 dark:placeholder:text-slate-500"
             />
           </div>
         </div>
 
         {/* Deleted Users List */}
         {filteredUsers.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-12 text-center">
             <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -217,7 +217,7 @@ const PastUsers = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredUsers.map((user) => (
-              <div key={user.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition border-l-4 border-red-500">
+              <div key={user.id} className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 hover:shadow-lg transition border-l-4 border-red-500">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center">
                     <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center">
@@ -240,7 +240,7 @@ const PastUsers = () => {
                 </div>
 
                 {user.university && (
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-gray-600 dark:text-slate-400 mb-2">
                     <strong>University:</strong> {user.university}
                   </p>
                 )}
@@ -288,8 +288,8 @@ const PastUsers = () => {
 
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-              <div className="relative inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full z-50">
-                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+               <div className="relative inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full z-50">
+                <div className="bg-white dark:bg-slate-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 sm:mx-0 sm:h-10 sm:w-10">
                       <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -322,7 +322,7 @@ const PastUsers = () => {
                     </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <div className="bg-gray-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                   <button
                     type="button"
                     onClick={handleRestoreUser}
@@ -336,7 +336,7 @@ const PastUsers = () => {
                       setShowRestoreModal(false);
                       setSelectedUser(null);
                     }}
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-700 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
                   >
                     Cancel
                   </button>

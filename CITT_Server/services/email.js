@@ -1,6 +1,16 @@
 const nodemailer = require('nodemailer');
 const logger = require('../config/logger');
 
+const escapeHtml = (text) => {
+  if (!text) return '';
+  return String(text)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+};
+
 let transporter = null;
 
 const getTransporter = () => {
@@ -81,7 +91,7 @@ const sendPasswordResetEmail = async (email, name, resetToken, expiryMinutes) =>
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
-    const template = generatePasswordResetTemplate(name, resetLink, expiryMinutes);
+    const template = generatePasswordResetTemplate(escapeHtml(name), resetLink, expiryMinutes);
 
     const info = await getTransporter().sendMail({
       from: process.env.MAIL_FROM || 'noreply@citt.ac.tz',
@@ -100,11 +110,12 @@ const sendPasswordResetEmail = async (email, name, resetToken, expiryMinutes) =>
 
 const sendWelcomeEmail = async (email, name) => {
   try {
+    const safeName = escapeHtml(name);
     const info = await getTransporter().sendMail({
       from: process.env.MAIL_FROM || 'noreply@citt.ac.tz',
       to: email,
       subject: 'Welcome to CITT',
-      html: `<h1>Welcome, ${name}!</h1><p>Your CITT account has been approved.</p>`,
+      html: `<h1>Welcome, ${safeName}!</h1><p>Your CITT account has been approved.</p>`,
     });
     logger.info('Welcome email sent', { to: email, messageId: info.messageId });
     return true;
@@ -118,13 +129,14 @@ const sendVerificationEmail = async (email, name, verificationToken) => {
   try {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     const verifyLink = `${frontendUrl}/verify-email?token=${verificationToken}`;
+    const safeName = escapeHtml(name);
 
     const info = await getTransporter().sendMail({
       from: process.env.MAIL_FROM || 'noreply@citt.ac.tz',
       to: email,
       subject: 'CITT - Verify Your Email Address',
       html: `
-<h1>Welcome to CITT, ${name}!</h1>
+<h1>Welcome to CITT, ${safeName}!</h1>
 <p>Thank you for registering. Please verify your email address by clicking the link below:</p>
 <p><a href="${verifyLink}">Verify Email Address</a></p>
 <p>Or copy this link: ${verifyLink}</p>

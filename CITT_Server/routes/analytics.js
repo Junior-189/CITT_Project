@@ -20,6 +20,11 @@ router.get('/dashboard',
   authenticateToken,
   checkRole(['admin', 'superAdmin']),
   asyncHandler(async (req, res) => {
+    // Helper to safely run a query and return defaults on failure (missing table etc.)
+    const safeQuery = async (queryFn, fallback) => {
+      try { return await queryFn(); } catch { return fallback; }
+    };
+
     // Execute all queries in parallel for better performance
     const [
       usersStats,
@@ -30,7 +35,7 @@ router.get('/dashboard',
       recentActivity
     ] = await Promise.all([
       // User statistics
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_users,
           COUNT(CASE WHEN role = 'innovator' THEN 1 END) as innovators,
@@ -40,10 +45,10 @@ router.get('/dashboard',
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END) as new_this_week,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as new_this_month
         FROM users
-      `),
+      `), { rows: [{ total_users: 0, innovators: 0, ip_managers: 0, admins: 0, super_admins: 0, new_this_week: 0, new_this_month: 0 }] }),
 
       // Project statistics
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_projects,
           COUNT(CASE WHEN approval_status = 'pending' THEN 1 END) as pending_approval,
@@ -55,10 +60,10 @@ router.get('/dashboard',
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END) as new_this_week,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as new_this_month
         FROM projects
-      `),
+      `), { rows: [{ total_projects: 0, pending_approval: 0, approved: 0, rejected: 0, submitted: 0, on_progress: 0, completed: 0, new_this_week: 0, new_this_month: 0 }] }),
 
       // Funding statistics
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_applications,
           COALESCE(SUM(amount), 0) as total_amount_requested,
@@ -72,10 +77,10 @@ router.get('/dashboard',
           COUNT(CASE WHEN funding_status = 'disbursed' THEN 1 END) as disbursed,
           COUNT(CASE WHEN funding_status = 'completed' THEN 1 END) as completed
         FROM funding
-      `),
+      `), { rows: [{ total_applications: 0, total_amount_requested: 0, total_amount_approved: 0, pending_approval: 0, approved: 0, rejected: 0, applied: 0, on_progress: 0, funding_approved: 0, disbursed: 0, completed: 0 }] }),
 
       // IP Management statistics
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_ip_records,
           COUNT(CASE WHEN approval_status = 'pending' THEN 1 END) as pending_approval,
@@ -84,26 +89,26 @@ router.get('/dashboard',
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END) as new_this_week,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as new_this_month
         FROM ip_management
-      `),
+      `), { rows: [{ total_ip_records: 0, pending_approval: 0, approved: 0, rejected: 0, new_this_week: 0, new_this_month: 0 }] }),
 
       // Events statistics
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_events,
           COUNT(CASE WHEN start_date >= NOW() THEN 1 END) as upcoming_events,
           COUNT(CASE WHEN start_date < NOW() THEN 1 END) as past_events,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '30 days' THEN 1 END) as created_this_month
         FROM events
-      `),
+      `), { rows: [{ total_events: 0, upcoming_events: 0, past_events: 0, created_this_month: 0 }] }),
 
       // Recent activity
-      pool.query(`
+      safeQuery(() => pool.query(`
         SELECT
           COUNT(*) as total_actions,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '24 hours' THEN 1 END) as last_24_hours,
           COUNT(CASE WHEN created_at >= NOW() - INTERVAL '7 days' THEN 1 END) as last_7_days
         FROM audit_logs
-      `)
+      `), { rows: [{ total_actions: 0, last_24_hours: 0, last_7_days: 0 }] })
     ]);
 
     res.json({
@@ -241,10 +246,10 @@ router.get('/activity-timeline',
         COUNT(CASE WHEN status = 'success' THEN 1 END) as success_count,
         COUNT(CASE WHEN status = 'failure' THEN 1 END) as failure_count
       FROM audit_logs
-      WHERE created_at >= NOW() - INTERVAL '${days} days'
+      WHERE created_at >= NOW() - ($1 || ' days')::INTERVAL
       GROUP BY DATE(created_at)
       ORDER BY date DESC
-    `);
+    `, [days]);
 
     res.json(result.rows);
   })
@@ -294,22 +299,14 @@ router.get('/pending-approvals',
   authenticateToken,
   checkRole(['admin', 'superAdmin']),
   asyncHandler(async (req, res) => {
+    const safeQuery = async (queryFn, fallback) => {
+      try { return await queryFn(); } catch { return fallback; }
+    };
+
     const [projects, funding, ip] = await Promise.all([
-      pool.query(`
-        SELECT COUNT(*) as count
-        FROM projects
-        WHERE approval_status = 'pending'
-      `),
-      pool.query(`
-        SELECT COUNT(*) as count
-        FROM funding
-        WHERE approval_status = 'pending'
-      `),
-      pool.query(`
-        SELECT COUNT(*) as count
-        FROM ip_management
-        WHERE approval_status = 'pending'
-      `)
+      safeQuery(() => pool.query(`SELECT COUNT(*) as count FROM projects WHERE approval_status = 'pending'`), { rows: [{ count: 0 }] }),
+      safeQuery(() => pool.query(`SELECT COUNT(*) as count FROM funding WHERE approval_status = 'pending'`), { rows: [{ count: 0 }] }),
+      safeQuery(() => pool.query(`SELECT COUNT(*) as count FROM ip_management WHERE approval_status = 'pending'`), { rows: [{ count: 0 }] })
     ]);
 
     res.json({
@@ -337,7 +334,7 @@ router.get('/monthly-trends',
     const result = await pool.query(`
       WITH months AS (
         SELECT generate_series(
-          DATE_TRUNC('month', NOW() - INTERVAL '${months} months'),
+          DATE_TRUNC('month', NOW() - ($1 || ' months')::INTERVAL),
           DATE_TRUNC('month', NOW()),
           '1 month'::interval
         ) AS month
@@ -355,7 +352,7 @@ router.get('/monthly-trends',
       LEFT JOIN users u ON DATE_TRUNC('month', u.created_at) = m.month
       GROUP BY m.month
       ORDER BY m.month DESC
-    `);
+    `, [months]);
 
     res.json(result.rows);
   })

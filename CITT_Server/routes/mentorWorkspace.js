@@ -107,12 +107,12 @@ router.post('/create', authenticateToken, asyncHandler(async (req, res) => {
   if (!WORKSPACE_ROLES.includes(role)) {
     return res.status(400).json({ error: `Role must be one of: ${WORKSPACE_ROLES.join(', ')}` });
   }
-  if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
   const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email.trim().toLowerCase()]);
   if (existing.rows.length) return res.status(400).json({ error: 'Email already registered' });
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 12);
   const result = await pool.query(
     `INSERT INTO users (name, email, password, phone, role, profile_complete, created_at, updated_at)
      VALUES ($1,$2,$3,$4,$5,true,NOW(),NOW())
@@ -138,8 +138,8 @@ router.put('/update/:id', authenticateToken, upload.single('photo'), asyncHandle
   const { name, phone, password } = req.body;
   let hashedPassword = undefined;
   if (password) {
-    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    hashedPassword = await bcrypt.hash(password, 10);
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    hashedPassword = await bcrypt.hash(password, 12);
   }
 
   const result = await pool.query(
@@ -422,10 +422,10 @@ router.put('/project/:id/milestone/:stageId/reject', authenticateToken, asyncHan
 
   const result = await pool.query(
     `UPDATE project_milestones SET status='rejected', approved_by=$1, rejection_reason=$2, updated_at=NOW()
-     WHERE project_id=$3 AND stage_number=$4 RETURNING *`,
+     WHERE project_id=$3 AND stage_number=$4 AND status='submitted' RETURNING *`,
     [userId, notes.trim(), id, stageNum]
   );
-  if (!result.rows.length) return res.status(404).json({ error: 'Milestone not found' });
+  if (!result.rows.length) return res.status(404).json({ error: 'Milestone not found or not in submitted status' });
 
   const projectRes = await pool.query('SELECT user_id, title FROM projects WHERE id=$1', [id]);
   const project = projectRes.rows[0];

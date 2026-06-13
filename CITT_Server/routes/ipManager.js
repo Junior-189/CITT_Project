@@ -13,6 +13,8 @@ const { checkRole, checkPermission } = require('../middleware/roleAuth');
 const { auditLog } = require('../middleware/auditLog');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { createNotification } = require('../utils/notifications');
+const { validate } = require('../middleware/validate');
+const { ipCreateSchema } = require('../validators/ip');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
@@ -447,7 +449,7 @@ router.get('/my-ips', authenticateToken, asyncHandler(async (req, res) => {
  * Innovator submits a new IP application with file uploads
  * Access: any authenticated user
  */
-router.post('/submit', authenticateToken, ipUpload.array('files', 10), asyncHandler(async (req, res) => {
+router.post('/submit', authenticateToken, validate(ipCreateSchema.passthrough()), ipUpload.array('files', 10), asyncHandler(async (req, res) => {
   const {
     ip_type, title, inventors, abstract, field, milestone_stage, prior_art, project_id,
     patent_number, application_number, trademark_reg_number, trademark_classification,

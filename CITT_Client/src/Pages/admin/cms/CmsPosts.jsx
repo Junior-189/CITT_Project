@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
 import { Plus, Edit2, Trash2, Newspaper, X, Save, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const CmsPosts = () => {
   const { getAuthenticatedAxios } = useAuth();
+  const [searchParams] = useSearchParams();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -14,9 +16,9 @@ const CmsPosts = () => {
   const [saving, setSaving] = useState(false);
   const [pagination, setPagination] = useState({ total: 0 });
   const [categories, setCategories] = useState([]);
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -31,29 +33,26 @@ const CmsPosts = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthenticatedAxios, statusFilter]);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       const api = getAuthenticatedAxios();
       const res = await api.get('/api/cms/categories');
       setCategories(res.data || []);
-    } catch {
-      // Non-critical
-    }
-  };
+    } catch { /* non-critical */ }
+  }, [getAuthenticatedAxios]);
 
-  useEffect(() => { fetchPosts(); }, [statusFilter]);
+  useEffect(() => { fetchPosts(); }, [fetchPosts]);
+  useEffect(() => { fetchCategories(); }, [fetchCategories]);
 
   const openCreate = () => {
-    fetchCategories();
     setEditing(null);
     setForm({ slug: '', title: '', excerpt: '', content: '', featured_image: '', category_id: '', status: 'draft' });
     setShowForm(true);
   };
 
   const openEdit = (p) => {
-    fetchCategories();
     setEditing(p.id);
     setForm({
       slug: p.slug, title: p.title, excerpt: p.excerpt || '', content: p.content || '',
@@ -112,7 +111,7 @@ const CmsPosts = () => {
           </div>
           <div className="flex gap-3">
             <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}
-              className="px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm">
+              className="px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100">
               <option value="">All Status</option>
               <option value="draft">Draft</option>
               <option value="published">Published</option>
@@ -130,36 +129,36 @@ const CmsPosts = () => {
           <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">{editing ? 'Edit Post' : 'New Post'}</h2>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Slug</label>
                   <input type="text" value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" required />
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
                   <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" required />
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" required />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Excerpt</label>
                 <input type="text" value={form.excerpt} onChange={e => setForm({ ...form, excerpt: e.target.value })}
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Featured Image URL</label>
                   <input type="text" value={form.featured_image} onChange={e => setForm({ ...form, featured_image: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" />
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
                   <select value={form.category_id} onChange={e => setForm({ ...form, category_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm">
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100">
                     <option value="">None</option>
                     {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                   </select>
@@ -167,7 +166,7 @@ const CmsPosts = () => {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm">
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100">
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
@@ -176,7 +175,7 @@ const CmsPosts = () => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Content (HTML)</label>
                 <textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })}
-                  rows={12} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm font-mono" />
+                  rows={12} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100 font-mono" />
               </div>
               <button type="submit" disabled={saving}
                 className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-semibold hover:bg-teal-700 disabled:opacity-50">
@@ -187,11 +186,14 @@ const CmsPosts = () => {
         )}
 
         {loading ? (
-          <div className="text-center py-16 text-slate-500">Loading posts...</div>
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto mb-3" />
+            <p className="text-slate-500 dark:text-slate-400">Loading posts...</p>
+          </div>
         ) : posts.length === 0 ? (
           <div className="bg-white dark:bg-slate-800 rounded-xl p-12 text-center shadow-sm">
-            <Newspaper className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-500">No posts yet. Create your first post.</p>
+            <Newspaper className="w-12 h-12 text-slate-300 dark:text-slate-500 mx-auto mb-3" />
+            <p className="text-slate-500 dark:text-slate-400">No posts yet. Create your first post.</p>
           </div>
         ) : (
           <div className="space-y-2">

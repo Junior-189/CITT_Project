@@ -12,14 +12,12 @@ import {
   Mail,
   LayoutDashboard,
   Users,
-  Settings,
   Database,
   BarChart3,
   FileBarChart,
   Shield,
   UserCog,
   Clock,
-  Lock,
   Image,
   Building2,
   UserCheck,
@@ -50,12 +48,11 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/superadmin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/superadmin/users', label: 'Role Management', icon: UserCog },
     { path: '/superadmin/past-users', label: 'Past Users', icon: Clock },
-    { path: '/superadmin/permissions', label: 'Permissions', icon: Lock },
-    { path: '/superadmin/system', label: 'System Stats', icon: Database },
-    { path: '/superadmin/analytics', label: 'Analytics', icon: BarChart3 },
+    { path: '/admin/analytics', label: 'Analytics', icon: BarChart3 },
     { path: '/superadmin/audit-logs', label: 'Audit Logs', icon: FileBarChart },
-    { path: '/superadmin/database', label: 'Database Info', icon: Settings },
+    { path: '/superadmin/database', label: 'Database Info', icon: Database },
     { path: '/admin/cms', label: 'CMS', icon: Layers },
+    { path: '/workspace', label: 'Workspace Portal', icon: Briefcase },
     { path: '/departments', label: 'Departments', icon: Building2 },
   ];
 
@@ -81,7 +78,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/ipmanager/submitted-projects', label: 'Submitted Projects', icon: FolderKanban },
     { path: '/ipmanager/records', label: 'IP Records', icon: FileText },
     { path: '/ipmanager/pending', label: 'Pending Approvals', icon: Clock },
-    { path: '/ipmanager/statistics', label: 'Statistics', icon: Database },
     { path: '/ipmanager/analytics', label: 'Analytics', icon: BarChart3 },
   ];
 
@@ -236,7 +232,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
                       className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
                         active 
                           ? 'bg-teal-50 dark:bg-slate-700 text-teal-600 dark:text-teal-400 font-medium' 
-                          : 'text-slate-700 dark:text-slate-200 dark:text-slate-300 hover:bg-slate-100 dark:bg-slate-700 dark:hover:bg-slate-700'
+                          : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
                       }`}
                     >
                       <Icon size={20} className="shrink-0" />

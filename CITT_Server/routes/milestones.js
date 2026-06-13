@@ -178,10 +178,10 @@ router.put('/:projectId/milestones/:stageId/reject', authenticateToken, asyncHan
 
   const result = await pool.query(
     `UPDATE project_milestones SET status='rejected', approved_by=$1, rejection_reason=$2, updated_at=NOW()
-     WHERE project_id=$3 AND stage_number=$4 RETURNING *`,
+     WHERE project_id=$3 AND stage_number=$4 AND status='submitted' RETURNING *`,
     [userId, notes.trim(), projectId, stageNum]
   );
-  if (!result.rows.length) return res.status(404).json({ error: 'Milestone not found' });
+  if (!result.rows.length) return res.status(404).json({ error: 'Milestone not found or not in submitted status' });
 
   try {
     const pRes = await pool.query('SELECT user_id, title FROM projects WHERE id=$1', [projectId]);

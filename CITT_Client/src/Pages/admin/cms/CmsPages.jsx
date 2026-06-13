@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../../context/AuthContext';
 import { Plus, Edit2, Trash2, FileText, X, Save, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,7 @@ const CmsPages = () => {
   const [saving, setSaving] = useState(false);
   const [pagination, setPagination] = useState({ total: 0 });
 
-  const fetchPages = async () => {
+  const fetchPages = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -27,9 +27,9 @@ const CmsPages = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthenticatedAxios]);
 
-  useEffect(() => { fetchPages(); }, []);
+  useEffect(() => { fetchPages(); }, [fetchPages]);
 
   const openCreate = () => {
     setEditing(null);
@@ -73,7 +73,9 @@ const CmsPages = () => {
       const api = getAuthenticatedAxios();
       await api.delete(`/api/cms/pages/${id}`);
       fetchPages();
-    } catch {}
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to delete page.');
+    }
   };
 
   const statusStyles = { draft: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300', published: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' };
@@ -103,24 +105,24 @@ const CmsPages = () => {
           <div className="mb-6 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">{editing ? 'Edit Page' : 'New Page'}</h2>
-              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
+              <button onClick={closeForm} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSave} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Slug</label>
                   <input type="text" value={form.slug} onChange={e => setForm({ ...form, slug: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" required />
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Title</label>
                   <input type="text" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm" required />
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
                   <select value={form.status} onChange={e => setForm({ ...form, status: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm">
+                    className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100">
                     <option value="draft">Draft</option>
                     <option value="published">Published</option>
                   </select>
@@ -129,7 +131,7 @@ const CmsPages = () => {
               <div>
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Content</label>
                 <textarea value={form.content} onChange={e => setForm({ ...form, content: e.target.value })}
-                  rows={8} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm font-mono" />
+                  rows={8} className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-sm text-slate-800 dark:text-slate-100" />
               </div>
               <button type="submit" disabled={saving}
                 className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg text-sm font-semibold hover:bg-teal-700 disabled:opacity-50">
@@ -140,11 +142,14 @@ const CmsPages = () => {
         )}
 
         {loading ? (
-          <div className="text-center py-16 text-slate-500">Loading pages...</div>
+          <div className="text-center py-16">
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600 mx-auto mb-3" />
+            <p className="text-slate-500 dark:text-slate-400">Loading pages...</p>
+          </div>
         ) : pages.length === 0 ? (
           <div className="bg-white dark:bg-slate-800 rounded-xl p-12 text-center shadow-sm">
-            <FileText className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
-            <p className="text-slate-500">No pages yet. Create your first page.</p>
+            <FileText className="w-12 h-12 text-slate-300 dark:text-slate-500 mx-auto mb-3" />
+            <p className="text-slate-500 dark:text-slate-400">No pages yet. Create your first page.</p>
           </div>
         ) : (
           <div className="space-y-2">

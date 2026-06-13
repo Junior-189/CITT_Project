@@ -83,7 +83,7 @@ router.put('/users/:id/role',
     }
 
     // Get current user info
-    const currentUser = await pool.query('SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const currentUser = await pool.query('SELECT role FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
 
     if (currentUser.rows.length === 0) {
       return res.status(404).json({ error: 'User not found or deleted' });
@@ -93,7 +93,7 @@ router.put('/users/:id/role',
 
     // Update role
     const result = await pool.query(
-      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING *',
+      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, email, role',
       [newRole, id]
     );
 
@@ -132,7 +132,7 @@ router.post('/users/:id/promote-to-admin',
     }
 
     const result = await pool.query(
-      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, email, role',
+      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 AND deleted_at IS NULL RETURNING id, name, email, role',
       [ROLES.ADMIN, id]
     );
 
@@ -167,7 +167,7 @@ router.post('/users/:id/demote-to-innovator',
     }
 
     const result = await pool.query(
-      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING id, name, email, role',
+      'UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 AND deleted_at IS NULL RETURNING id, name, email, role',
       [ROLES.INNOVATOR, id]
     );
 
@@ -191,6 +191,12 @@ router.get('/system/stats',
   authenticateToken,
   canModifyRole,
   asyncHandler(async (req, res) => {
+    const safeQuery = async (queryFn, fallback) => {
+      try { return await queryFn(); } catch { return fallback; }
+    };
+    const defaultRow = { rows: [{ count: 0 }] };
+    const defaultFundingRow = { rows: [{ count: 0, total_amount: 0 }] };
+
     const [
       users,
       projects,
@@ -200,13 +206,13 @@ router.get('/system/stats',
       auditLogs,
       permissions
     ] = await Promise.all([
-      pool.query('SELECT COUNT(*) as count FROM users'),
-      pool.query('SELECT COUNT(*) as count FROM projects'),
-      pool.query('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total_amount FROM funding'),
-      pool.query('SELECT COUNT(*) as count FROM ip_management'),
-      pool.query('SELECT COUNT(*) as count FROM events'),
-      pool.query('SELECT COUNT(*) as count FROM audit_logs'),
-      pool.query('SELECT COUNT(*) as count FROM role_permissions')
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM users'), defaultRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM projects'), defaultRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count, COALESCE(SUM(amount), 0) as total_amount FROM funding'), defaultFundingRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM ip_management'), defaultRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM events'), defaultRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM audit_logs'), defaultRow),
+      safeQuery(() => pool.query('SELECT COUNT(*) as count FROM role_permissions'), defaultRow)
     ]);
 
     res.json({
@@ -338,35 +344,7 @@ router.delete('/permissions/:id',
   })
 );
 
-/**
- * GET /api/superadmin/audit-logs/all
- * Get all audit logs (no filters, superAdmin only)
- * Access: superAdmin only
- */
-router.get('/audit-logs/all',
-  authenticateToken,
-  canModifyRole,
-  asyncHandler(async (req, res) => {
-    const { limit = 100, offset = 0 } = req.query;
-
-    const result = await pool.query(`
-      SELECT * FROM audit_logs
-      ORDER BY created_at DESC
-      LIMIT $1 OFFSET $2
-    `, [limit, offset]);
-
-    const countResult = await pool.query('SELECT COUNT(*) FROM audit_logs');
-
-    res.json({
-      logs: result.rows,
-      pagination: {
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        total: parseInt(countResult.rows[0].count)
-      }
-    });
-  })
-);
+// Audit log endpoints consolidated into /api/admin/audit-logs (routes/admin.js)
 
 /**
  * DELETE /api/superadmin/audit-logs/cleanup
@@ -378,13 +356,14 @@ router.delete('/audit-logs/cleanup',
   canModifyRole,
   auditLog('audit_logs'),
   asyncHandler(async (req, res) => {
-    const { days = 90 } = req.query; // Default: delete logs older than 90 days
+    const days = Math.abs(parseInt(req.query.days) || 90);
 
-    const result = await pool.query(`
-      DELETE FROM audit_logs
-      WHERE created_at < NOW() - INTERVAL '${parseInt(days)} days'
-      RETURNING COUNT(*) as deleted_count
-    `);
+    const result = await pool.query(
+      `DELETE FROM audit_logs
+       WHERE created_at < NOW() - ($1 || ' days')::INTERVAL
+       RETURNING id`,
+      [days]
+    );
 
     res.json({
       message: `Deleted audit logs older than ${days} days`,
@@ -393,63 +372,7 @@ router.delete('/audit-logs/cleanup',
   })
 );
 
-/**
- * GET /api/superadmin/analytics
- * Get analytics data (user, project, funding stats)
- * Access: superAdmin only
- */
-router.get('/analytics',
-  authenticateToken,
-  canModifyRole,
-  asyncHandler(async (req, res) => {
-    const [
-      users,
-      projects,
-      funding
-    ] = await Promise.all([
-      pool.query(`
-        SELECT 
-          COUNT(*) as total,
-          SUM(CASE WHEN role = 'superAdmin' THEN 1 ELSE 0 END) as super_admins,
-          SUM(CASE WHEN role = 'admin' THEN 1 ELSE 0 END) as admins,
-          SUM(CASE WHEN role = 'ipManager' THEN 1 ELSE 0 END) as ip_managers,
-          SUM(CASE WHEN role = 'innovator' THEN 1 ELSE 0 END) as innovators
-        FROM users
-        WHERE deleted_at IS NULL
-      `),
-      pool.query(`
-        SELECT 
-          COUNT(*) as total,
-          SUM(CASE WHEN approval_status = 'pending' THEN 1 ELSE 0 END) as pending_approval,
-          SUM(CASE WHEN approval_status = 'approved' THEN 1 ELSE 0 END) as approved,
-          SUM(CASE WHEN approval_status = 'rejected' THEN 1 ELSE 0 END) as rejected
-        FROM projects
-        WHERE deleted_at IS NULL
-      `),
-      pool.query(`
-        SELECT 
-          COUNT(*) as total,
-          COALESCE(SUM(amount), 0) as total_amount,
-          SUM(CASE WHEN approval_status = 'pending' THEN 1 ELSE 0 END) as pending_approval,
-          SUM(CASE WHEN approval_status = 'approved' THEN 1 ELSE 0 END) as approved,
-          SUM(CASE WHEN approval_status = 'rejected' THEN 1 ELSE 0 END) as rejected
-        FROM funding
-        WHERE deleted_at IS NULL
-      `)
-    ]);
-
-    res.json({
-      users: users.rows[0],
-      projects: projects.rows[0],
-      funding: funding.rows[0],
-      overview: {
-        totalUsers: parseInt(users.rows[0].total),
-        totalProjects: parseInt(projects.rows[0].total),
-        totalFunding: parseInt(funding.rows[0].total)
-      }
-    });
-  })
-);
+// Analytics endpoints have been consolidated into /api/analytics/* (routes/analytics.js)
 
 /**
  * GET /api/superadmin/database/info
@@ -475,7 +398,7 @@ router.get('/database/info',
     const tables = await Promise.all(
       tablesResult.rows.map(async (table) => {
         try {
-          const countResult = await pool.query(`SELECT COUNT(*) FROM ${table.table_name}`);
+          const countResult = await pool.query(`SELECT COUNT(*) FROM "${table.table_name}"`);
           const columnsResult = await pool.query(`
             SELECT column_name, data_type
             FROM information_schema.columns
@@ -512,48 +435,7 @@ router.get('/database/info',
   })
 );
 
-/**
- * GET /api/superadmin/database/tables
- * Get information about all database tables
- * Access: superAdmin only
- */
-router.get('/database/tables',
-  authenticateToken,
-  canModifyRole,
-  asyncHandler(async (req, res) => {
-    const result = await pool.query(`
-      SELECT
-        table_name,
-        (SELECT COUNT(*) FROM information_schema.columns WHERE table_name = t.table_name) as column_count
-      FROM information_schema.tables t
-      WHERE table_schema = 'public'
-      ORDER BY table_name
-    `);
-
-    // Get row counts for each table
-    const tables = await Promise.all(
-      result.rows.map(async (table) => {
-        try {
-          const countResult = await pool.query(`SELECT COUNT(*) FROM ${table.table_name}`);
-          return {
-            name: table.table_name,
-            columnCount: parseInt(table.column_count),
-            rowCount: parseInt(countResult.rows[0].count)
-          };
-        } catch (error) {
-          return {
-            name: table.table_name,
-            columnCount: parseInt(table.column_count),
-            rowCount: 0,
-            error: 'Could not count rows'
-          };
-        }
-      })
-    );
-
-    res.json({ tables });
-  })
-);
+// Additional database endpoints available via /api/analytics
 
 /**
  * POST /api/superadmin/users/bulk-update-role
@@ -677,7 +559,7 @@ router.post('/users/:id/restore',
     const { id } = req.params;
 
     // Check if user exists and is deleted
-    const userCheck = await pool.query('SELECT * FROM users WHERE id = $1 AND deleted_at IS NOT NULL', [id]);
+    const userCheck = await pool.query('SELECT id, name FROM users WHERE id = $1 AND deleted_at IS NOT NULL', [id]);
 
     if (userCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Deleted user not found' });
@@ -712,7 +594,7 @@ router.delete('/users/:id/permanent',
     const { id } = req.params;
 
     // Check if user exists and is already soft-deleted
-    const userCheck = await pool.query('SELECT * FROM users WHERE id = $1 AND deleted_at IS NOT NULL', [id]);
+    const userCheck = await pool.query('SELECT id, name FROM users WHERE id = $1 AND deleted_at IS NOT NULL', [id]);
 
     if (userCheck.rows.length === 0) {
       return res.status(404).json({ error: 'Deleted user not found. Users must be soft-deleted first.' });
@@ -747,10 +629,20 @@ router.put('/users/:id',
     const { name, email } = req.body;
 
     // Check if user exists
-    const userCheck = await pool.query('SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const userCheck = await pool.query('SELECT id FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
 
     if (userCheck.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
+    }
+
+    if (email) {
+      const emailCheck = await pool.query(
+        'SELECT id FROM users WHERE email = $1 AND id != $2 AND deleted_at IS NULL',
+        [email, id]
+      );
+      if (emailCheck.rows.length > 0) {
+        return res.status(409).json({ error: 'Email already in use by another user' });
+      }
     }
 
     const result = await pool.query(
@@ -783,18 +675,18 @@ router.put('/users/:id/password',
     const { id } = req.params;
     const { newPassword } = req.body;
 
-    if (!newPassword || newPassword.length < 6) {
-      return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({ error: 'Password must be at least 8 characters long' });
     }
 
     // Check if user exists
-    const userCheck = await pool.query('SELECT * FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
+    const userCheck = await pool.query('SELECT id FROM users WHERE id = $1 AND deleted_at IS NULL', [id]);
 
     if (userCheck.rows.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
 
     const result = await pool.query(
       `UPDATE users
@@ -841,7 +733,7 @@ router.post('/users',
       return res.status(409).json({ error: 'A user with this email already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await pool.query(
       `INSERT INTO users (name, email, password, phone, role, university, campus, account_status, approved_by_admin, approved_at, created_at, updated_at)

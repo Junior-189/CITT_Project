@@ -294,26 +294,33 @@ app.post('/api/auth/register',
       `INSERT INTO users
        (name, email, password, phone, role, university, campus, college, year_of_study, firestore_id, account_status, created_at, updated_at)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, 'pending', NOW(), NOW())
+       ON CONFLICT (email) DO NOTHING
        RETURNING id, name, email, phone, role, university, campus, account_status, created_at`,
       [name, email, hashedPassword, phone || null,
        'innovator',
        university || null, campus || null, college || null, year_of_study || null, firestore_id || null]
     );
 
+    if (result.rows.length === 0) {
+      return res.status(409).json({ error: 'User with this email already exists' });
+    }
+
     logger.info('User registered', { email, userId: result.rows[0].id });
 
     // Generate verification token and send email
     const verificationToken = crypto.randomBytes(32).toString('hex');
     const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+    const hashedVerificationToken = crypto.createHash('sha256').update(verificationToken).digest('hex');
     await pool.query(
       `UPDATE users SET email_verification_token = $1, email_verification_expires = $2 WHERE id = $3`,
-      [verificationToken, verificationExpires, result.rows[0].id]
+      [hashedVerificationToken, verificationExpires, result.rows[0].id]
     );
     sendVerificationEmail(email, name, verificationToken).catch(() => {});
 
     res.status(201).json({
-      message: 'Registration successful. Your account is awaiting admin approval.',
+      message: 'Registration successful. Please verify your email address. A verification link has been sent to your inbox.',
       pending: true,
+      emailVerificationRequired: true,
       user: {
         id: result.rows[0].id,
         name: result.rows[0].name,
@@ -334,7 +341,10 @@ app.post('/api/auth/login',
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
-    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+    const result = await pool.query(
+      'SELECT id, name, email, password, phone, role, university, college, year_of_study, profile_complete, account_status, deleted_at, created_at FROM users WHERE email = $1',
+      [email]
+    );
 
     if (result.rows.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
@@ -345,6 +355,17 @@ app.post('/api/auth/login',
     if (user.deleted_at) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
+
+    if (!user.password) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
     if (user.account_status === 'pending') {
       return res.status(403).json({
         error: 'account_pending',
@@ -356,12 +377,6 @@ app.post('/api/auth/login',
         error: 'account_rejected',
         message: 'Your account registration was not approved. Please contact CITT administration.'
       });
-    }
-
-    const validPassword = await bcrypt.compare(password, user.password);
-
-    if (!validPassword) {
-      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     const accessToken = generateAccessToken(user);
@@ -525,7 +540,7 @@ app.post('/api/auth/firebase-register',
     const user = result.rows[0];
 
     res.status(201).json({
-      message: 'Registration successful. Your account is awaiting admin approval.',
+      message: 'Registration successful. Your account will be reviewed by an administrator.',
       pending: true,
       user: { id: user.id, name: user.name, email: user.email, role: user.role, account_status: 'pending' }
     });
@@ -632,10 +647,11 @@ app.post('/api/auth/forgot-password',
     const resetToken = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes
 
+    const hashedResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
     await pool.query(
       `INSERT INTO password_reset_tokens (user_id, token, expires_at)
        VALUES ($1, $2, $3)`,
-      [user.id, resetToken, expiresAt]
+      [user.id, hashedResetToken, expiresAt]
     );
 
     await sendPasswordResetEmail(user.email, user.name, resetToken, 30);
@@ -656,11 +672,12 @@ app.post('/api/auth/reset-password',
   asyncHandler(async (req, res) => {
     const { token, newPassword } = req.body;
 
+    const hashedResetToken = crypto.createHash('sha256').update(token).digest('hex');
     const tokenResult = await pool.query(
       `SELECT * FROM password_reset_tokens
        WHERE token = $1 AND used = FALSE AND expires_at > NOW()
        ORDER BY created_at DESC LIMIT 1`,
-      [token]
+      [hashedResetToken]
     );
 
     if (tokenResult.rows.length === 0) {
@@ -708,19 +725,29 @@ app.post('/api/auth/verify-email', asyncHandler(async (req, res) => {
   const { token } = req.body;
   if (!token) return res.status(400).json({ error: 'Verification token is required' });
 
-  const result = await pool.query(
-    `SELECT id FROM users WHERE email_verification_token = $1 AND email_verification_expires > NOW() AND deleted_at IS NULL`,
-    [token]
-  );
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+  let result;
+  try {
+    result = await pool.query(
+      `SELECT id FROM users WHERE email_verification_token = $1 AND email_verification_expires > NOW() AND deleted_at IS NULL`,
+      [hashedToken]
+    );
+  } catch {
+    return res.status(500).json({ error: 'Email verification is not available. Please contact support.' });
+  }
 
   if (result.rows.length === 0) {
     return res.status(400).json({ error: 'Invalid or expired verification token' });
   }
 
-  await pool.query(
-    `UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_verification_expires = NULL, updated_at = NOW() WHERE id = $1`,
-    [result.rows[0].id]
-  );
+  try {
+    await pool.query(
+      `UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_verification_expires = NULL, updated_at = NOW() WHERE id = $1`,
+      [result.rows[0].id]
+    );
+  } catch {
+    return res.status(500).json({ error: 'Failed to update verification status. Please contact support.' });
+  }
 
   logger.info('Email verified', { userId: result.rows[0].id });
   res.json({ message: 'Email verified successfully. You can now log in once your account is approved.' });

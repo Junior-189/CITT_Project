@@ -35,16 +35,16 @@ const MilestoneViewModal = ({ project, onClose, api }) => {
       <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl my-6">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
-            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 dark:text-slate-100">{project.title}</h2>
+            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">{project.title}</h2>
             <p className="text-xs text-gray-500 dark:text-slate-400">{project.innovator_name} · {completedCount}/9 completed</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-6 py-3 border-b">
-          <div className="flex justify-between text-xs text-gray-400 mb-1">
+          <div className="flex justify-between text-xs text-gray-400 dark:text-slate-400 mb-1">
             <span>Innovation Progress</span><span>{Math.round(completedCount / 9 * 100)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
             <div className="bg-green-500 h-2 rounded-full" style={{ width: `${Math.round(completedCount / 9 * 100)}%` }} />
           </div>
         </div>
@@ -55,22 +55,22 @@ const MilestoneViewModal = ({ project, onClose, api }) => {
             const isOpen = expanded === stageNum;
             return (
               <div key={stageNum}>
-                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900 dark:bg-slate-900"
+                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900 dark:hover:bg-slate-700"
                   onClick={() => setExpanded(isOpen ? null : stageNum)}>
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${STATUS_COLORS[status]}`}>
                     {stageNum}
                   </div>
                   <div className="flex-1">
-                    <span className="text-xs text-gray-400">Stage {stageNum}</span>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{STAGE_NAMES[stageNum]}</p>
+                    <span className="text-xs text-gray-400 dark:text-slate-400">Stage {stageNum}</span>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{STAGE_NAMES[stageNum]}</p>
                   </div>
                   <span className={`hidden sm:inline text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[status]}`}>
                     {status.replace('_', ' ')}
                   </span>
-                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400 dark:text-slate-400" /> : <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-400" />}
                 </button>
                 {isOpen && record?.submission_notes && (
-                  <div className="px-6 pb-4 bg-gray-50 dark:bg-slate-900 border-t text-sm text-gray-600 dark:text-slate-400 dark:text-slate-400">
+                  <div className="px-6 pb-4 bg-gray-50 dark:bg-slate-900 border-t text-sm text-gray-600 dark:text-slate-400">
                     <p className="mt-3"><strong>Notes:</strong> {record.submission_notes}</p>
                     {record.rejection_reason && <p className="mt-1 text-red-600"><strong>Feedback:</strong> {record.rejection_reason}</p>}
                   </div>
@@ -227,7 +227,7 @@ const RTPWorkspace = () => {
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap
-                  ${activeTab === tab.id ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                  ${activeTab === tab.id ? 'border-green-600 text-green-700' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}>
                 <Icon className="w-4 h-4" /> {tab.label}
               </button>
             );
@@ -237,12 +237,12 @@ const RTPWorkspace = () => {
 
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex justify-between">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 flex justify-between">
             <span>{error}</span><button onClick={() => setError('')}><X className="w-4 h-4" /></button>
           </div>
         )}
         {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2">
+          <div className="mb-4 p-3 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
             <CheckCircle className="w-4 h-4" /> {success}
           </div>
         )}
@@ -257,24 +257,18 @@ const RTPWorkspace = () => {
                 { label: 'Open Complaints', value: dashData.stats.openComplaints, color: 'border-red-400' },
               ].map(s => (
                 <div key={s.label} className={`bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border-l-4 ${s.color} text-center`}>
-                  <p className="text-3xl font-bold text-slate-800 dark:text-slate-100 dark:text-slate-100">{s.value}</p>
+                  <p className="text-3xl font-bold text-slate-800 dark:text-slate-100">{s.value}</p>
                   <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
                 </div>
               ))}
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
               <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">RTP Department Functions</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  'Identify and document rural technological needs',
-                  'Facilitate transfer of appropriate technologies to rural communities',
-                  'Conduct training programmes for rural innovators and communities',
-                  'Monitor and evaluate impact of technology transfer projects',
-                  'Handle student and staff complaints related to RTP',
-                ].map((fn, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-green-50 rounded-lg">
-                    <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
-                    <p className="text-sm text-slate-700 dark:text-slate-200 dark:text-slate-200">{fn}</p>
+                {(dashData?.department?.functions || []).map((fn, i) => (
+                  <div key={fn.id || i} className="flex items-start gap-3 p-3 bg-green-50 dark:bg-green-500/10 rounded-lg">
+                    <span className="w-6 h-6 rounded-full bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 flex items-center justify-center text-xs font-bold flex-shrink-0">{fn.order_num || i + 1}</span>
+                    <p className="text-sm text-slate-700 dark:text-slate-300">{fn.description}</p>
                   </div>
                 ))}
               </div>
@@ -287,10 +281,10 @@ const RTPWorkspace = () => {
           <div>
             <input value={projectSearch} onChange={e => setProjectSearch(e.target.value)}
               placeholder="Search by title or innovator…"
-              className="w-full mb-5 border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" />
+              className="w-full mb-5 border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-green-400 outline-none" />
             <div className="space-y-3">
               {filteredProjects.length === 0 && (
-                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No projects found</div>
+                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No projects found</div>
               )}
               {filteredProjects.map(p => {
                 const pct = Math.round(((p.completed_milestones || 0) / 9) * 100);
@@ -312,10 +306,10 @@ const RTPWorkspace = () => {
                       </button>
                     </div>
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-gray-200 rounded-full h-2">
+                      <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
                         <div className="bg-green-500 h-2 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
-                      <span className="text-xs text-gray-400">{p.completed_milestones || 0}/9</span>
+                      <span className="text-xs text-gray-400 dark:text-slate-400">{p.completed_milestones || 0}/9</span>
                     </div>
                   </div>
                 );
@@ -328,7 +322,7 @@ const RTPWorkspace = () => {
         {activeTab === 'trainings' && (
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">Training Programmes <span className="text-gray-400 font-normal text-sm">({trainings.length})</span></h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Training Programmes <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({trainings.length})</span></h2>
               <button onClick={() => setShowTrainingForm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Add Programme
@@ -341,17 +335,17 @@ const RTPWorkspace = () => {
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Title *</label>
                     <input value={trainingForm.title} onChange={e => setTrainingForm(f => ({ ...f, title: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" placeholder="Programme title" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none" placeholder="Programme title" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Target Audience</label>
                     <input value={trainingForm.target_audience} onChange={e => setTrainingForm(f => ({ ...f, target_audience: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" placeholder="e.g. Rural Innovators, Communities" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none" placeholder="e.g. Rural Innovators, Communities" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Status</label>
                     <select value={trainingForm.status} onChange={e => setTrainingForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none">
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none">
                       <option value="planned">Planned</option>
                       <option value="active">Active</option>
                       <option value="completed">Completed</option>
@@ -361,37 +355,37 @@ const RTPWorkspace = () => {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Start Date</label>
                     <input type="date" value={trainingForm.start_date} onChange={e => setTrainingForm(f => ({ ...f, start_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">End Date</label>
                     <input type="date" value={trainingForm.end_date} onChange={e => setTrainingForm(f => ({ ...f, end_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Description</label>
                     <textarea rows={3} value={trainingForm.description} onChange={e => setTrainingForm(f => ({ ...f, description: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none resize-none" placeholder="Programme description…" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none resize-none" placeholder="Programme description…" />
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={submitTraining} className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold">Save</button>
-                  <button onClick={() => setShowTrainingForm(false)} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
+                  <button onClick={() => setShowTrainingForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
             )}
             <div className="space-y-3">
-              {trainings.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No training programmes yet</div>}
+              {trainings.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No training programmes yet</div>}
               {trainings.map(t => {
                 const sc = { planned: 'bg-gray-100 text-gray-700', active: 'bg-green-100 text-green-700', completed: 'bg-blue-100 text-blue-700', cancelled: 'bg-red-100 text-red-700' };
                 return (
                   <div key={t.id} className="bg-white dark:bg-slate-800 rounded-xl border border-gray-200 dark:border-slate-700 p-5 shadow-sm">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{t.title}</h3>
+                      <h3 className="font-semibold text-slate-800 dark:text-slate-100">{t.title}</h3>
                       <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${sc[t.status] || 'bg-gray-100 text-gray-700'}`}>{t.status}</span>
                     </div>
                     {t.description && <p className="text-sm text-gray-500 dark:text-slate-400">{t.description}</p>}
-                    <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-400">
+                    <div className="flex flex-wrap gap-3 mt-1 text-xs text-gray-400 dark:text-slate-400">
                       {t.target_audience && <span>Audience: {t.target_audience}</span>}
                       {t.start_date && <span>Start: {new Date(t.start_date).toLocaleDateString()}</span>}
                       {t.end_date && <span>End: {new Date(t.end_date).toLocaleDateString()}</span>}
@@ -407,7 +401,7 @@ const RTPWorkspace = () => {
         {activeTab === 'complaints' && (
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">Complaints <span className="text-gray-400 font-normal text-sm">({complaints.length})</span></h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Complaints <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({complaints.length})</span></h2>
               <button onClick={() => setShowComplaintForm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Submit Complaint
@@ -418,18 +412,18 @@ const RTPWorkspace = () => {
                 <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">New Complaint</h3>
                 <div className="space-y-3">
                   <input value={complaintForm.subject} onChange={e => setComplaintForm(f => ({ ...f, subject: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none" placeholder="Subject *" />
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none" placeholder="Subject *" />
                   <textarea rows={4} value={complaintForm.description} onChange={e => setComplaintForm(f => ({ ...f, description: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-400 outline-none resize-none" placeholder="Describe the issue… *" />
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-green-400 outline-none resize-none" placeholder="Describe the issue… *" />
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={submitComplaint} className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-semibold">Submit</button>
-                  <button onClick={() => setShowComplaintForm(false)} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
+                  <button onClick={() => setShowComplaintForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
             )}
             <div className="space-y-3">
-              {complaints.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No complaints filed</div>}
+              {complaints.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No complaints filed</div>}
               {complaints.map(c => {
                 const sc = { open: 'bg-red-100 text-red-700', in_review: 'bg-yellow-100 text-yellow-700', resolved: 'bg-green-100 text-green-700', closed: 'bg-gray-100 text-gray-600' };
                 return (
@@ -437,10 +431,10 @@ const RTPWorkspace = () => {
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{c.subject}</h3>
+                          <h3 className="font-semibold text-slate-800 dark:text-slate-100">{c.subject}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${sc[c.status] || 'bg-gray-100 text-gray-600'}`}>{c.status.replace('_', ' ')}</span>
                         </div>
-                        <p className="text-xs text-gray-400">By: {c.submitted_by_name} · {new Date(c.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-gray-400 dark:text-slate-400">By: {c.submitted_by_name} · {new Date(c.created_at).toLocaleDateString()}</p>
                       </div>
                       {(c.status === 'open' || c.status === 'in_review') && (
                         <div className="flex gap-2 flex-shrink-0">
@@ -455,9 +449,9 @@ const RTPWorkspace = () => {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-slate-400 dark:text-slate-400">{c.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">{c.description}</p>
                     {c.resolution && (
-                      <div className="mt-2 p-3 bg-green-50 rounded-lg text-sm text-green-700">
+                      <div className="mt-2 p-3 bg-green-50 dark:bg-green-500/10 rounded-lg text-sm text-green-700 dark:text-green-300">
                         <span className="font-semibold">Resolution: </span>{c.resolution}
                       </div>
                     )}

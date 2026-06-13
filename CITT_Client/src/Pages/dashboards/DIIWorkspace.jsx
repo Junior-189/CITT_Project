@@ -53,13 +53,13 @@ const MilestoneModal = ({ project, onClose, api, onRefresh }) => {
       <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-3xl my-6">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div>
-            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 dark:text-slate-100">{project.title}</h2>
+            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">{project.title}</h2>
             <p className="text-xs text-gray-500 dark:text-slate-400">{project.innovator_name} · {completedCount}/9 completed</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="p-2 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg"><X className="w-5 h-5" /></button>
         </div>
         <div className="px-6 py-3 border-b">
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
             <div className="bg-teal-500 h-2 rounded-full" style={{ width: `${Math.round(completedCount / 9 * 100)}%` }} />
           </div>
         </div>
@@ -76,30 +76,30 @@ const MilestoneModal = ({ project, onClose, api, onRefresh }) => {
             const isOpen = expanded === stageNum;
             return (
               <div key={stageNum}>
-                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900 dark:bg-slate-900"
+                <button className="w-full flex items-center gap-3 px-6 py-3 text-left hover:bg-gray-50 dark:bg-slate-900 dark:hover:bg-slate-700"
                   onClick={() => setExpanded(isOpen ? null : stageNum)}>
                   <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${STATUS_COLORS[status] || 'bg-gray-100 text-gray-600'}`}>
                     {stageNum}
                   </div>
                   <div className="flex-1">
-                    <span className="text-xs text-gray-400">Stage {stageNum}</span>
-                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{STAGE_NAMES[stageNum]}</p>
+                    <span className="text-xs text-gray-400 dark:text-slate-400">Stage {stageNum}</span>
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{STAGE_NAMES[stageNum]}</p>
                   </div>
                   <span className={`hidden sm:inline text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[status]}`}>
                     {status.replace('_', ' ')}
                   </span>
-                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400" /> : <ChevronDown className="w-4 h-4 text-gray-400" />}
+                  {isOpen ? <ChevronUp className="w-4 h-4 text-gray-400 dark:text-slate-400" /> : <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-400" />}
                 </button>
                 {isOpen && (
                   <div className="px-6 pb-4 bg-gray-50 dark:bg-slate-900 border-t">
                     {record?.submission_notes && (
                       <div className="mt-3 p-3 bg-white dark:bg-slate-800 border rounded-lg text-sm">
                         <p className="font-semibold text-gray-700 dark:text-slate-300 mb-1">Innovator's notes:</p>
-                        <p className="text-gray-600 dark:text-slate-400 dark:text-slate-400">{record.submission_notes}</p>
+                        <p className="text-gray-600 dark:text-slate-400">{record.submission_notes}</p>
                       </div>
                     )}
                     {record?.rejection_reason && (
-                      <div className="mt-2 p-3 bg-red-50 rounded-lg text-sm text-red-700">
+                      <div className="mt-2 p-3 bg-red-50 dark:bg-red-500/10 rounded-lg text-sm text-red-700 dark:text-red-300">
                         <p className="font-semibold mb-1">Previous feedback:</p>
                         <p>{record.rejection_reason}</p>
                       </div>
@@ -108,7 +108,7 @@ const MilestoneModal = ({ project, onClose, api, onRefresh }) => {
                       <div className="mt-3 space-y-2">
                         <textarea rows={2} value={notes[stageNum] || ''} placeholder="Review notes (required for revision)..."
                           onChange={e => setNotes(n => ({ ...n, [stageNum]: e.target.value }))}
-                          className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none resize-none" />
+                          className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none resize-none" />
                         <div className="flex gap-2">
                           <button onClick={() => handleAction(stageNum, 'approve')} disabled={!!acting}
                             className="flex items-center gap-1.5 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-semibold disabled:opacity-50">
@@ -303,16 +303,16 @@ const DIIWorkspace = () => {
         <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
           <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-md p-6">
             <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">Assign Project</h3>
-            <p className="text-sm text-gray-500 mb-4 truncate">{assigningProject.title}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 mb-4 truncate">{assigningProject.title}</p>
             <div className="space-y-3">
               <select value={assignData.type} onChange={e => setAssignData(d => ({ ...d, type: e.target.value, userId: '' }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none">
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none">
                 <option value="mentor">Mentor</option>
                 <option value="technical_committee">Technical Committee</option>
                 <option value="coordinator">Coordinator</option>
               </select>
               <select value={assignData.userId} onChange={e => setAssignData(d => ({ ...d, userId: e.target.value }))}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none">
+                className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none">
                 <option value="">Select user…</option>
                 {assignableUsers
                   .filter(u => assignData.type === 'mentor' ? u.role === 'mentor' : assignData.type === 'technical_committee' ? u.role === 'technicalCommittee' : u.role === 'coordinator')
@@ -324,7 +324,7 @@ const DIIWorkspace = () => {
               <button onClick={handleAssign} className="flex-1 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <UserCheck className="w-4 h-4 inline mr-1" /> Confirm
               </button>
-              <button onClick={() => setAssigningProject(null)} className="flex-1 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
+              <button onClick={() => setAssigningProject(null)} className="flex-1 px-4 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
             </div>
           </div>
         </div>
@@ -359,7 +359,7 @@ const DIIWorkspace = () => {
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap
-                  ${activeTab === tab.id ? 'border-teal-600 text-teal-700' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
+                  ${activeTab === tab.id ? 'border-teal-600 text-teal-700' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}>
                 <Icon className="w-4 h-4" /> {tab.label}
               </button>
             );
@@ -369,13 +369,13 @@ const DIIWorkspace = () => {
 
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700 flex justify-between">
+          <div className="mb-4 p-3 bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-800 rounded-lg text-sm text-red-700 dark:text-red-300 flex justify-between">
             <span>{error}</span>
             <button onClick={() => setError('')}><X className="w-4 h-4" /></button>
           </div>
         )}
         {success && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700 flex items-center gap-2">
+          <div className="mb-4 p-3 bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-800 rounded-lg text-sm text-green-700 dark:text-green-300 flex items-center gap-2">
             <CheckCircle className="w-4 h-4" /> {success}
           </div>
         )}
@@ -391,26 +391,18 @@ const DIIWorkspace = () => {
                 { label: 'Open Complaints', value: dashData.stats.openComplaints, color: 'border-red-400' },
               ].map(s => (
                 <div key={s.label} className={`bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border-l-4 ${s.color} text-center`}>
-                  <p className="text-3xl font-bold text-slate-800 dark:text-slate-100 dark:text-slate-100">{s.value}</p>
+                  <p className="text-3xl font-bold text-slate-800 dark:text-slate-100">{s.value}</p>
                   <p className="text-xs text-slate-500 mt-1 font-medium">{s.label}</p>
                 </div>
               ))}
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 p-6">
               <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">DII Department Functions</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {[
-                  'Conduct training and mentoring of inventors and innovators',
-                  'Handle innovators complaints related to innovations and incubation',
-                  'Establish and run Innovations and incubation with partners',
-                  'Coordinate all matters related to Technology Transfer',
-                  'Maintain database of Innovators and track project progress',
-                  'Handle registration and assessment of student Innovation programmes',
-                  'Coordinate evaluation of performance programs and keep periodic reports',
-                ].map((fn, i) => (
-                  <div key={i} className="flex items-start gap-3 p-3 bg-teal-50 rounded-lg">
-                    <span className="w-6 h-6 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold flex-shrink-0">{i + 1}</span>
-                    <p className="text-sm text-slate-700 dark:text-slate-200 dark:text-slate-200">{fn}</p>
+                {(dashData?.department?.functions || []).map((fn, i) => (
+                  <div key={fn.id || i} className="flex items-start gap-3 p-3 bg-teal-50 dark:bg-teal-500/10 rounded-lg">
+                    <span className="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 flex items-center justify-center text-xs font-bold flex-shrink-0">{fn.order_num || i + 1}</span>
+                    <p className="text-sm text-slate-700 dark:text-slate-300">{fn.description}</p>
                   </div>
                 ))}
               </div>
@@ -424,7 +416,7 @@ const DIIWorkspace = () => {
             <div className="flex flex-wrap gap-3 mb-5">
               <input value={projectSearch} onChange={e => setProjectSearch(e.target.value)}
                 placeholder="Search by title or innovator…"
-                className="flex-1 min-w-[200px] border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none" />
+                className="flex-1 min-w-[200px] border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-teal-400 outline-none" />
               <select value={projectStatusFilter} onChange={e => setProjectStatusFilter(e.target.value)}
                 className="border border-gray-300 dark:border-slate-600 rounded-xl px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none">
                 <option value="">All Statuses</option>
@@ -435,7 +427,7 @@ const DIIWorkspace = () => {
             </div>
             <div className="space-y-3">
               {filteredProjects.length === 0 && (
-                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No projects found</div>
+                <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No projects found</div>
               )}
               {filteredProjects.map(p => {
                 const pct = Math.round(((p.completed_milestones || 0) / 9) * 100);
@@ -454,7 +446,7 @@ const DIIWorkspace = () => {
                             </span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500 mt-0.5">{p.innovator_name} · {p.category}</p>
+                        <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">{p.innovator_name} · {p.category}</p>
                         {p.assigned_mentor && <p className="text-xs text-teal-600 mt-0.5">Mentor: {p.assigned_mentor}</p>}
                       </div>
                       <div className="flex gap-2 flex-shrink-0">
@@ -484,10 +476,10 @@ const DIIWorkspace = () => {
                     </div>
                     {p.approval_status === 'approved' && (
                       <div className="flex items-center gap-2">
-                        <div className="flex-1 bg-gray-200 rounded-full h-1.5">
+                        <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-1.5">
                           <div className="bg-teal-500 h-1.5 rounded-full" style={{ width: `${pct}%` }} />
                         </div>
-                        <span className="text-xs text-gray-400">{p.completed_milestones || 0}/9</span>
+                        <span className="text-xs text-gray-400 dark:text-slate-400">{p.completed_milestones || 0}/9</span>
                       </div>
                     )}
                   </div>
@@ -501,16 +493,16 @@ const DIIWorkspace = () => {
         {activeTab === 'innovators' && (
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">Innovator Database <span className="text-gray-400 font-normal text-sm">({innovators.length})</span></h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Innovator Database <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({innovators.length})</span></h2>
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 overflow-hidden">
               {innovators.length === 0 ? (
-                <div className="text-center py-12 text-gray-400">No innovators registered yet</div>
+                <div className="text-center py-12 text-gray-400 dark:text-slate-400">No innovators registered yet</div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 uppercase tracking-wide text-left">
+                      <tr className="bg-gray-50 dark:bg-slate-900 text-xs text-gray-500 dark:text-slate-400 uppercase tracking-wide text-left">
                         <th className="px-5 py-3 font-semibold">Name</th>
                         <th className="px-5 py-3 font-semibold">Email</th>
                         <th className="px-5 py-3 font-semibold">University</th>
@@ -520,25 +512,25 @@ const DIIWorkspace = () => {
                         <th className="px-5 py-3 font-semibold">Joined</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
                       {innovators.map(u => (
-                        <tr key={u.id} className="hover:bg-gray-50 dark:bg-slate-900 dark:bg-slate-900">
+                        <tr key={u.id} className="hover:bg-gray-50 dark:bg-slate-900 dark:hover:bg-slate-700">
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-2">
                               <div className="w-7 h-7 rounded-full bg-teal-100 flex items-center justify-center flex-shrink-0">
                                 <span className="text-xs font-bold text-teal-700">{u.name?.charAt(0).toUpperCase()}</span>
                               </div>
-                              <span className="font-medium text-slate-800 dark:text-slate-100 dark:text-slate-100">{u.name}</span>
+                              <span className="font-medium text-slate-800 dark:text-slate-100">{u.name}</span>
                             </div>
                           </td>
                           <td className="px-5 py-3 text-gray-500 dark:text-slate-400">{u.email}</td>
                           <td className="px-5 py-3 text-gray-500 dark:text-slate-400">{u.university || '—'}</td>
-                          <td className="px-5 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-200">{u.total_projects}</td>
+                          <td className="px-5 py-3 font-semibold text-slate-700 dark:text-slate-200">{u.total_projects}</td>
                           <td className="px-5 py-3">
                             <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold">{u.approved_projects}</span>
                           </td>
                           <td className="px-5 py-3 text-gray-500 dark:text-slate-400">{u.max_milestone_reached ? `Stage ${u.max_milestone_reached}` : '—'}</td>
-                          <td className="px-5 py-3 text-gray-400">{new Date(u.created_at).toLocaleDateString()}</td>
+                          <td className="px-5 py-3 text-gray-400 dark:text-slate-400">{new Date(u.created_at).toLocaleDateString()}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -553,7 +545,7 @@ const DIIWorkspace = () => {
         {activeTab === 'trainings' && (
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">Training Programmes <span className="text-gray-400 font-normal text-sm">({trainings.length})</span></h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Training Programmes <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({trainings.length})</span></h2>
               <button onClick={() => setShowTrainingForm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Add Programme
@@ -567,19 +559,19 @@ const DIIWorkspace = () => {
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Title *</label>
                     <input value={trainingForm.title} onChange={e => setTrainingForm(f => ({ ...f, title: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none"
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none"
                       placeholder="Training programme title" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Target Audience</label>
                     <input value={trainingForm.target_audience} onChange={e => setTrainingForm(f => ({ ...f, target_audience: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none"
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none"
                       placeholder="e.g. Innovators, Students" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Status</label>
                     <select value={trainingForm.status} onChange={e => setTrainingForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none">
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none">
                       <option value="planned">Planned</option>
                       <option value="active">Active</option>
                       <option value="completed">Completed</option>
@@ -589,29 +581,29 @@ const DIIWorkspace = () => {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Start Date</label>
                     <input type="date" value={trainingForm.start_date} onChange={e => setTrainingForm(f => ({ ...f, start_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">End Date</label>
                     <input type="date" value={trainingForm.end_date} onChange={e => setTrainingForm(f => ({ ...f, end_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Description</label>
                     <textarea rows={3} value={trainingForm.description} onChange={e => setTrainingForm(f => ({ ...f, description: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none resize-none"
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none resize-none"
                       placeholder="Programme description…" />
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={submitTraining} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">Save</button>
-                  <button onClick={() => setShowTrainingForm(false)} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
+                  <button onClick={() => setShowTrainingForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
             )}
 
             <div className="space-y-3">
-              {trainings.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No training programmes yet</div>}
+              {trainings.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No training programmes yet</div>}
               {trainings.map(t => {
                 const statusColor = { planned: 'bg-gray-100 text-gray-700', active: 'bg-green-100 text-green-700', completed: 'bg-blue-100 text-blue-700', cancelled: 'bg-red-100 text-red-700' };
                 return (
@@ -619,11 +611,11 @@ const DIIWorkspace = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{t.title}</h3>
+                          <h3 className="font-semibold text-slate-800 dark:text-slate-100">{t.title}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${statusColor[t.status] || 'bg-gray-100 text-gray-700'}`}>{t.status}</span>
                         </div>
                         {t.description && <p className="text-sm text-gray-500 dark:text-slate-400">{t.description}</p>}
-                        <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-400">
+                        <div className="flex flex-wrap gap-3 mt-2 text-xs text-gray-400 dark:text-slate-400">
                           {t.target_audience && <span>Audience: {t.target_audience}</span>}
                           {t.start_date && <span>Start: {new Date(t.start_date).toLocaleDateString()}</span>}
                           {t.end_date && <span>End: {new Date(t.end_date).toLocaleDateString()}</span>}
@@ -642,7 +634,7 @@ const DIIWorkspace = () => {
         {activeTab === 'complaints' && (
           <div>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">Complaints <span className="text-gray-400 font-normal text-sm">({complaints.length})</span></h2>
+              <h2 className="font-bold text-slate-700 dark:text-slate-200">Complaints <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({complaints.length})</span></h2>
               <button onClick={() => setShowComplaintForm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Submit Complaint
@@ -656,23 +648,23 @@ const DIIWorkspace = () => {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Subject *</label>
                     <input value={complaintForm.subject} onChange={e => setComplaintForm(f => ({ ...f, subject: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none" placeholder="Complaint subject" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none" placeholder="Complaint subject" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Description *</label>
                     <textarea rows={4} value={complaintForm.description} onChange={e => setComplaintForm(f => ({ ...f, description: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-400 outline-none resize-none" placeholder="Describe the issue…" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600 focus:ring-teal-400 outline-none resize-none" placeholder="Describe the issue…" />
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
                   <button onClick={submitComplaint} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">Submit</button>
-                  <button onClick={() => setShowComplaintForm(false)} className="px-5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
+                  <button onClick={() => setShowComplaintForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
             )}
 
             <div className="space-y-3">
-              {complaints.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400">No complaints filed</div>}
+              {complaints.length === 0 && <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No complaints filed</div>}
               {complaints.map(c => {
                 const statusColor = { open: 'bg-red-100 text-red-700', in_review: 'bg-yellow-100 text-yellow-700', resolved: 'bg-green-100 text-green-700', closed: 'bg-gray-100 text-gray-600' };
                 return (
@@ -680,10 +672,10 @@ const DIIWorkspace = () => {
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{c.subject}</h3>
+                          <h3 className="font-semibold text-slate-800 dark:text-slate-100">{c.subject}</h3>
                           <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${statusColor[c.status] || 'bg-gray-100 text-gray-700'}`}>{c.status.replace('_', ' ')}</span>
                         </div>
-                        <p className="text-xs text-gray-400">By: {c.submitted_by_name} · {new Date(c.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-gray-400 dark:text-slate-400">By: {c.submitted_by_name} · {new Date(c.created_at).toLocaleDateString()}</p>
                       </div>
                       {(c.status === 'open' || c.status === 'in_review') && (
                         <div className="flex gap-2 flex-shrink-0">
@@ -698,9 +690,9 @@ const DIIWorkspace = () => {
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-slate-400 dark:text-slate-400">{c.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-slate-400">{c.description}</p>
                     {c.resolution && (
-                      <div className="mt-2 p-3 bg-green-50 rounded-lg text-sm text-green-700">
+                      <div className="mt-2 p-3 bg-green-50 dark:bg-green-500/10 rounded-lg text-sm text-green-700 dark:text-green-300">
                         <span className="font-semibold">Resolution: </span>{c.resolution}
                       </div>
                     )}

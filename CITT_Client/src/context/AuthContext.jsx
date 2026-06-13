@@ -218,7 +218,7 @@ export const AuthProvider = ({ children }) => {
         try {
           await signInWithEmailAndPassword(auth, email, password);
         } catch (firebaseError) {
-          console.log("Firebase sign-in skipped:", firebaseError.message);
+          // Firebase sign-in skipped (not configured or unavailable)
         }
       }
 
@@ -318,7 +318,6 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${token}` }
       });
 
-      console.log("Password set successfully:", response.data);
       return response.data;
     } catch (error) {
       console.error("Failed to set password:", error);
@@ -391,15 +390,10 @@ export const AuthProvider = ({ children }) => {
   // 🔹 Get the default route for a given role
   const getRouteForRole = (userRole) => ROLE_ROUTES[userRole] || '/';
 
-  // 🔹 Get axios instance with auth header
+  // 🔹 Get axios instance with auth header (uses shared api with auto-refresh)
   const getAuthenticatedAxios = useCallback(() => {
-    return axios.create({
-      baseURL: API_BASE_URL,
-      headers: {
-        Authorization: token ? `Bearer ${token}` : ""
-      }
-    });
-  }, [token]);
+    return api;
+  }, []);
 
   return (
     <AuthContext.Provider

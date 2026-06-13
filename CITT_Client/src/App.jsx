@@ -60,17 +60,13 @@ import Gallery from './Pages/Gallery';
 
 //SuperAdmin Pages
 import RoleManagement from './Pages/superadmin/RoleManagement';
-import SystemStats from './Pages/superadmin/SystemStats';
 import AuditLogs from './Pages/superadmin/AuditLogs';
 import DatabaseInfo from './Pages/superadmin/DatabaseInfo';
-import Analytics from './Pages/superadmin/Analytics';
 import PastUsers from './Pages/superadmin/PastUsers';
-import Permissions from './Pages/superadmin/Permissions';
 
 //IP Manager Pages
 import IPRecords from './Pages/ipmanager/IPRecords';
 import PendingApprovals from './Pages/ipmanager/PendingApprovals';
-import IPStatistics from './Pages/ipmanager/Statistics';
 import IPAnalytics from './Pages/ipmanager/Analytics';
 import SubmittedIPs from './Pages/ipmanager/SubmittedIPs';
 import SubmittedProjects from './Pages/ipmanager/SubmittedProjects';
@@ -136,18 +132,14 @@ const App = () => (
               {/* SuperAdmin Routes */}
               <Route path="/superadmin/dashboard" element={<SuperAdminRoute><SuperAdminDashboard /></SuperAdminRoute>} />
               <Route path="/superadmin/users" element={<SuperAdminRoute><RoleManagement /></SuperAdminRoute>} />
-              <Route path="/superadmin/system" element={<SuperAdminRoute><SystemStats /></SuperAdminRoute>} />
               <Route path="/superadmin/audit-logs" element={<SuperAdminRoute><AuditLogs /></SuperAdminRoute>} />
               <Route path="/superadmin/database" element={<SuperAdminRoute><DatabaseInfo /></SuperAdminRoute>} />
-              <Route path="/superadmin/analytics" element={<SuperAdminRoute><Analytics /></SuperAdminRoute>} />
               <Route path="/superadmin/past-users" element={<SuperAdminRoute><PastUsers /></SuperAdminRoute>} />
-              <Route path="/superadmin/permissions" element={<SuperAdminRoute><Permissions /></SuperAdminRoute>} />
 
               {/* IP Manager Routes */}
               <Route path="/ipmanager/dashboard" element={<IPManagerRoute><IPManagerDashboard /></IPManagerRoute>} />
               <Route path="/ipmanager/records" element={<IPManagerRoute><IPRecords /></IPManagerRoute>} />
               <Route path="/ipmanager/pending" element={<IPManagerRoute><PendingApprovals /></IPManagerRoute>} />
-              <Route path="/ipmanager/statistics" element={<IPManagerRoute><IPStatistics /></IPManagerRoute>} />
               <Route path="/ipmanager/analytics" element={<IPManagerRoute><IPAnalytics /></IPManagerRoute>} />
               <Route path="/ipmanager/submitted-ips" element={<IPManagerRoute><SubmittedIPs /></IPManagerRoute>} />
               <Route path="/ipmanager/submitted-projects" element={<IPManagerRoute><SubmittedProjects /></IPManagerRoute>} />

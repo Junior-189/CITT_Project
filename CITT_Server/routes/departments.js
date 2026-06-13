@@ -51,7 +51,7 @@ router.get('/directors/all', authenticateToken, asyncHandler(async (req, res) =>
 
 // ── POST /api/departments/directors/create ────────────────────────────────────
 router.post('/directors/create', authenticateToken, asyncHandler(async (req, res) => {
-  if (!['superAdmin', 'admin'].includes(req.user.role)) {
+  if (!ADMIN_ROLES.includes(req.user.role)) {
     return res.status(403).json({ error: 'Only SuperAdmin or Admin can create directors' });
   }
 
@@ -59,7 +59,7 @@ router.post('/directors/create', authenticateToken, asyncHandler(async (req, res
   if (!name?.trim() || !email?.trim() || !password || !department_code) {
     return res.status(400).json({ error: 'name, email, password, and department_code are required' });
   }
-  if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
 
   const deptCode = department_code.toUpperCase();
   const directorRole = DEPT_ROLE_MAP[deptCode];
@@ -71,7 +71,7 @@ router.post('/directors/create', authenticateToken, asyncHandler(async (req, res
   const dept = await pool.query('SELECT id FROM departments WHERE code = $1', [deptCode]);
   if (!dept.rows.length) return res.status(404).json({ error: 'Department not found' });
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await bcrypt.hash(password, 12);
   const result = await pool.query(
     `INSERT INTO users (name, email, password, phone, role, profile_complete, created_at, updated_at)
      VALUES ($1,$2,$3,$4,$5,true,NOW(),NOW())
@@ -97,8 +97,8 @@ router.put('/directors/:id', authenticateToken, asyncHandler(async (req, res) =>
 
   let hashedPassword = null;
   if (password) {
-    if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
-    hashedPassword = await bcrypt.hash(password, 10);
+    if (password.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    hashedPassword = await bcrypt.hash(password, 12);
   }
 
   let directorRole = null;
@@ -173,6 +173,11 @@ router.get('/:code/dashboard', authenticateToken, asyncHandler(async (req, res) 
   if (!dept.rows.length) return res.status(404).json({ error: 'Department not found' });
   const deptId = dept.rows[0].id;
 
+  const funcs = await pool.query(
+    'SELECT * FROM department_functions WHERE department_id = $1 ORDER BY order_num',
+    [deptId]
+  );
+
   const [totalProjects, pendingProjects, approvedProjects, completedProjects] = await Promise.all([
     pool.query('SELECT COUNT(*) FROM projects WHERE deleted_at IS NULL'),
     pool.query("SELECT COUNT(*) FROM projects WHERE approval_status = 'pending'"),
@@ -203,7 +208,7 @@ router.get('/:code/dashboard', authenticateToken, asyncHandler(async (req, res) 
   } catch { /* table not yet created */ }
 
   res.json({
-    department: dept.rows[0],
+    department: { ...dept.rows[0], functions: funcs.rows },
     stats: {
       totalProjects: parseInt(totalProjects.rows[0].count),
       pendingProjects: parseInt(pendingProjects.rows[0].count),
@@ -236,19 +241,37 @@ router.get('/:code/projects', authenticateToken, asyncHandler(async (req, res) =
     LEFT JOIN users u ON u.id = p.user_id
     WHERE p.deleted_at IS NULL
   `;
+  let countQuery = `SELECT COUNT(*) FROM projects p LEFT JOIN users u ON u.id = p.user_id WHERE p.deleted_at IS NULL`;
   const params = [];
+  const countParams = [];
 
   if (deptCode === 'DEBM') {
-    query += ` AND (SELECT COUNT(*) FROM project_milestones pm WHERE pm.project_id = p.id AND pm.status = 'completed') >= 8`;
+    const debmFilter = ` AND (SELECT COUNT(*) FROM project_milestones pm WHERE pm.project_id = p.id AND pm.status = 'completed') >= 8`;
+    query += debmFilter;
+    countQuery += debmFilter;
   }
-  if (status) { params.push(status); query += ` AND p.approval_status = $${params.length}`; }
-  if (search) { params.push(`%${search}%`); query += ` AND (p.title ILIKE $${params.length} OR u.name ILIKE $${params.length})`; }
+  if (status) {
+    const statusFilter = ` AND p.approval_status = $${params.length + 1}`;
+    params.push(status);
+    countParams.push(status);
+    query += statusFilter;
+    countQuery += statusFilter;
+  }
+  if (search) {
+    const searchFilter = ` AND (p.title ILIKE $${params.length + 1} OR u.name ILIKE $${params.length + 1})`;
+    params.push(`%${search}%`);
+    countParams.push(`%${search}%`);
+    query += searchFilter;
+    countQuery += searchFilter;
+  }
 
   query += ` ORDER BY p.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
   params.push(limit, offset);
 
-  const result = await pool.query(query, params);
-  const total = await pool.query('SELECT COUNT(*) FROM projects WHERE deleted_at IS NULL');
+  const [result, total] = await Promise.all([
+    pool.query(query, params),
+    pool.query(countQuery, countParams),
+  ]);
 
   res.json({
     projects: result.rows,
@@ -362,7 +385,8 @@ router.get('/:code/business-records', authenticateToken, asyncHandler(async (req
   const isAdmin = ADMIN_ROLES.includes(req.user.role);
   if (!isAdmin && req.user.role !== 'debmDirector') return res.status(403).json({ error: 'Access denied' });
 
-  const dept = await pool.query('SELECT id FROM departments WHERE code = $1', ['DEBM']);
+  const deptCode = req.params.code.toUpperCase();
+  const dept = await pool.query('SELECT id FROM departments WHERE code = $1', [deptCode]);
   if (!dept.rows.length) return res.status(404).json({ error: 'Department not found' });
 
   try {

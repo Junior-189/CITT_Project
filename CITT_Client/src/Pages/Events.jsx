@@ -88,9 +88,7 @@ const Events = () => {
     try {
       const api = getAuthenticatedAxios();
       const endpoint = isAuthenticated ? '/api/events?limit=500' : '/api/events/public';
-      console.log('Fetching events from:', endpoint);
       const response = await api.get(endpoint);
-      console.log('Events response:', response.data);
       setEvents(response.data.events || []);
     } catch (e) {
       console.error("fetchEvents error:", e);

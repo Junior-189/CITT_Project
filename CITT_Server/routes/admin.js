@@ -1,6 +1,6 @@
 /**
  * Admin Routes
- * Purpose: Admin-specific functionality (user management, approvals, analytics)
+ * Purpose: Admin-specific functionality (user management, approvals)
  * Access: admin, superAdmin roles only
  */
 
@@ -13,6 +13,9 @@ const { auditLog } = require('../middleware/auditLog');
 const { asyncHandler } = require('../middleware/errorHandler');
 const { createNotification, notifyAdmins } = require('../utils/notifications');
 const { isAdmin, isReviewer } = require('../utils/roleHelpers');
+const { validate } = require('../middleware/validate');
+const { projectCreateSchema, projectUpdateSchema } = require('../validators/project');
+const { fundingCreateSchema, fundingPledgeSchema } = require('../validators/funding');
 
 // ============================================
 // ACCOUNT APPROVAL
@@ -109,7 +112,7 @@ router.post('/users/create',
     if (existing.rows.length) return res.status(409).json({ error: 'Email already exists' });
 
     const bcrypt = require('bcrypt');
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 12);
 
     const result = await pool.query(
       `INSERT INTO users (name, email, password, phone, role, university, campus, account_status, approved_by_admin, approved_at, created_at, updated_at)
@@ -404,6 +407,7 @@ router.get('/projects',
  */
 router.post('/projects',
   authenticateToken,
+  validate(projectCreateSchema),
   asyncHandler(async (req, res) => {
     const { title, description, category, institution, funding_needed, problem_statement, project_status } = req.body;
 
@@ -492,6 +496,7 @@ router.post('/projects',
  */
 router.put('/projects/:id',
   authenticateToken,
+  validate(projectUpdateSchema),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { title, description, category, institution, funding_needed, problem_statement, project_status } = req.body;
@@ -759,6 +764,7 @@ router.delete('/projects/:id',
  */
 router.post('/funding',
   authenticateToken,
+  validate(fundingCreateSchema),
   asyncHandler(async (req, res) => {
     const { title, description, amount, currency, project_id, grant_type } = req.body;
 
@@ -1181,6 +1187,7 @@ router.put('/funding/:id/reject',
  */
 router.post('/funding/:id/pledge',
   authenticateToken,
+  validate(fundingPledgeSchema),
   auditLog('funding'),
   asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -1378,31 +1385,47 @@ router.get('/audit-logs',
   authenticateToken,
   checkRole(['admin', 'superAdmin']),
   asyncHandler(async (req, res) => {
-    const { user_id, resource, action, limit = 50, offset = 0 } = req.query;
+    const { user_id, resource, action, start_date, end_date, limit = 50, offset = 0 } = req.query;
 
-    let query = 'SELECT * FROM audit_logs WHERE 1=1';
+    const conditions = [];
     const params = [];
 
     if (user_id) {
       params.push(user_id);
-      query += ` AND user_id = $${params.length}`;
+      conditions.push(`user_id = $${params.length}`);
     }
 
     if (resource) {
       params.push(resource);
-      query += ` AND resource = $${params.length}`;
+      conditions.push(`resource = $${params.length}`);
     }
 
     if (action) {
       params.push(`%${action}%`);
-      query += ` AND action ILIKE $${params.length}`;
+      conditions.push(`action ILIKE $${params.length}`);
     }
 
-    query += ` ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
-    params.push(limit, offset);
+    if (start_date) {
+      params.push(start_date);
+      conditions.push(`created_at >= $${params.length}`);
+    }
 
-    const result = await pool.query(query, params);
-    const countResult = await pool.query('SELECT COUNT(*) FROM audit_logs');
+    if (end_date) {
+      params.push(end_date);
+      conditions.push(`created_at <= $${params.length}`);
+    }
+
+    const whereClause = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
+
+    const countQuery = `SELECT COUNT(*) FROM audit_logs ${whereClause}`;
+    const dataQuery = `SELECT * FROM audit_logs ${whereClause} ORDER BY created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+
+    const dataParams = [...params, limit, offset];
+
+    const [result, countResult] = await Promise.all([
+      pool.query(dataQuery, dataParams),
+      pool.query(countQuery, params)
+    ]);
 
     res.json({
       logs: result.rows,
@@ -1411,81 +1434,6 @@ router.get('/audit-logs',
         offset: parseInt(offset),
         total: parseInt(countResult.rows[0].count)
       }
-    });
-  })
-);
-
-// ============================================
-// ANALYTICS DASHBOARD
-// ============================================
-
-// GET /api/admin/analytics — summary stats
-router.get('/analytics',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
-  asyncHandler(async (req, res) => {
-    const [
-      usersRes, projectsRes, eventsRes,
-    ] = await Promise.all([
-      pool.query(`SELECT COUNT(*) as total, SUM(CASE WHEN account_status='pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN account_status='approved' THEN 1 ELSE 0 END) as approved FROM users WHERE deleted_at IS NULL`),
-      pool.query(`SELECT COUNT(*) as total, SUM(CASE WHEN approval_status='pending' THEN 1 ELSE 0 END) as pending, SUM(CASE WHEN approval_status='approved' THEN 1 ELSE 0 END) as approved, SUM(CASE WHEN approval_status='rejected' THEN 1 ELSE 0 END) as rejected FROM projects`),
-      pool.query(`SELECT COUNT(*) as total FROM events WHERE deleted_at IS NULL`),
-    ]);
-
-    let fundingData = { total: 0, totalAmount: 0 };
-    let ipData = { total: 0 };
-    try {
-      const fundingRes = await pool.query(`SELECT COUNT(*) as total, COALESCE(SUM(amount),0) as total_amount FROM funding`);
-      fundingData = { total: parseInt(fundingRes.rows[0].total), totalAmount: parseFloat(fundingRes.rows[0].total_amount) };
-    } catch { /* table might not exist */ }
-    try {
-      const ipRes = await pool.query(`SELECT COUNT(*) as total FROM ip_management`);
-      ipData = { total: parseInt(ipRes.rows[0].total) };
-    } catch { /* table might not exist */ }
-
-    res.json({
-      users: {
-        total: parseInt(usersRes.rows[0].total),
-        pending: parseInt(usersRes.rows[0].pending),
-        approved: parseInt(usersRes.rows[0].approved),
-      },
-      projects: {
-        total: parseInt(projectsRes.rows[0].total),
-        pending: parseInt(projectsRes.rows[0].pending),
-        approved: parseInt(projectsRes.rows[0].approved),
-        rejected: parseInt(projectsRes.rows[0].rejected),
-      },
-      funding: fundingData,
-      events: { total: parseInt(eventsRes.rows[0].total) },
-      ipRecords: ipData,
-    });
-  })
-);
-
-// GET /api/admin/analytics/trends — monthly trends
-router.get('/analytics/trends',
-  authenticateToken,
-  checkRole(['admin', 'superAdmin', 'transferTechnologyOfficer']),
-  asyncHandler(async (req, res) => {
-    const months = 12;
-    const usersRes = await pool.query(
-      `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count FROM users WHERE created_at > NOW() - INTERVAL '${months} months' AND deleted_at IS NULL GROUP BY month ORDER BY month`
-    );
-    const projectsRes = await pool.query(
-      `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count FROM projects WHERE created_at > NOW() - INTERVAL '${months} months' GROUP BY month ORDER BY month`
-    );
-    let fundingRows = [];
-    try {
-      const r = await pool.query(
-        `SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count, COALESCE(SUM(amount),0) as total_amount FROM funding WHERE created_at > NOW() - INTERVAL '${months} months' GROUP BY month ORDER BY month`
-      );
-      fundingRows = r.rows;
-    } catch { /* table might not exist */ }
-
-    res.json({
-      users: usersRes.rows,
-      projects: projectsRes.rows,
-      funding: fundingRows,
     });
   })
 );

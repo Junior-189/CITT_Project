@@ -494,13 +494,113 @@ The system uses a dual authentication approach:
 
 ## Security
 
-- **Password Hashing** — bcrypt with 10 salt rounds
-- **Token Expiration** — JWT tokens expire after 24 hours
+- **Password Hashing** — bcrypt with 12 salt rounds
+- **Token Rotation** — Access tokens (15min) with refresh token rotation and family-based revocation
+- **Token Blacklist** — Redis-backed token blacklisting with PostgreSQL fallback
 - **Parameterised Queries** — All database queries use parameterised inputs to prevent SQL injection
 - **Role Enforcement** — Middleware-level role checks on every protected endpoint; role hierarchy prevents privilege escalation
 - **Soft Deletes** — User data is logically deleted, preserving referential integrity
 - **Audit Trail** — All significant actions logged with user, timestamp, IP address, and user agent
-- **CORS** — Configured to allow only the frontend origin
+- **Rate Limiting** — Auth endpoints (20 req/15min), sensitive endpoints (5 req/hour), general API (120 req/min)
+- **CORS** — Configured to allow only configured frontend origins
+- **Helmet** — Security headers (CSP, HSTS, XSS protection, no-sniff)
+
+
+
+## Production Deployment
+
+### Option 1: Docker Compose (Recommended)
+
+The project includes production and development Docker Compose files:
+
+```bash
+# Copy and configure environment variables
+cp CITT_Server/.env.example CITT_Server/.env.prod
+# Edit .env.prod with production values (DB credentials, JWT secret, SMTP config)
+
+# Build and start all services (PostgreSQL, Redis, Server, Client, MailHog)
+docker-compose -f docker-compose.yml up -d --build
+```
+
+The production stack runs:
+- **PostgreSQL 16** — on port 5432 (internal)
+- **Redis 7** — for token blacklisting and caching
+- **Express Server** — on port 5000 (internal, proxied)
+- **Nginx + React Client** — on port 80 (public)
+- **MailHog** — on port 8025 (dev email, remove in production)
+
+### Option 2: Manual Deployment
+
+#### Prerequisites
+- Node.js 18+
+- PostgreSQL 14+
+- Redis 6+
+- Nginx (for reverse proxy)
+
+#### Server Deployment
+
+```bash
+cd CITT_Server
+
+# Install dependencies
+npm ci --production
+
+# Set environment
+cp .env.example .env
+# Edit .env with production values:
+#   NODE_ENV=production
+#   DB_HOST, DB_PASSWORD, JWT_SECRET, SMTP_*, FRONTEND_URL
+#   REDIS_URL=redis://localhost:6379
+
+# Run database migrations
+npm run migrate
+
+# Start server (use PM2 or systemd for process management)
+NODE_ENV=production node server.js
+```
+
+#### Client Deployment
+
+```bash
+cd CITT_Client
+
+# Install dependencies
+npm ci
+
+# Set environment
+cp .env.example .env
+# Edit .env: VITE_API_BASE_URL=https://your-domain.com
+
+# Build for production
+npm run build
+
+# Serve the dist/ directory with Nginx or any static file server
+# See CITT_Client/nginx.conf for a sample Nginx configuration
+```
+
+#### Production Checklist
+
+- [ ] Set `NODE_ENV=production` in server `.env`
+- [ ] Generate a strong `JWT_SECRET` (minimum 64 random characters)
+- [ ] Set a strong `DB_PASSWORD`
+- [ ] Configure real SMTP settings (`SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`)
+- [ ] Set `FRONTEND_URL` and `ALLOWED_ORIGINS` to your production domain
+- [ ] Disable/remove MailHog in production
+- [ ] Set up SSL/TLS (Let's Encrypt with Certbot)
+- [ ] Configure firewall (only expose ports 80/443)
+- [ ] Set up log rotation for Winston logs
+- [ ] Remove any development `.env` files from the server
+- [ ] Ensure `service-account.json` (Firebase) has correct production credentials
+- [ ] Run `npm audit` and address any high/critical vulnerabilities
+
+#### Process Management (PM2)
+
+```bash
+npm install -g pm2
+pm2 start CITT_Server/server.js --name citt-api --env production
+pm2 save
+pm2 startup
+```
 
 
 

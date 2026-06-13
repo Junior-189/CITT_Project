@@ -12,7 +12,7 @@ pool.query(`CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, use
 
 // Global helpers
 global.createTestUser = async (overrides = {}) => {
-  const hashedPassword = await bcrypt.hash(overrides.password || 'Test@1234', 10);
+   const hashedPassword = await bcrypt.hash(overrides.password || 'Test@1234', 12);
   const result = await pool.query(
     `INSERT INTO users (name, email, password, role, account_status) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
     [overrides.name || 'Test User', overrides.email || `test${Date.now()}@test.com`, hashedPassword, overrides.role || 'innovator', overrides.account_status || 'approved']

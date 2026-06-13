@@ -36,7 +36,7 @@ const auditLog = (resource) => async (req, res, next) => {
             req.get('User-Agent') || null,
           ]
         );
-      } catch (err) { /* silent — never block the request */ }
+      } catch (err) { console.error('Audit log insert error:', err.message); }
     });
     return originalJson(data);
   };
@@ -51,7 +51,7 @@ const logAction = async (userId, action, resource, resourceId, details) => {
       [userId || null, action, resource || null, resourceId || null,
        details ? JSON.stringify(details) : null]
     );
-  } catch (err) { /* silent */ }
+  } catch (err) { console.error('logAction error:', err.message); }
 };
 
 const logActivity = async (logData) => {
