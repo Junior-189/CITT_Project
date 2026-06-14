@@ -101,12 +101,12 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
 
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600" />
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
           </div>
         ) : (
           <div className="p-6 space-y-3">
             {message && (
-              <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg text-sm text-purple-700 mb-4">
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700 mb-4">
                 {message} <button onClick={() => setMessage('')} className="ml-2 text-xs underline">Dismiss</button>
               </div>
             )}
@@ -141,13 +141,13 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
               const isSubmitted = status === 'submitted';
 
               return (
-                <div key={stageNum} className={`border rounded-xl overflow-hidden ${isSubmitted ? 'border-purple-300 shadow-sm' : 'border-gray-200'}`}>
+                <div key={stageNum} className={`border rounded-xl overflow-hidden ${isSubmitted ? 'border-blue-300 shadow-sm' : 'border-gray-200'}`}>
                   <button
                     onClick={() => setExpandedStage(isExpanded ? null : stageNum)}
                     className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-gray-50 dark:bg-slate-900 dark:bg-slate-900"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-7 h-7 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold">
+                      <span className="w-7 h-7 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs font-bold">
                         {stageNum}
                       </span>
                       <span className="font-semibold text-sm text-slate-800 dark:text-slate-100 dark:text-slate-100">{STAGE_NAMES[stageNum]}</span>
@@ -166,8 +166,8 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
                   {isExpanded && (
                     <div className="px-5 pb-5 border-t border-gray-100 pt-4 space-y-4">
                       {milestone?.submission_notes && (
-                        <div className="p-4 bg-purple-50 rounded-xl">
-                          <p className="text-xs font-bold text-purple-600 uppercase tracking-wide mb-2">Submission</p>
+                        <div className="p-4 bg-blue-50 rounded-xl">
+                          <p className="text-xs font-bold text-blue-600 uppercase tracking-wide mb-2">Submission</p>
                           <p className="text-sm text-slate-700 dark:text-slate-200 whitespace-pre-wrap">{milestone.submission_notes}</p>
                         </div>
                       )}
@@ -176,7 +176,7 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
                           href={`${import.meta.env.VITE_API_URL}${milestone.file_url}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-purple-50 border border-purple-200 text-purple-700 rounded-lg text-xs font-semibold hover:bg-purple-100 transition-colors"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-200 text-teal-700 rounded-lg text-xs font-semibold hover:bg-teal-100 transition-colors"
                         >
                           <Download className="w-3.5 h-3.5" /> View Submitted Document
                         </a>
@@ -192,12 +192,12 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
                               value={approveNotes[stageNum] || ''}
                               onChange={e => setApproveNotes(n => ({ ...n, [stageNum]: e.target.value }))}
                               placeholder="Approval coordination notes..."
-                              className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-purple-300 focus:outline-none"
+                              className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-teal-300 focus:outline-none"
                             />
                             <button
                               onClick={() => handleApprove(stageNum)}
                               disabled={processing[`approve_${stageNum}`]}
-                              className="mt-2 flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                              className="mt-2 flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
                             >
                               <CheckCircle className="w-4 h-4" />
                               {processing[`approve_${stageNum}`] ? 'Approving...' : 'Approve Stage'}
@@ -246,12 +246,12 @@ const ProjectDetailModal = ({ projectId, onClose }) => {
                           value={commentText[stageNum] || ''}
                           onChange={e => setCommentText(t => ({ ...t, [stageNum]: e.target.value }))}
                           placeholder="Add coordination guidance..."
-                          className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-purple-300 focus:outline-none"
+                          className="w-full border border-gray-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-teal-300 focus:outline-none"
                         />
                         <button
                           onClick={() => handleComment(stageNum)}
                           disabled={processing[`comment_${stageNum}`]}
-                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
+                          className="mt-2 flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold disabled:opacity-50"
                         >
                           <MessageSquare className="w-4 h-4" />
                           {processing[`comment_${stageNum}`] ? 'Posting...' : 'Post Note'}
@@ -325,15 +325,15 @@ const CoordinatorWorkspace = () => {
 
   return (
     <main className="flex-1 bg-gray-50 dark:bg-slate-900 overflow-auto">
-      <div className="bg-gradient-to-r from-purple-800 to-purple-600 text-white px-6 py-8">
+      <div className="bg-gradient-to-r from-teal-800 to-teal-600 text-white px-6 py-8">
         <h1 className="text-2xl font-bold mb-1">Coordinator Workspace</h1>
-        <p className="text-purple-100 text-sm">Coordinate project activities and ensure smooth milestone progression.</p>
+        <p className="text-teal-100 text-sm">Coordinate project activities and ensure smooth milestone progression.</p>
       </div>
 
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-6 py-5 bg-white dark:bg-slate-800 border-b border-gray-100">
           {[
-            { label: 'Total Projects', value: stats.totalProjects, color: 'text-purple-600' },
+            { label: 'Total Projects', value: stats.totalProjects, color: 'text-teal-600' },
             { label: 'Pending Reviews', value: stats.pendingReviews, color: 'text-yellow-600' },
             { label: 'Completed', value: stats.completedProjects, color: 'text-green-600' },
             { label: 'Unread Notifs', value: stats.unreadNotifications, color: 'text-red-500' },
@@ -354,7 +354,7 @@ const CoordinatorWorkspace = () => {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={`flex items-center gap-2 px-4 py-3.5 text-sm font-semibold border-b-2 transition-colors
-                ${tab === t.key ? 'border-purple-600 text-purple-700' : 'border-transparent text-gray-500 hover:text-slate-700'}`}
+                ${tab === t.key ? 'border-teal-600 text-teal-700' : 'border-transparent text-gray-500 hover:text-slate-700'}`}
             >
               <Icon className="w-4 h-4" /> {t.label}
             </button>
@@ -365,7 +365,7 @@ const CoordinatorWorkspace = () => {
       <div className="p-6 max-w-6xl mx-auto">
         {loading ? (
           <div className="flex justify-center py-16">
-            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600" />
+            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-teal-600" />
           </div>
         ) : (
           <>
@@ -376,7 +376,7 @@ const CoordinatorWorkspace = () => {
                   {[
                     { label: 'On Track', value: onTrack, color: 'border-green-400 text-green-600' },
                     { label: 'Needs Review', value: pendingReviewCount, color: 'border-yellow-400 text-yellow-600' },
-                    { label: 'Completed', value: completedCount, color: 'border-purple-400 text-purple-600' },
+                    { label: 'Completed', value: completedCount, color: 'border-teal-400 text-teal-600' },
                   ].map(s => (
                     <div key={s.label} className={`bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border-l-4 ${s.color.split(' ')[0]} text-center`}>
                       <p className={`text-3xl font-bold ${s.color.split(' ')[1]}`}>{s.value}</p>
@@ -389,7 +389,7 @@ const CoordinatorWorkspace = () => {
                   <h2 className="text-lg font-bold text-slate-700 dark:text-slate-200 mb-3">Projects Needing Attention</h2>
                   {projects.filter(p => Number(p.pending_review) > 0).length === 0 ? (
                     <div className="bg-white dark:bg-slate-800 rounded-xl border border-gray-100 p-8 text-center">
-                      <CheckCircle className="w-10 h-10 text-purple-100 mx-auto mb-2" />
+                      <CheckCircle className="w-10 h-10 text-teal-100 mx-auto mb-2" />
                       <p className="text-gray-400 text-sm">All projects are on track.</p>
                     </div>
                   ) : (
@@ -428,7 +428,7 @@ const CoordinatorWorkspace = () => {
                     <div
                       key={n.id}
                       onClick={() => !n.read && markRead(n.id)}
-                      className={`p-4 rounded-xl border cursor-pointer ${n.read ? 'bg-white dark:bg-slate-800 border-gray-100' : 'bg-purple-50 border-purple-200'}`}
+                      className={`p-4 rounded-xl border cursor-pointer ${n.read ? 'bg-white dark:bg-slate-800 border-gray-100' : 'bg-teal-50 border-teal-200'}`}
                     >
                       <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{n.title}</p>
                       <p className="text-xs text-slate-500 mt-0.5">{n.message}</p>
@@ -470,7 +470,7 @@ const CoordProjectCard = ({ project, onView }) => {
           {pending > 0 && (
             <span className="text-xs bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full font-bold">{pending} pending</span>
           )}
-          <button onClick={onView} className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold">
+          <button onClick={onView} className="px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold">
             View Project
           </button>
         </div>
@@ -478,10 +478,10 @@ const CoordProjectCard = ({ project, onView }) => {
       <div className="mt-4">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-gray-500 dark:text-slate-400">Progress</span>
-          <span className="text-xs font-semibold text-purple-600">{pct}% ({completed}/9)</span>
+          <span className="text-xs font-semibold text-teal-600">{pct}% ({completed}/9)</span>
         </div>
         <div className="w-full bg-gray-100 rounded-full h-2">
-          <div className="h-2 rounded-full bg-purple-500 transition-all" style={{ width: `${pct}%` }} />
+          <div className="h-2 rounded-full bg-teal-500 transition-all" style={{ width: `${pct}%` }} />
         </div>
       </div>
     </div>

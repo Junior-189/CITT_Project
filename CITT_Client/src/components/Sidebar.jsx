@@ -23,6 +23,7 @@ import {
   UserCheck,
   Briefcase,
   Layers,
+  Newspaper,
 } from 'lucide-react';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
@@ -41,6 +42,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/ip', label: 'IP Management', icon: FileText, protected: true },
     { path: '/events', label: 'Events', icon: Calendar, protected: true },
     { path: '/gallery', label: 'Gallery', icon: Image },
+    { path: '/blog', label: 'Blog', icon: Newspaper },
     { path: '/contact', label: 'Contact', icon: Mail },
   ];
 
@@ -54,6 +56,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/admin/cms', label: 'CMS', icon: Layers },
     { path: '/workspace', label: 'Workspace Portal', icon: Briefcase },
     { path: '/departments', label: 'Departments', icon: Building2 },
+    { path: '/contact', label: 'Contact', icon: Mail },
   ];
 
   const adminNavItems = [
@@ -70,6 +73,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { path: '/admin/audit-logs', label: 'Audit Logs', icon: FileBarChart },
     { path: '/workspace', label: 'Workspace Portal', icon: Briefcase },
     { path: '/departments', label: 'Departments', icon: Building2 },
+    { path: '/contact', label: 'Contact', icon: Mail },
   ];
 
   const ipManagerNavItems = [

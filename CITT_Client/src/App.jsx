@@ -20,6 +20,9 @@ import MySubmissions from './Pages/MySubmissions';
 import NotFoundPage from './Pages/NotFoundPage';
 import Contact from './Pages/Contact';
 import Departments from './Pages/Departments';
+import Blog from './Pages/Blog';
+import BlogPost from './Pages/BlogPost';
+import CmsPage from './Pages/CmsPage';
 
 //Workspace Imports
 import DIIWorkspace from './Pages/dashboards/DIIWorkspace';
@@ -102,6 +105,9 @@ const App = () => (
               <Route path="/verify-email" element={<VerifyEmail />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route path="/gallery" element={<Gallery />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              <Route path="/page/:slug" element={<CmsPage />} />
 
               {/* Protected Routes - All authenticated users */}
               <Route path="/set-password" element={<ProtectedRoute><SetPassword /></ProtectedRoute>} />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const IPRecords = () => {
@@ -14,17 +14,13 @@ const IPRecords = () => {
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, pages: 0 });
 
-  useEffect(() => {
-    fetchIPRecords();
-  }, [page]);
-
-  const fetchIPRecords = async () => {
+  const fetchIPRecords = useCallback(async () => {
     try {
       setLoading(true);
       const api = getAuthenticatedAxios();
-      const response = await api.get('/api/ipmanager/ip-records', {
-        params: { page, limit: 50 }
-      });
+      const params = { page, limit: 50 };
+      if (searchTerm) params.search = searchTerm;
+      const response = await api.get('/api/ipmanager/ip-records', { params });
       setIps(response.data.ipRecords || []);
       setPagination(response.data.pagination || { total: 0, pages: 0 });
       setError(null);
@@ -34,7 +30,11 @@ const IPRecords = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm, getAuthenticatedAxios]);
+
+  useEffect(() => {
+    fetchIPRecords();
+  }, [fetchIPRecords]);
 
   const formatDate = (value) => {
     if (!value) return 'N/A';
@@ -48,54 +48,48 @@ const IPRecords = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'approved':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
       case 'rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-400';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
   const getIPTypeColor = (type) => {
-    switch (type) {
-      case 'Patent':
-        return 'bg-purple-100 text-purple-800';
-      case 'Trademark':
-        return 'bg-blue-100 text-blue-800';
-      case 'Copyright':
-        return 'bg-green-100 text-green-800';
-      case 'Design':
-        return 'bg-orange-100 text-orange-800';
+    switch ((type || '').toLowerCase()) {
+      case 'patent':
+        return 'bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-400';
+      case 'trademark':
+        return 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-400';
+      case 'copyright':
+        return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
+      case 'design':
+        return 'bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
   const filteredIPs = ips.filter(ip => {
-    const title = ip.title || ip.ip_title || '';
-    const matchesSearch = !searchTerm ||
-      title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (ip.inventors || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (ip.patent_number || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (ip.user_name || '').toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = filterType === 'all' || ip.ip_type === filterType;
+    const matchesType = filterType === 'all' || (ip.ip_type || '').toLowerCase() === filterType;
     const matchesStatus = filterStatus === 'all' || ip.approval_status === filterStatus;
-    return matchesSearch && matchesType && matchesStatus;
+    return matchesType && matchesStatus;
   });
 
   const stats = {
     total: pagination.total || ips.length,
-    patent: ips.filter(ip => ip.ip_type === 'Patent').length,
-    trademark: ips.filter(ip => ip.ip_type === 'Trademark').length,
+    patent: ips.filter(ip => (ip.ip_type || '').toLowerCase() === 'patent').length,
+    trademark: ips.filter(ip => (ip.ip_type || '').toLowerCase() === 'trademark').length,
     approved: ips.filter(ip => ip.approval_status === 'approved').length,
     pending: ips.filter(ip => ip.approval_status === 'pending').length,
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-slate-400">Loading IP records...</p>
@@ -110,16 +104,16 @@ const IPRecords = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">IP Records</h1>
           <p className="text-gray-600 dark:text-slate-400 mt-2">View and manage all intellectual property records</p>
-          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400">
             IP Manager Access
           </div>
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={fetchIPRecords} className="text-sm text-red-600 hover:text-red-800 underline">Retry</button>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <button onClick={fetchIPRecords} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 underline">Retry</button>
             </div>
           </div>
         )}
@@ -131,15 +125,15 @@ const IPRecords = () => {
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Patents</p>
-            <p className="text-3xl font-bold text-purple-600 mt-2">{stats.patent}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">{stats.patent}</p>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Pending</p>
-            <p className="text-3xl font-bold text-yellow-600 mt-2">{stats.pending}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">{stats.pending}</p>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Approved</p>
-            <p className="text-3xl font-bold text-green-600 mt-2">{stats.approved}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">{stats.approved}</p>
           </div>
         </div>
 
@@ -152,7 +146,7 @@ const IPRecords = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by title, inventors, or patent number..."
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
               />
             </div>
             <div>
@@ -160,13 +154,13 @@ const IPRecords = () => {
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
               >
                 <option value="all">All Types</option>
-                <option value="Patent">Patent</option>
-                <option value="Trademark">Trademark</option>
-                <option value="Copyright">Copyright</option>
-                <option value="Design">Design</option>
+                <option value="patent">Patent</option>
+                <option value="trademark">Trademark</option>
+                <option value="copyright">Copyright</option>
+                <option value="design">Industrial Design</option>
               </select>
             </div>
             <div>
@@ -174,7 +168,7 @@ const IPRecords = () => {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -187,7 +181,7 @@ const IPRecords = () => {
 
         {filteredIPs.length === 0 ? (
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-12 text-center">
-            <svg className="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="mx-auto h-16 w-16 text-gray-400 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
             </svg>
             <h3 className="mt-4 text-lg font-medium text-gray-900 dark:text-slate-100">No IP Records Found</h3>
@@ -238,9 +232,9 @@ const IPRecords = () => {
                 )}
 
                 {ip.rejection_reason && (
-                  <div className="mb-4 bg-red-50 p-3 rounded">
-                    <p className="text-sm font-semibold text-red-700">Rejection Reason</p>
-                    <p className="text-sm text-red-600 mt-1">{ip.rejection_reason}</p>
+                  <div className="mb-4 bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                    <p className="text-sm font-semibold text-red-700 dark:text-red-400">Rejection Reason</p>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">{ip.rejection_reason}</p>
                   </div>
                 )}
 
@@ -259,9 +253,9 @@ const IPRecords = () => {
 
         {pagination.pages > 1 && (
           <div className="mt-6 flex justify-center gap-2">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
             <span className="px-4 py-2 text-gray-700 dark:text-slate-300">Page {page} of {pagination.pages}</span>
-            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
+            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
           </div>
         )}
 
@@ -336,9 +330,9 @@ const IPRecords = () => {
                       </div>
                     )}
                     {selectedIP.rejection_reason && (
-                      <div className="bg-red-50 p-3 rounded">
-                        <p className="font-semibold text-red-700">Rejection Reason</p>
-                        <p className="text-red-600">{selectedIP.rejection_reason}</p>
+                      <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                        <p className="font-semibold text-red-700 dark:text-red-400">Rejection Reason</p>
+                        <p className="text-red-600 dark:text-red-400">{selectedIP.rejection_reason}</p>
                       </div>
                     )}
                   </div>
@@ -347,7 +341,7 @@ const IPRecords = () => {
                   <button
                     type="button"
                     onClick={() => { setShowDetailsModal(false); setSelectedIP(null); }}
-                    className="w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-900 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm"
                   >
                     Close
                   </button>

@@ -20,7 +20,7 @@ const Contact = () => {
   const { role, getAuthenticatedAxios, profile } = useAuth();
   const { photos: hookPhotos } = useDirectorPhotos();
   const [uploadedPhotos, setUploadedPhotos] = useState({});
-  const isAdminUser = !!profile && ['admin', 'superAdmin', 'transferTechnologyOfficer'].includes(role);
+  const isAdminUser = !!profile && ['admin', 'superAdmin'].includes(role);
 
   const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [formStatus, setFormStatus] = useState({ loading: false, success: '', error: '' });
@@ -63,14 +63,17 @@ const Contact = () => {
   return (
     <main className="bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
       {/* Hero */}
+      {!isAdminUser && (
       <section className="bg-teal-700 dark:bg-slate-800 text-white py-16 px-6 text-center">
         <h1 className="text-4xl font-bold mb-3">Contact CITT</h1>
         <p className="text-teal-100 max-w-xl mx-auto text-base">
           Reach out to the Centre for Innovation and Technology Transfer at Mbeya University of Science and Technology.
         </p>
       </section>
+      )}
 
       {/* Contact Info Cards */}
+      {!isAdminUser && (
       <section className="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[
           { icon: <MapPin className="w-6 h-6 text-teal-600" />, title: 'Address', content: 'Mbeya University of Science and Technology, Mbeya, Tanzania' },
@@ -85,8 +88,10 @@ const Contact = () => {
           </div>
         ))}
       </section>
+      )}
 
       {/* Contact Form + Map side by side */}
+      {!isAdminUser && (
       <section className="max-w-5xl mx-auto px-4 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Contact Form */}
         <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-slate-700">
@@ -166,6 +171,7 @@ const Contact = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Directors Section */}
       <section className="bg-white dark:bg-slate-800 py-12 px-4">

@@ -1,6 +1,67 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import api from '../services/api';
 
 const About = () => {
+  const [cmsContent, setCmsContent] = useState(null);
+  const [cmsLoading, setCmsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCmsAbout = async () => {
+      try {
+        const res = await api.get('/api/cms/public/pages/about');
+        if (res.data?.content) {
+          setCmsContent(res.data);
+        }
+      } catch {
+        /* CMS page not available, use hardcoded content */
+      } finally {
+        setCmsLoading(false);
+      }
+    };
+    fetchCmsAbout();
+  }, []);
+
+  if (cmsLoading) {
+    return (
+      <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900">
+        <div className="max-w-6xl mx-auto flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-teal-600 mx-auto mb-4"></div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (cmsContent) {
+    return (
+      <main className="flex-1 px-4 md:px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100">
+        <article className="max-w-3xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-8">
+            {cmsContent.title}
+          </h1>
+          <div
+            className="[&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4 [&_h1]:text-slate-800 dark:[&_h1]:text-slate-100
+              [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:mb-3 [&_h2]:mt-8 [&_h2]:text-slate-800 dark:[&_h2]:text-slate-100
+              [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:mb-3 [&_h3]:mt-6 [&_h3]:text-slate-800 dark:[&_h3]:text-slate-100
+              [&_p]:text-base [&_p]:leading-relaxed [&_p]:mb-4 [&_p]:text-slate-600 dark:[&_p]:text-slate-300
+              [&_a]:text-teal-600 dark:[&_a]:text-teal-400 [&_a]:underline
+              [&_img]:rounded-xl [&_img]:shadow-md [&_img]:my-6 [&_img]:max-w-full
+              [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-4 [&_ul]:space-y-1
+              [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-4 [&_ol]:space-y-1
+              [&_li]:text-slate-600 dark:[&_li]:text-slate-300 [&_li]:leading-relaxed
+              [&_blockquote]:border-l-4 [&_blockquote]:border-teal-500 [&_blockquote]:pl-4 [&_blockquote]:py-2 [&_blockquote]:my-6 [&_blockquote]:italic [&_blockquote]:text-slate-500 dark:[&_blockquote]:text-slate-400
+              [&_pre]:bg-slate-100 dark:[&_pre]:bg-slate-800 [&_pre]:p-4 [&_pre]:rounded-lg [&_pre]:overflow-x-auto [&_pre]:my-4 [&_pre]:text-sm
+              [&_code]:bg-slate-100 dark:[&_code]:bg-slate-800 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded [&_code]:text-sm [&_code]:text-teal-700 dark:[&_code]:text-teal-300
+              [&_hr]:my-8 [&_hr]:border-slate-200 dark:[&_hr]:border-slate-700
+            "
+            dangerouslySetInnerHTML={{ __html: cmsContent.content }}
+          />
+        </article>
+      </main>
+    );
+  }
+
   return (
     <main className="flex-1 px-16 py-10 overflow-auto bg-gray-50 dark:bg-slate-900">
       {/* Main Content */}

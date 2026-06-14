@@ -45,7 +45,7 @@ const MilestoneViewModal = ({ project, onClose, api }) => {
             <span>Commercialization Progress</span><span>{Math.round(completedCount / 9 * 100)}%</span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-2">
-            <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${Math.round(completedCount / 9 * 100)}%` }} />
+            <div className="bg-teal-500 h-2 rounded-full" style={{ width: `${Math.round(completedCount / 9 * 100)}%` }} />
           </div>
         </div>
         <div className="divide-y max-h-[60vh] overflow-y-auto">
@@ -206,7 +206,7 @@ const DEBMWorkspace = () => {
 
   if (loading) return (
     <div className="flex justify-center items-center min-h-[60vh]">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600" />
     </div>
   );
 
@@ -217,9 +217,9 @@ const DEBMWorkspace = () => {
       )}
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-700 to-blue-600 text-white px-6 md:px-10 py-6 flex items-center gap-6">
+      <div className="bg-gradient-to-r from-teal-700 to-teal-600 text-white px-6 md:px-10 py-6 flex items-center gap-6">
         <div className="relative group shrink-0">
-          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 bg-blue-500 flex items-center justify-center">
+          <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white/30 bg-teal-500 flex items-center justify-center">
             {myPhotoUrl
               ? <img src={myPhotoUrl} alt="Director" className="w-full h-full object-cover" />
               : <span className="text-2xl font-bold text-white">{profile?.name?.[0]?.toUpperCase() || 'D'}</span>
@@ -231,9 +231,9 @@ const DEBMWorkspace = () => {
           </label>
         </div>
         <div>
-          <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-1">Department Workspace</p>
+          <p className="text-teal-200 text-xs font-semibold uppercase tracking-widest mb-1">Department Workspace</p>
           <h1 className="text-2xl md:text-3xl font-bold">Department of Entrepreneurship & Business Management</h1>
-          <p className="text-blue-100 text-sm mt-1">Welcome, {profile?.name} — DEBM Director</p>
+          <p className="text-teal-100 text-sm mt-1">Welcome, {profile?.name} — DEBM Director</p>
         </div>
       </div>
 
@@ -245,7 +245,7 @@ const DEBMWorkspace = () => {
             return (
               <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold border-b-2 transition-colors whitespace-nowrap
-                  ${activeTab === tab.id ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}>
+                  ${activeTab === tab.id ? 'border-teal-600 text-teal-700' : 'border-transparent text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'}`}>
                 <Icon className="w-4 h-4" /> {tab.label}
               </button>
             );
@@ -270,9 +270,9 @@ const DEBMWorkspace = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Total Projects', value: dashData.stats.totalProjects, color: 'border-blue-500' },
+                { label: 'Total Projects', value: dashData.stats.totalProjects, color: 'border-teal-500' },
                 { label: 'Approved', value: dashData.stats.approvedProjects, color: 'border-green-500' },
-                { label: 'Business Records', value: dashData.stats.businessRecords, color: 'border-purple-500' },
+                { label: 'Business Records', value: dashData.stats.businessRecords, color: 'border-teal-400' },
                 { label: 'Open Complaints', value: dashData.stats.openComplaints, color: 'border-red-400' },
               ].map(s => (
                 <div key={s.label} className={`bg-white dark:bg-slate-800 rounded-xl p-5 shadow-sm border-l-4 ${s.color} text-center`}>
@@ -285,8 +285,8 @@ const DEBMWorkspace = () => {
               <h3 className="font-bold text-slate-800 dark:text-slate-100 mb-4">DEBM Department Functions</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {(dashData?.department?.functions || []).map((fn, i) => (
-                  <div key={fn.id || i} className="flex items-start gap-3 p-3 bg-blue-50 dark:bg-blue-500/10 rounded-lg">
-                    <span className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-400 flex items-center justify-center text-xs font-bold flex-shrink-0">{fn.order_num || i + 1}</span>
+                  <div key={fn.id || i} className="flex items-start gap-3 p-3 bg-teal-50 dark:bg-teal-500/10 rounded-lg">
+                    <span className="w-6 h-6 rounded-full bg-teal-100 dark:bg-teal-500/20 text-teal-700 dark:text-teal-400 flex items-center justify-center text-xs font-bold flex-shrink-0">{fn.order_num || i + 1}</span>
                     <p className="text-sm text-slate-700 dark:text-slate-300">{fn.description}</p>
                   </div>
                 ))}
@@ -298,12 +298,12 @@ const DEBMWorkspace = () => {
         {/* ── PROJECTS (commercialization-ready: ≥8 milestones) ── */}
         {activeTab === 'projects' && (
           <div>
-            <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-700">
+            <div className="mb-4 p-3 bg-teal-50 border border-teal-200 rounded-lg text-sm text-teal-700">
               Showing projects that have completed 8+ milestone stages and are ready for commercialization.
             </div>
             <input value={projectSearch} onChange={e => setProjectSearch(e.target.value)}
               placeholder="Search by title or innovator…"
-              className="w-full mb-5 border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-400 outline-none" />
+              className="w-full mb-5 border border-gray-300 dark:border-slate-600 rounded-xl px-4 py-2 text-sm bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-teal-400 outline-none" />
             <div className="space-y-3">
               {filteredProjects.length === 0 && (
                 <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl border text-gray-400 dark:text-slate-400">No commercialization-ready projects yet</div>
@@ -323,13 +323,13 @@ const DEBMWorkspace = () => {
                         <p className="text-xs text-gray-500 dark:text-slate-400">{p.innovator_name} · {p.category}</p>
                       </div>
                       <button onClick={() => setViewingProject(p)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold flex-shrink-0">
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold flex-shrink-0">
                         <Eye className="w-3.5 h-3.5" /> View Progress
                       </button>
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="flex-1 bg-gray-200 dark:bg-slate-700 rounded-full h-2">
-                        <div className="bg-blue-500 h-2 rounded-full" style={{ width: `${pct}%` }} />
+                        <div className="bg-teal-500 h-2 rounded-full" style={{ width: `${pct}%` }} />
                       </div>
                       <span className="text-xs text-gray-400 dark:text-slate-400">{p.completed_milestones || 0}/9</span>
                     </div>
@@ -346,19 +346,19 @@ const DEBMWorkspace = () => {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-slate-700 dark:text-slate-200">Business Records <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({businessRecords.length})</span></h2>
               <button onClick={() => setShowBizForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">
+                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Add Record
               </button>
             </div>
 
             {showBizForm && (
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-blue-200 p-6 mb-5">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-teal-200 p-6 mb-5">
                 <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">New Business Record</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Project *</label>
                     <select value={bizForm.project_id} onChange={e => setBizForm(f => ({ ...f, project_id: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none">
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none">
                       <option value="">Select project…</option>
                       {projects.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
                     </select>
@@ -366,31 +366,31 @@ const DEBMWorkspace = () => {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Business Name</label>
                     <input value={bizForm.business_name} onChange={e => setBizForm(f => ({ ...f, business_name: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="Company / venture name" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="Company / venture name" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Market Status</label>
                     <input value={bizForm.market_status} onChange={e => setBizForm(f => ({ ...f, market_status: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="e.g. Pre-market, Launched" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="e.g. Pre-market, Launched" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Investment Amount (TZS)</label>
                     <input type="number" value={bizForm.investment_amount} onChange={e => setBizForm(f => ({ ...f, investment_amount: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="0.00" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="0.00" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Business Plan Summary</label>
                     <textarea rows={3} value={bizForm.business_plan} onChange={e => setBizForm(f => ({ ...f, business_plan: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none resize-none" placeholder="Brief business plan…" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none resize-none" placeholder="Brief business plan…" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Notes</label>
                     <textarea rows={2} value={bizForm.notes} onChange={e => setBizForm(f => ({ ...f, notes: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none resize-none" placeholder="Additional notes…" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none resize-none" placeholder="Additional notes…" />
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <button onClick={submitBizRecord} className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">Save</button>
+                  <button onClick={submitBizRecord} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">Save</button>
                   <button onClick={() => setShowBizForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
@@ -427,28 +427,28 @@ const DEBMWorkspace = () => {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-slate-700 dark:text-slate-200">Training Programmes <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({trainings.length})</span></h2>
               <button onClick={() => setShowTrainingForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">
+                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Add Programme
               </button>
             </div>
             {showTrainingForm && (
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-blue-200 p-6 mb-5">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-teal-200 p-6 mb-5">
                 <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">New Training Programme</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Title *</label>
                     <input value={trainingForm.title} onChange={e => setTrainingForm(f => ({ ...f, title: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="Programme title" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="Programme title" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Target Audience</label>
                     <input value={trainingForm.target_audience} onChange={e => setTrainingForm(f => ({ ...f, target_audience: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="e.g. Entrepreneurs, Students" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="e.g. Entrepreneurs, Students" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Status</label>
                     <select value={trainingForm.status} onChange={e => setTrainingForm(f => ({ ...f, status: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none">
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none">
                       <option value="planned">Planned</option>
                       <option value="active">Active</option>
                       <option value="completed">Completed</option>
@@ -458,21 +458,21 @@ const DEBMWorkspace = () => {
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Start Date</label>
                     <input type="date" value={trainingForm.start_date} onChange={e => setTrainingForm(f => ({ ...f, start_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">End Date</label>
                     <input type="date" value={trainingForm.end_date} onChange={e => setTrainingForm(f => ({ ...f, end_date: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="block text-xs font-semibold text-gray-600 dark:text-slate-400 mb-1">Description</label>
                     <textarea rows={3} value={trainingForm.description} onChange={e => setTrainingForm(f => ({ ...f, description: e.target.value }))}
-                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none resize-none" placeholder="Programme description…" />
+                      className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none resize-none" placeholder="Programme description…" />
                   </div>
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <button onClick={submitTraining} className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">Save</button>
+                  <button onClick={submitTraining} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">Save</button>
                   <button onClick={() => setShowTrainingForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>
@@ -506,21 +506,21 @@ const DEBMWorkspace = () => {
             <div className="flex items-center justify-between mb-5">
               <h2 className="font-bold text-slate-700 dark:text-slate-200">Complaints <span className="text-gray-400 dark:text-slate-400 font-normal text-sm">({complaints.length})</span></h2>
               <button onClick={() => setShowComplaintForm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">
+                className="flex items-center gap-2 px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">
                 <Plus className="w-4 h-4" /> Submit Complaint
               </button>
             </div>
             {showComplaintForm && (
-              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-blue-200 p-6 mb-5">
+              <div className="bg-white dark:bg-slate-800 rounded-2xl border border-teal-200 p-6 mb-5">
                 <h3 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">New Complaint</h3>
                 <div className="space-y-3">
                   <input value={complaintForm.subject} onChange={e => setComplaintForm(f => ({ ...f, subject: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none" placeholder="Subject *" />
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none" placeholder="Subject *" />
                   <textarea rows={4} value={complaintForm.description} onChange={e => setComplaintForm(f => ({ ...f, description: e.target.value }))}
-                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-blue-400 outline-none resize-none" placeholder="Describe the issue… *" />
+                    className="w-full border rounded-lg px-3 py-2 text-sm focus:ring dark:bg-slate-700 dark:text-slate-100 dark:border-slate-600-2 focus:ring-teal-400 outline-none resize-none" placeholder="Describe the issue… *" />
                 </div>
                 <div className="flex gap-2 mt-4">
-                  <button onClick={submitComplaint} className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold">Submit</button>
+                  <button onClick={submitComplaint} className="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-sm font-semibold">Submit</button>
                   <button onClick={() => setShowComplaintForm(false)} className="px-5 py-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg text-sm font-semibold">Cancel</button>
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const SubmittedProjects = () => {
@@ -14,15 +14,7 @@ const SubmittedProjects = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchProjects();
-  }, [page, statusFilter]);
-
-  useEffect(() => {
-    filterProjects();
-  }, [search, projects]);
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -41,7 +33,15 @@ const SubmittedProjects = () => {
       setProjects([]);
     }
     setLoading(false);
-  };
+  }, [page, statusFilter, getAuthenticatedAxios]);
+
+  useEffect(() => {
+    fetchProjects();
+  }, [fetchProjects]);
+
+  useEffect(() => {
+    filterProjects();
+  }, [search, projects]);
 
   const filterProjects = () => {
     const filtered = projects.filter((p) =>
@@ -55,19 +55,19 @@ const SubmittedProjects = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-400';
+      case 'approved': return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
+      case 'rejected': return 'bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-400';
+      default: return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
   const getProjectStatusColor = (status) => {
     switch (status) {
-      case 'submitted': return 'bg-blue-100 text-blue-800';
-      case 'on_progress': return 'bg-orange-100 text-orange-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'submitted': return 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-400';
+      case 'on_progress': return 'bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400';
+      case 'completed': return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
+      default: return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
@@ -80,10 +80,10 @@ const SubmittedProjects = () => {
         </div>
 
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={fetchProjects} className="text-sm text-red-600 hover:text-red-800 underline">Retry</button>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <button onClick={fetchProjects} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 underline">Retry</button>
             </div>
           </div>
         )}
@@ -95,12 +95,12 @@ const SubmittedProjects = () => {
               placeholder="Search by title, innovator, or institution..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
             />
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -109,7 +109,7 @@ const SubmittedProjects = () => {
             </select>
             <button
               onClick={() => { setSearch(''); setStatusFilter(''); setPage(1); }}
-              className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300"
             >
               Reset Filters
             </button>
@@ -121,14 +121,14 @@ const SubmittedProjects = () => {
             <div className="p-12 text-center text-gray-500 dark:text-slate-400">Loading...</div>
           ) : filteredProjects.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-slate-400">
-              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-slate-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p>No projects found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                 <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Project</th>
@@ -140,9 +140,9 @@ const SubmittedProjects = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {filteredProjects.map((proj) => (
-                    <tr key={proj.id} className="hover:bg-gray-50 dark:bg-slate-900">
+                    <tr key={proj.id} className="hover:bg-gray-50 dark:hover:bg-slate-700">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900 dark:text-slate-100">{proj.title || 'Untitled'}</div>
                         <div className="text-xs text-gray-500 dark:text-slate-400">{(proj.description || '').substring(0, 50)}{(proj.description || '').length > 50 ? '...' : ''}</div>
@@ -185,9 +185,9 @@ const SubmittedProjects = () => {
 
         {pagination.pages > 1 && (
           <div className="mt-6 flex justify-center gap-2">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
             <span className="px-4 py-2 text-gray-700 dark:text-slate-300">Page {page} of {pagination.pages}</span>
-            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
+            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
           </div>
         )}
 
@@ -251,9 +251,9 @@ const SubmittedProjects = () => {
                       </div>
                     )}
                     {selectedProject.rejection_reason && (
-                      <div className="bg-red-50 p-3 rounded">
-                        <p className="font-semibold text-red-700 text-sm">Rejection Reason</p>
-                        <p className="text-red-600 text-sm">{selectedProject.rejection_reason}</p>
+                      <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded">
+                        <p className="font-semibold text-red-700 dark:text-red-400 text-sm">Rejection Reason</p>
+                        <p className="text-red-600 dark:text-red-400 text-sm">{selectedProject.rejection_reason}</p>
                       </div>
                     )}
                   </div>
@@ -261,7 +261,7 @@ const SubmittedProjects = () => {
                 <div className="bg-gray-50 dark:bg-slate-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                   <button
                     onClick={() => { setShowModal(false); setSelectedProject(null); }}
-                    className="w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:bg-slate-900 sm:w-auto sm:text-sm"
+                    className="w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:hover:bg-slate-900 sm:w-auto sm:text-sm"
                   >
                     Close
                   </button>

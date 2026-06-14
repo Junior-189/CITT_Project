@@ -468,7 +468,7 @@ const DIIWorkspace = () => {
                         )}
                         {p.approval_status === 'approved' && (
                           <button onClick={() => { setAssigningProject(p); setAssignData({ userId: '', type: 'mentor' }); }}
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-xs font-semibold">
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-semibold">
                             <UserCheck className="w-3.5 h-3.5" /> Assign
                           </button>
                         )}

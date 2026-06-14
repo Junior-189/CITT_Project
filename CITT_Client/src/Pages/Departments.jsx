@@ -22,14 +22,14 @@ const DEPT_COLORS = {
     dot: 'bg-teal-500', title: 'text-teal-700 dark:text-teal-400', ring: 'ring-teal-300 dark:ring-teal-500/30',
   },
   DEBM: {
-    bg: 'bg-blue-50 dark:bg-blue-500/10', border: 'border-blue-200 dark:border-blue-500/30', icon: 'bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400',
-    badge: 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-400', btn: 'bg-blue-600 hover:bg-blue-700',
-    dot: 'bg-blue-500', title: 'text-blue-700 dark:text-blue-400', ring: 'ring-blue-300 dark:ring-blue-500/30',
+    bg: 'bg-teal-50 dark:bg-teal-500/10', border: 'border-teal-200 dark:border-teal-500/30', icon: 'bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400',
+    badge: 'bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-400', btn: 'bg-teal-600 hover:bg-teal-700',
+    dot: 'bg-teal-500', title: 'text-teal-700 dark:text-teal-400', ring: 'ring-teal-300 dark:ring-teal-500/30',
   },
   RTP: {
-    bg: 'bg-green-50 dark:bg-green-500/10', border: 'border-green-200 dark:border-green-500/30', icon: 'bg-green-100 text-green-600 dark:bg-green-500/20 dark:text-green-400',
-    badge: 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-400', btn: 'bg-green-600 hover:bg-green-700',
-    dot: 'bg-green-500', title: 'text-green-700 dark:text-green-400', ring: 'ring-green-300 dark:ring-green-500/30',
+    bg: 'bg-teal-50 dark:bg-teal-500/10', border: 'border-teal-200 dark:border-teal-500/30', icon: 'bg-teal-100 text-teal-600 dark:bg-teal-500/20 dark:text-teal-400',
+    badge: 'bg-teal-100 text-teal-800 dark:bg-teal-500/20 dark:text-teal-400', btn: 'bg-teal-600 hover:bg-teal-700',
+    dot: 'bg-teal-500', title: 'text-teal-700 dark:text-teal-400', ring: 'ring-teal-300 dark:ring-teal-500/30',
   },
 };
 

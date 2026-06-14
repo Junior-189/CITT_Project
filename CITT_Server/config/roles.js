@@ -27,7 +27,7 @@ const ROLE_NAMES = {
 };
 
 const ADMIN_ROLES = ['superAdmin','admin','transferTechnologyOfficer'];
-const REVIEWER_ROLES = ['superAdmin','admin','transferTechnologyOfficer','diiDirector','debmDirector','rtpDirector','mentor','technicalCommittee','coordinator'];
+const REVIEWER_ROLES = ['superAdmin','admin','transferTechnologyOfficer','diiDirector','debmDirector','rtpDirector','mentor','technicalCommittee','coordinator','ipManager'];
 const PROJECT_APPROVAL_ROLES = ['superAdmin','admin','transferTechnologyOfficer','diiDirector'];
 
 const isValidRole = (role) => Object.values(ROLES).includes(role);

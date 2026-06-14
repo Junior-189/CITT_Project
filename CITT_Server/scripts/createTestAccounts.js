@@ -1,6 +1,6 @@
 /**
  * CITT RBAC System - Test Account Creator
- * Purpose: Create test accounts for all 4 roles (superAdmin, admin, ipManager, innovator)
+ * Purpose: Create test accounts for all 11 roles
  * Usage: node scripts/createTestAccounts.js
  */
 
@@ -42,10 +42,21 @@ const testAccounts = [
     profile_complete: true
   },
   {
+    name: 'Tech Transfer Officer',
+    email: 'tto@citt.ac.tz',
+    password: 'TTOfficer@2025',
+    phone: '+255700000003',
+    role: 'transferTechnologyOfficer',
+    university: 'CITT',
+    college: 'Technology Transfer',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
     name: 'Mary IP Manager',
     email: 'ipmanager@citt.ac.tz',
     password: 'IPManager@2025',
-    phone: '+255700000003',
+    phone: '+255700000004',
     role: 'ipManager',
     university: 'CITT',
     college: 'IP Management Department',
@@ -53,10 +64,76 @@ const testAccounts = [
     profile_complete: true
   },
   {
+    name: 'DII Director',
+    email: 'diidirector@citt.ac.tz',
+    password: 'DiiDirector@2025',
+    phone: '+255700000005',
+    role: 'diiDirector',
+    university: 'CITT',
+    college: 'Incubation & Innovation',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
+    name: 'DEBM Director',
+    email: 'debmdirector@citt.ac.tz',
+    password: 'DebmDirector@2025',
+    phone: '+255700000006',
+    role: 'debmDirector',
+    university: 'CITT',
+    college: 'Entrepreneurship & Business',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
+    name: 'RTP Director',
+    email: 'rtpdirector@citt.ac.tz',
+    password: 'RtpDirector@2025',
+    phone: '+255700000007',
+    role: 'rtpDirector',
+    university: 'CITT',
+    college: 'Rural Technology Promotion',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
+    name: 'David Mentor',
+    email: 'mentor@citt.ac.tz',
+    password: 'Mentor@2025',
+    phone: '+255700000008',
+    role: 'mentor',
+    university: 'CITT',
+    college: 'Mentorship Programme',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
+    name: 'TC Evaluator',
+    email: 'tc@citt.ac.tz',
+    password: 'TechCommittee@2025',
+    phone: '+255700000009',
+    role: 'technicalCommittee',
+    university: 'CITT',
+    college: 'Technical Committee',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
+    name: 'Sarah Coordinator',
+    email: 'coordinator@citt.ac.tz',
+    password: 'Coordinator@2025',
+    phone: '+255700000010',
+    role: 'coordinator',
+    university: 'CITT',
+    college: 'Project Coordination',
+    year_of_study: null,
+    profile_complete: true
+  },
+  {
     name: 'Alice Innovator',
     email: 'innovator@citt.ac.tz',
     password: 'Innovator@2025',
-    phone: '+255700000004',
+    phone: '+255700000011',
     role: 'innovator',
     university: 'University of Dar es Salaam',
     college: 'College of Engineering',
@@ -190,8 +267,15 @@ async function createAllTestAccounts() {
         CASE role
           WHEN 'superAdmin' THEN 1
           WHEN 'admin' THEN 2
-          WHEN 'ipManager' THEN 3
-          WHEN 'innovator' THEN 4
+          WHEN 'transferTechnologyOfficer' THEN 3
+          WHEN 'ipManager' THEN 4
+          WHEN 'diiDirector' THEN 5
+          WHEN 'debmDirector' THEN 6
+          WHEN 'rtpDirector' THEN 7
+          WHEN 'mentor' THEN 8
+          WHEN 'technicalCommittee' THEN 9
+          WHEN 'coordinator' THEN 10
+          WHEN 'innovator' THEN 11
         END
     `);
 

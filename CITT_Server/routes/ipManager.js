@@ -117,8 +117,21 @@ router.get('/ip-records',
     query += ` ORDER BY ip.created_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
 
-    const result = await pool.query(query, params);
-    const countResult = await pool.query('SELECT COUNT(*) FROM ip_management');
+    let countQuery = `SELECT COUNT(*) FROM ip_management ip JOIN users u ON ip.user_id = u.id LEFT JOIN users approver ON ip.approved_by = approver.id WHERE 1=1`;
+    const countParams = [];
+    if (approval_status) {
+      countParams.push(approval_status);
+      countQuery += ` AND ip.approval_status = $${countParams.length}`;
+    }
+    if (search) {
+      countParams.push(`%${search}%`, `%${search}%`, `%${search}%`);
+      countQuery += ` AND (COALESCE(ip.title, ip.ip_title) ILIKE $${countParams.length - 2} OR ip.description ILIKE $${countParams.length - 1} OR ip.inventors ILIKE $${countParams.length})`;
+    }
+
+    const [result, countResult] = await Promise.all([
+      pool.query(query, params),
+      pool.query(countQuery, countParams)
+    ]);
 
     res.json({
       ipRecords: result.rows,
@@ -175,46 +188,71 @@ router.put('/ip-records/:id/approve',
     const { id } = req.params;
     const { comments } = req.body;
 
-    const result = await pool.query(`
-      UPDATE ip_management
-      SET approval_status = 'approved',
-          approved_by = $1,
-          approved_at = NOW(),
-          updated_at = NOW()
-      WHERE id = $2
-      RETURNING *
-    `, [req.user.id, id]);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'IP record not found' });
+      const result = await client.query(`
+        UPDATE ip_management
+        SET approval_status = 'approved',
+            approved_by = $1,
+            approved_at = NOW(),
+            updated_at = NOW()
+        WHERE id = $2
+        RETURNING *
+      `, [req.user.id, id]);
+
+      if (result.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'IP record not found' });
+      }
+
+      const ipRecord = result.rows[0];
+      const ipType = ipRecord.ip_type || 'patent';
+      const statusMap = {
+        patent: 'Patent Granted',
+        trademark: 'Trademark Registered',
+        copyright: 'Copyright Registered',
+        design: 'Design Registered',
+        industrial_design: 'Design Registered',
+        trade_secret: 'Trade Secret Granted',
+        other: 'Granted',
+      };
+      const newStatus = statusMap[ipType] || 'Granted';
+
+      // Record status history
+      await client.query(
+        `INSERT INTO ip_status_history (ip_id, old_status, new_status, changed_by, note, created_at)
+         VALUES ($1, $2, $3, $4, $5, NOW())`,
+        [ipRecord.id, ipRecord.status || 'pending', newStatus, req.user.id, comments || 'Approved']
+      );
+
+      // Update status to type-appropriate granted status
+      await client.query(`UPDATE ip_management SET status = $1 WHERE id = $2`, [newStatus, ipRecord.id]);
+
+      await client.query('COMMIT');
+
+      // Notify IP applicant
+      const ipTitle = ipRecord.title || ipRecord.ip_title || 'Untitled';
+      await createNotification(
+        ipRecord.user_id,
+        'IP Application Approved',
+        `Your IP application "${ipTitle}" has been approved.`,
+        'success',
+        '/ip'
+      );
+
+      res.json({
+        message: 'IP application approved successfully',
+        ipRecord: { ...result.rows[0], status: newStatus },
+        comments
+      });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
     }
-
-    // Record status history
-    const ipRecord = result.rows[0];
-    await pool.query(
-      `INSERT INTO ip_status_history (ip_id, old_status, new_status, changed_by, note, created_at)
-       VALUES ($1, $2, 'Patent Granted', $3, $4, NOW())`,
-      [ipRecord.id, ipRecord.status || null, req.user.id, comments || 'Approved']
-    );
-
-    // Update status to Patent Granted
-    await pool.query(`UPDATE ip_management SET status = 'Patent Granted' WHERE id = $1`, [ipRecord.id]);
-
-    // Notify IP applicant
-    const ipTitle = ipRecord.title || ipRecord.ip_title || 'Untitled';
-    await createNotification(
-      ipRecord.user_id,
-      'IP Application Approved',
-      `Your IP application "${ipTitle}" has been approved.`,
-      'success',
-      '/ip'
-    );
-
-    res.json({
-      message: 'IP application approved successfully',
-      ipRecord: result.rows[0],
-      comments
-    });
   })
 );
 
@@ -236,46 +274,57 @@ router.put('/ip-records/:id/reject',
       return res.status(400).json({ error: 'Rejection reason is required' });
     }
 
-    const result = await pool.query(`
-      UPDATE ip_management
-      SET approval_status = 'rejected',
-          rejection_reason = $1,
-          approved_by = $2,
-          approved_at = NOW(),
-          updated_at = NOW()
-      WHERE id = $3
-      RETURNING *
-    `, [reason, req.user.id, id]);
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'IP record not found' });
+      const result = await client.query(`
+        UPDATE ip_management
+        SET approval_status = 'rejected',
+            rejection_reason = $1,
+            approved_by = $2,
+            approved_at = NOW(),
+            updated_at = NOW()
+        WHERE id = $3
+        RETURNING *
+      `, [reason, req.user.id, id]);
+
+      if (result.rows.length === 0) {
+        await client.query('ROLLBACK');
+        return res.status(404).json({ error: 'IP record not found' });
+      }
+
+      const ipRecord = result.rows[0];
+
+      await client.query(
+        `INSERT INTO ip_status_history (ip_id, old_status, new_status, changed_by, note, created_at)
+         VALUES ($1, $2, 'Rejected', $3, $4, NOW())`,
+        [ipRecord.id, ipRecord.status || null, req.user.id, reason]
+      );
+
+      await client.query(`UPDATE ip_management SET status = 'Rejected' WHERE id = $1`, [ipRecord.id]);
+
+      await client.query('COMMIT');
+
+      const ipTitle = ipRecord.title || ipRecord.ip_title || 'Untitled';
+      await createNotification(
+        ipRecord.user_id,
+        'IP Application Rejected',
+        `Your IP application "${ipTitle}" has been rejected. Reason: ${reason}`,
+        'warning',
+        '/ip'
+      );
+
+      res.json({
+        message: 'IP application rejected',
+        ipRecord: result.rows[0]
+      });
+    } catch (err) {
+      await client.query('ROLLBACK');
+      throw err;
+    } finally {
+      client.release();
     }
-
-    // Record status history
-    const ipRecord = result.rows[0];
-    await pool.query(
-      `INSERT INTO ip_status_history (ip_id, old_status, new_status, changed_by, note, created_at)
-       VALUES ($1, $2, 'Rejected', $3, $4, NOW())`,
-      [ipRecord.id, ipRecord.status || null, req.user.id, reason]
-    );
-
-    // Update status to Rejected
-    await pool.query(`UPDATE ip_management SET status = 'Rejected' WHERE id = $1`, [ipRecord.id]);
-
-    // Notify IP applicant
-    const ipTitle = ipRecord.title || ipRecord.ip_title || 'Untitled';
-    await createNotification(
-      ipRecord.user_id,
-      'IP Application Rejected',
-      `Your IP application "${ipTitle}" has been rejected. Reason: ${reason}`,
-      'warning',
-      '/ip'
-    );
-
-    res.json({
-      message: 'IP application rejected',
-      ipRecord: result.rows[0]
-    });
   })
 );
 
@@ -323,7 +372,7 @@ router.put('/ip-records/:id',
 
 /**
  * DELETE /api/ipmanager/ip-records/:id
- * Delete IP record
+ * Soft-delete IP record
  * Access: ipManager, admin, superAdmin
  */
 router.delete('/ip-records/:id',
@@ -335,12 +384,14 @@ router.delete('/ip-records/:id',
     const { id } = req.params;
 
     const result = await pool.query(
-      'DELETE FROM ip_management WHERE id = $1 RETURNING COALESCE(title, ip_title) as title',
-      [id]
+      `UPDATE ip_management SET deleted_at = NOW(), deleted_by = $1, updated_at = NOW()
+       WHERE id = $2 AND deleted_at IS NULL
+       RETURNING COALESCE(title, ip_title) as title`,
+      [req.user.id, id]
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'IP record not found' });
+      return res.status(404).json({ error: 'IP record not found or already deleted' });
     }
 
     res.json({
@@ -552,7 +603,8 @@ router.post('/licenses', authenticateToken, checkRole(['ipManager','admin','supe
   if (!ip_id || !licensee) return res.status(400).json({ error: 'ip_id and licensee are required' });
   const ipRes = await pool.query('SELECT status FROM ip_management WHERE id = $1 AND deleted_at IS NULL', [ip_id]);
   if (!ipRes.rows.length) return res.status(404).json({ error: 'IP not found' });
-  if (!['Patent Granted','Granted','Published'].includes(ipRes.rows[0].status)) {
+  const licensableStatuses = ['Patent Granted','Granted','Published','Trademark Registered','Copyright Registered','Design Registered','Trade Secret Granted','Registered'];
+  if (!licensableStatuses.includes(ipRes.rows[0].status)) {
     return res.status(400).json({ error: 'Only granted or published IPs can be licensed' });
   }
   const result = await pool.query(

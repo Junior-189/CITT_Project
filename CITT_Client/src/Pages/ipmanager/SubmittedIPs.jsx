@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const SubmittedIPs = () => {
@@ -17,24 +17,7 @@ const SubmittedIPs = () => {
   const [reviewComment, setReviewComment] = useState('');
   const [success, setSuccess] = useState(null);
 
-  useEffect(() => {
-    fetchIPs();
-  }, [page, statusFilter]);
-
-  useEffect(() => {
-    filterIPs();
-  }, [search, ips]);
-
-  const formatDate = (value) => {
-    if (!value) return 'N/A';
-    try {
-      return new Date(value).toLocaleDateString();
-    } catch (e) {
-      return String(value);
-    }
-  };
-
-  const fetchIPs = async () => {
+  const fetchIPs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -54,6 +37,23 @@ const SubmittedIPs = () => {
       setPagination({ total: 0, pages: 0 });
     }
     setLoading(false);
+  }, [page, statusFilter, getAuthenticatedAxios]);
+
+  useEffect(() => {
+    fetchIPs();
+  }, [fetchIPs]);
+
+  useEffect(() => {
+    filterIPs();
+  }, [search, ips]);
+
+  const formatDate = (value) => {
+    if (!value) return 'N/A';
+    try {
+      return new Date(value).toLocaleDateString();
+    } catch (e) {
+      return String(value);
+    }
   };
 
   const filterIPs = () => {
@@ -81,7 +81,7 @@ const SubmittedIPs = () => {
       fetchIPs();
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to approve');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to approve');
       setTimeout(() => setError(null), 5000);
     } finally {
       setActionLoading(false);
@@ -107,7 +107,7 @@ const SubmittedIPs = () => {
       fetchIPs();
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to reject');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to reject');
       setTimeout(() => setError(null), 5000);
     } finally {
       setActionLoading(false);
@@ -116,10 +116,10 @@ const SubmittedIPs = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending': return 'bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-400';
+      case 'approved': return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
+      case 'rejected': return 'bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-400';
+      default: return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
@@ -132,16 +132,16 @@ const SubmittedIPs = () => {
         </div>
 
         {success && (
-          <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-            <p className="text-sm text-green-700">{success}</p>
+          <div className="mb-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded">
+            <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={fetchIPs} className="text-sm text-red-600 hover:text-red-800 underline">Retry</button>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <button onClick={fetchIPs} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 underline">Retry</button>
             </div>
           </div>
         )}
@@ -153,12 +153,12 @@ const SubmittedIPs = () => {
               placeholder="Search by title, inventor, or description..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
             />
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none"
+              className="px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-teal-500 outline-none bg-white dark:bg-slate-700 text-gray-900 dark:text-slate-100"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -167,7 +167,7 @@ const SubmittedIPs = () => {
             </select>
             <button
               onClick={() => { setSearch(''); setStatusFilter(''); setPage(1); }}
-              className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300"
+              className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300"
             >
               Reset Filters
             </button>
@@ -179,14 +179,14 @@ const SubmittedIPs = () => {
             <div className="p-12 text-center text-gray-500 dark:text-slate-400">Loading...</div>
           ) : filteredIps.length === 0 ? (
             <div className="p-12 text-center text-gray-500 dark:text-slate-400">
-              <svg className="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="mx-auto h-12 w-12 text-gray-400 dark:text-slate-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p>No IP submissions found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-slate-700">
                 <thead className="bg-gray-50 dark:bg-slate-900">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Title</th>
@@ -197,9 +197,9 @@ const SubmittedIPs = () => {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200">
+                <tbody className="bg-white dark:bg-slate-800 divide-y divide-gray-200 dark:divide-slate-700">
                   {filteredIps.map((ip) => (
-                    <tr key={ip.id} className="hover:bg-gray-50 dark:bg-slate-900">
+                    <tr key={ip.id} className="hover:bg-gray-50 dark:hover:bg-slate-700">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900 dark:text-slate-100">{ip.title || ip.ip_title || 'Untitled'}</div>
                         <div className="text-xs text-gray-500 dark:text-slate-400">{(ip.abstract || ip.description || '').substring(0, 50)}{(ip.abstract || ip.description || '').length > 50 ? '...' : ''}</div>
@@ -225,7 +225,7 @@ const SubmittedIPs = () => {
                           className={`px-3 py-1 text-sm rounded-lg font-medium ${
                             ip.approval_status === 'pending'
                               ? 'bg-orange-600 text-white hover:bg-orange-700'
-                              : 'bg-gray-200 text-gray-700 dark:text-slate-300 hover:bg-gray-300'
+                              : 'bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:bg-gray-300 dark:hover:bg-slate-600'
                           }`}
                         >
                           {ip.approval_status === 'pending' ? 'Review' : 'View'}
@@ -241,9 +241,9 @@ const SubmittedIPs = () => {
 
         {pagination.pages > 1 && (
           <div className="mt-6 flex justify-center gap-2">
-            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
+            <button onClick={() => setPage(Math.max(1, page - 1))} disabled={page === 1} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Previous</button>
             <span className="px-4 py-2 text-gray-700 dark:text-slate-300">Page {page} of {pagination.pages}</span>
-            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 text-gray-700 dark:text-slate-300 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
+            <button onClick={() => setPage(Math.min(pagination.pages, page + 1))} disabled={page === pagination.pages} className="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-lg hover:bg-gray-300 disabled:opacity-50">Next</button>
           </div>
         )}
 
@@ -273,7 +273,7 @@ const SubmittedIPs = () => {
                     )}
                     {selectedIP.trl && <div><p className="font-semibold text-gray-700 dark:text-slate-300 text-sm">TRL Level</p><p className="text-gray-900 dark:text-slate-100">{selectedIP.trl}</p></div>}
                     {selectedIP.rejection_reason && (
-                      <div className="bg-red-50 p-3 rounded"><p className="font-semibold text-red-700 text-sm">Rejection Reason</p><p className="text-red-600 text-sm">{selectedIP.rejection_reason}</p></div>
+                      <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded"><p className="font-semibold text-red-700 dark:text-red-400 text-sm">Rejection Reason</p><p className="text-red-600 dark:text-red-400 text-sm">{selectedIP.rejection_reason}</p></div>
                     )}
                   </div>
 
@@ -287,7 +287,7 @@ const SubmittedIPs = () => {
                         onChange={(e) => setReviewComment(e.target.value)}
                         rows={3}
                         placeholder="Add comments (required for rejection)..."
-                        className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100"
+                        className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-teal-500 focus:border-teal-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
                       />
                     </div>
                   )}
@@ -307,7 +307,7 @@ const SubmittedIPs = () => {
                     </>
                   )}
                   <button onClick={() => { setShowModal(false); setSelectedIP(null); setReviewComment(''); }}
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:bg-slate-900 sm:mt-0 sm:w-auto sm:text-sm">
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-300 font-medium hover:bg-gray-50 dark:hover:bg-slate-900 sm:mt-0 sm:w-auto sm:text-sm">
                     Close
                   </button>
                 </div>

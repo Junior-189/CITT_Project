@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
 const PendingApprovals = () => {
@@ -14,11 +14,7 @@ const PendingApprovals = () => {
   const [rejectionReason, setRejectionReason] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
 
-  useEffect(() => {
-    fetchPendingApplications();
-  }, []);
-
-  const fetchPendingApplications = async () => {
+  const fetchPendingApplications = useCallback(async () => {
     try {
       setLoading(true);
       const api = getAuthenticatedAxios();
@@ -31,7 +27,11 @@ const PendingApprovals = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getAuthenticatedAxios]);
+
+  useEffect(() => {
+    fetchPendingApplications();
+  }, [fetchPendingApplications]);
 
   const handleApprove = async () => {
     if (!selectedIP) return;
@@ -49,7 +49,7 @@ const PendingApprovals = () => {
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       console.error('Approve error:', err);
-      setError(err.response?.data?.message || 'Failed to approve application');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to approve application');
       setTimeout(() => setError(null), 5000);
     } finally {
       setActionLoading(false);
@@ -77,7 +77,7 @@ const PendingApprovals = () => {
       setTimeout(() => setSuccess(null), 5000);
     } catch (err) {
       console.error('Reject error:', err);
-      setError(err.response?.data?.message || 'Failed to reject application');
+      setError(err.response?.data?.error || err.response?.data?.message || 'Failed to reject application');
       setTimeout(() => setError(null), 5000);
     } finally {
       setActionLoading(false);
@@ -94,18 +94,18 @@ const PendingApprovals = () => {
   };
 
   const getIPTypeColor = (type) => {
-    switch (type) {
-      case 'Patent': return 'bg-purple-100 text-purple-800';
-      case 'Trademark': return 'bg-blue-100 text-blue-800';
-      case 'Copyright': return 'bg-green-100 text-green-800';
-      case 'Design': return 'bg-orange-100 text-orange-800';
-      default: return 'bg-gray-100 text-gray-800';
+    switch ((type || '').toLowerCase()) {
+      case 'patent': return 'bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-400';
+      case 'trademark': return 'bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-400';
+      case 'copyright': return 'bg-green-100 dark:bg-green-500/20 text-green-800 dark:text-green-400';
+      case 'design': return 'bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400';
+      default: return 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-slate-300';
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-slate-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
           <p className="mt-4 text-gray-600 dark:text-slate-400">Loading pending applications...</p>
@@ -120,22 +120,22 @@ const PendingApprovals = () => {
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-slate-100">Pending Approvals</h1>
           <p className="text-gray-600 dark:text-slate-400 mt-2">Review and approve IP applications awaiting approval</p>
-          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 dark:bg-orange-500/20 text-orange-800 dark:text-orange-400">
             {pendingIPs.length} Applications in Queue
           </div>
         </div>
 
         {success && (
-          <div className="mb-4 bg-green-50 border-l-4 border-green-500 p-4 rounded">
-            <p className="text-sm text-green-700">{success}</p>
+          <div className="mb-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 p-4 rounded">
+            <p className="text-sm text-green-700 dark:text-green-400">{success}</p>
           </div>
         )}
 
         {error && (
-          <div className="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={fetchPendingApplications} className="text-sm text-red-600 hover:text-red-800 underline">Retry</button>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+              <button onClick={fetchPendingApplications} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 underline">Retry</button>
             </div>
           </div>
         )}
@@ -143,24 +143,24 @@ const PendingApprovals = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Total Pending</p>
-            <p className="text-3xl font-bold text-yellow-600 mt-2">{pendingIPs.length}</p>
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">{pendingIPs.length}</p>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Patents</p>
-            <p className="text-3xl font-bold text-purple-600 mt-2">
-              {pendingIPs.filter(ip => ip.ip_type === 'Patent').length}
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">
+              {pendingIPs.filter(ip => (ip.ip_type || '').toLowerCase() === 'patent').length}
             </p>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Trademarks</p>
-            <p className="text-3xl font-bold text-blue-600 mt-2">
-              {pendingIPs.filter(ip => ip.ip_type === 'Trademark').length}
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">
+              {pendingIPs.filter(ip => (ip.ip_type || '').toLowerCase() === 'trademark').length}
             </p>
           </div>
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-4">
             <p className="text-gray-600 dark:text-slate-400 text-sm">Other Types</p>
-            <p className="text-3xl font-bold text-gray-600 dark:text-slate-400 mt-2">
-              {pendingIPs.filter(ip => ip.ip_type !== 'Patent' && ip.ip_type !== 'Trademark').length}
+            <p className="text-3xl font-bold text-gray-900 dark:text-slate-100 mt-2">
+              {pendingIPs.filter(ip => !['patent', 'trademark'].includes((ip.ip_type || '').toLowerCase())).length}
             </p>
           </div>
         </div>
@@ -180,7 +180,7 @@ const PendingApprovals = () => {
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 dark:bg-yellow-500/20 text-yellow-800 dark:text-yellow-400">
                         Queue #{index + 1}
                       </span>
                       <h3 className="text-xl font-bold text-gray-900 dark:text-slate-100">{ip.title || ip.ip_title || 'Untitled'}</h3>
@@ -274,7 +274,7 @@ const PendingApprovals = () => {
                       onChange={(e) => setApproveComment(e.target.value)}
                       rows={3}
                       placeholder="Add any comments or patent/registration number..."
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
                     />
                   </div>
                 </div>
@@ -284,7 +284,7 @@ const PendingApprovals = () => {
                     {actionLoading ? 'Approving...' : 'Approve Application'}
                   </button>
                   <button type="button" onClick={() => { setShowApproveModal(false); setSelectedIP(null); setApproveComment(''); }}
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-900 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     Cancel
                   </button>
                 </div>
@@ -311,7 +311,7 @@ const PendingApprovals = () => {
                       onChange={(e) => setRejectionReason(e.target.value)}
                       rows={4}
                       placeholder="Please provide a reason for rejection..."
-                      className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100"
+                      className="w-full px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-md focus:ring-orange-500 focus:border-orange-500 text-gray-900 dark:text-slate-100 bg-white dark:bg-slate-700"
                     />
                   </div>
                 </div>
@@ -321,7 +321,7 @@ const PendingApprovals = () => {
                     {actionLoading ? 'Rejecting...' : 'Reject Application'}
                   </button>
                   <button type="button" onClick={() => { setShowRejectModal(false); setSelectedIP(null); setRejectionReason(''); }}
-                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-slate-600 shadow-sm px-4 py-2 bg-white dark:bg-slate-800 text-base font-medium text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-900 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                     Cancel
                   </button>
                 </div>

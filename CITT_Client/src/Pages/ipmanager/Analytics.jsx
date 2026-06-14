@@ -22,22 +22,39 @@ const Analytics = () => {
 
   const { getAuthenticatedAxios } = useAuth();
 
+  const [isDark, setIsDark] = useState(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches
+  );
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e) => setIsDark(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
   const fetchAnalytics = useCallback(async () => {
     try {
       setLoading(true);
       const api = getAuthenticatedAxios();
       const res = await api.get('/api/ipmanager/statistics');
 
+      const TYPE_LABELS = {
+        patent: 'Patent',
+        trademark: 'Trademark',
+        copyright: 'Copyright',
+        design: 'Design',
+        industrial_design: 'Design',
+      };
       const byType = { Patent: 0, Trademark: 0, Copyright: 0, Design: 0, Other: 0 };
       (res.data.byType || []).forEach(r => {
-        const key = r.ip_type || 'Other';
-        if (byType[key] !== undefined) { byType[key] = parseInt(r.count); } else { byType.Other += parseInt(r.count); }
+        const label = TYPE_LABELS[(r.ip_type || '').toLowerCase()] || 'Other';
+        byType[label] += parseInt(r.count);
       });
 
-      const byStatus = { pending: 0, approved: 0, rejected: 0 };
+      const byStatus = { pending: 0, approved: 0, rejected: 0, other: 0 };
       (res.data.byStatus || []).forEach(r => {
         const key = (r.approval_status || 'pending').toLowerCase();
-        if (byStatus[key] !== undefined) byStatus[key] = parseInt(r.count);
+        if (byStatus[key] !== undefined) { byStatus[key] = parseInt(r.count); } else { byStatus.other += parseInt(r.count); }
       });
 
       const monthlyTrends = (res.data.monthlyTrend || [])
@@ -81,10 +98,10 @@ const Analytics = () => {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-slate-900 py-8 px-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 rounded">
             <div className="flex justify-between items-center">
-              <p className="text-sm text-red-700">{error}</p>
-              <button onClick={fetchAnalytics} className="text-sm text-red-600 hover:text-red-800 underline">Retry</button>
+          <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
+          <button onClick={fetchAnalytics} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 underline">Retry</button>
             </div>
           </div>
         </div>
@@ -148,7 +165,7 @@ const Analytics = () => {
                   <Pie data={typePieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                     {typePieData.map((d) => <Cell key={d.name} fill={TYPE_COLORS[d.name] || '#6b7280'} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                  <Tooltip contentStyle={{ borderRadius: '8px', border: `1px solid ${isDark ? '#334155' : '#e5e7eb'}`, fontSize: '13px', backgroundColor: isDark ? '#1e293b' : '#ffffff', color: isDark ? '#e2e8f0' : '#000000' }} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
@@ -165,7 +182,7 @@ const Analytics = () => {
                   <Pie data={statusPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                     {statusPieData.map((d) => <Cell key={d.name} fill={STATUS_COLORS[d.name.toLowerCase()] || '#6b7280'} />)}
                   </Pie>
-                  <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }} />
+                  <Tooltip contentStyle={{ borderRadius: '8px', border: `1px solid ${isDark ? '#334155' : '#e5e7eb'}`, fontSize: '13px', backgroundColor: isDark ? '#1e293b' : '#ffffff', color: isDark ? '#e2e8f0' : '#000000' }} />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
@@ -180,18 +197,18 @@ const Analytics = () => {
           {analyticsData.monthlyTrends.length > 0 ? (
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={analyticsData.monthlyTrends} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#e5e7eb'} />
                 <XAxis
                   dataKey="month"
-                  tick={{ fontSize: 12, fill: '#6b7280' }}
+                  tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#6b7280' }}
                   tickFormatter={(m) => {
                     const d = new Date(m + '-01');
                     return d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
                   }}
                 />
-                <YAxis tick={{ fontSize: 12, fill: '#6b7280' }} />
+                <YAxis tick={{ fontSize: 12, fill: isDark ? '#94a3b8' : '#6b7280' }} />
                 <Tooltip
-                  contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '13px' }}
+                  contentStyle={{ borderRadius: '8px', border: `1px solid ${isDark ? '#334155' : '#e5e7eb'}`, fontSize: '13px', backgroundColor: isDark ? '#1e293b' : '#ffffff', color: isDark ? '#e2e8f0' : '#000000' }}
                   labelFormatter={(m) => new Date(m + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                   formatter={(value) => [`${value} submissions`, 'Count']}
                 />
